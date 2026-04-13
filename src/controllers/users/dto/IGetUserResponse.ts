@@ -4,5 +4,5 @@ export interface IGetUserResponse {
   apellido: string;
   email: string;
   tipo: string;
-  planId: number;
+  planId: number | null;
 }
