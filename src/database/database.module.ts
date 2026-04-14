@@ -2,6 +2,12 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { join } from 'path';
+import { UserEntity } from './entities/user.entity';
+import { MenuEntity } from './entities/menu.entity';
+import { OrderEntity } from './entities/order.entity';
+import { MealPlanEntity } from './entities/meal-plan.entity';
+import { StockEntity } from './entities/stock.entity';
+import { PromotionEntity } from './entities/promotion.entity';
 
 @Module({
   imports: [
@@ -18,14 +24,21 @@ import { join } from 'path';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        entities: [join(process.cwd(), 'dist/**/*.entity{.ts,.js}')],
+        entities: [
+          UserEntity,
+          MenuEntity,
+          OrderEntity,
+          MealPlanEntity,
+          StockEntity,
+          PromotionEntity,
+        ],
         synchronize: true,
         autoLoadEntities: true,
       }),
       inject: [ConfigService],
     }),
   ],
-  exports: [],
+  exports: [TypeOrmModule],
   providers: [],
 })
 export class DatabaseModule {}
