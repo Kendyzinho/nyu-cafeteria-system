@@ -1,0 +1,5 @@
+name: NYU Cafeteria
+values:
+  - key: URL
+    value: ''
+    enabled: true
