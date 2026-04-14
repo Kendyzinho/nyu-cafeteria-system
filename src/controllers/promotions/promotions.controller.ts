@@ -1,23 +1,23 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, Res } from '@nestjs/common';
 import type { Response } from 'express';
-import type { IGetPromotionResponse } from './dto/IGetPromotionResponse';
 import type { IPostPromotionRequest } from './dto/IPostPromotionRequest';
 import type { IPostPromotionResponse } from './dto/IPostPromotionResponse';
 import type { IPutPromotionRequest } from './dto/IPutPromotionRequest';
+import { PromotionsService } from 'src/providers/promotions/promotions.service';
 
 @Controller('promotions')
 export class PromotionsController {
 
-  private promotions: IGetPromotionResponse[] = [];
+  constructor(private readonly promotionsService: PromotionsService) {}
 
   @Get()
-  public getPromotions(): IGetPromotionResponse[] {
-    return this.promotions;
+  public async getPromotions() {
+    return await this.promotionsService.getAll();
   }
 
   @Get(':id')
-  public getPromotion(@Param('id') id: number): IGetPromotionResponse | undefined {
-    return this.promotions.find(e => e.id == id);
+  public async getPromotion(@Param('id') id: number) {
+    return await this.promotionsService.getOne(id);
   }
 
   @Post()
@@ -32,16 +32,7 @@ export class PromotionsController {
     };
 
     if (request) {
-      const newPromotion: IGetPromotionResponse = {
-        id: this.promotions.length + 1,
-        nombre: request.nombre,
-        descripcion: request.descripcion,
-        descuento: request.descuento,
-        fechaInicio: request.fechaInicio,
-        fechaFin: request.fechaFin,
-        activa: true,
-      };
-      this.promotions.push(newPromotion);
+      await this.promotionsService.create(request);
     }
 
     return response;
@@ -55,16 +46,9 @@ export class PromotionsController {
   ): Promise<Response> {
     if (isNaN(id)) return response.status(400).send();
 
-    this.promotions.find((promotion) => {
-      if (promotion.id == id) {
-        promotion.nombre = request?.nombre ?? promotion.nombre;
-        promotion.descripcion = request?.descripcion ?? promotion.descripcion;
-        promotion.descuento = request?.descuento ?? promotion.descuento;
-        promotion.fechaInicio = request?.fechaInicio ?? promotion.fechaInicio;
-        promotion.fechaFin = request?.fechaFin ?? promotion.fechaFin;
-        promotion.activa = request?.activa ?? promotion.activa;
-      }
-    });
+    const result = await this.promotionsService.update(id, request);
+
+    if (!result) return response.status(404).send();
 
     return response.status(202).send();
   }
@@ -76,17 +60,9 @@ export class PromotionsController {
   ): Promise<Response> {
     if (isNaN(id)) return response.status(400).send();
 
-    let found = false;
+    const result = await this.promotionsService.delete(id);
 
-    this.promotions = this.promotions.filter((promotion) => {
-      if (promotion.id == id) {
-        found = true;
-        return false;
-      }
-      return true;
-    });
-
-    if (!found) return response.status(404).send();
+    if (!result) return response.status(404).send();
 
     return response.status(200).send();
   }

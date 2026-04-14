@@ -1,23 +1,23 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, Res } from '@nestjs/common';
 import type { Response } from 'express';
-import type { IGetUserResponse } from './dto/IGetUserResponse';
 import type { IPostUserRequest } from './dto/IPostUserRequest';
 import type { IPostUserResponse } from './dto/IPostUserResponse';
 import type { IPutUserRequest } from './dto/IPutUserRequest';
+import { UsersService } from 'src/providers/users/users.service';
 
 @Controller('users')
 export class UsersController {
 
-  private users: IGetUserResponse[] = [];
+  constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  public getUsers(): IGetUserResponse[] {
-    return this.users;
+  public async getUsers() {
+    return await this.usersService.getAll();
   }
 
   @Get(':id')
-  public getUser(@Param('id') id: number): IGetUserResponse | undefined {
-    return this.users.find(e => e.id == id);
+  public async getUser(@Param('id') id: number) {
+    return await this.usersService.getOne(id);
   }
 
   @Post()
@@ -32,15 +32,7 @@ export class UsersController {
     };
 
     if (request) {
-      const newUser: IGetUserResponse = {
-        id: this.users.length + 1,
-        nombre: request.nombre,
-        apellido: request.apellido,
-        email: request.email,
-        tipo: request.tipo,
-        planId: null,
-      };
-      this.users.push(newUser);
+      await this.usersService.create(request);
     }
 
     return response;
@@ -54,15 +46,9 @@ export class UsersController {
   ): Promise<Response> {
     if (isNaN(id)) return response.status(400).send();
 
-    this.users.find((user) => {
-      if (user.id == id) {
-        user.nombre = request?.nombre ?? user.nombre;
-        user.apellido = request?.apellido ?? user.apellido;
-        user.email = request?.email ?? user.email;
-        user.tipo = request?.tipo ?? user.tipo;
-        user.planId = request?.planId ?? user.planId;
-      }
-    });
+    const result = await this.usersService.update(id, request);
+
+    if (!result) return response.status(404).send();
 
     return response.status(202).send();
   }
@@ -74,17 +60,9 @@ export class UsersController {
   ): Promise<Response> {
     if (isNaN(id)) return response.status(400).send();
 
-    let found = false;
+    const result = await this.usersService.delete(id);
 
-    this.users = this.users.filter((user) => {
-      if (user.id == id) {
-        found = true;
-        return false;
-      }
-      return true;
-    });
-
-    if (!found) return response.status(404).send();
+    if (!result) return response.status(404).send();
 
     return response.status(200).send();
   }

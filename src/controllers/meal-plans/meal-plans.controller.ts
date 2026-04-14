@@ -1,23 +1,23 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, Res } from '@nestjs/common';
 import type { Response } from 'express';
-import type { IGetMealPlanResponse } from './dto/IGetMealPlanResponse';
 import type { IPostMealPlanRequest } from './dto/IPostMealPlanRequest';
 import type { IPostMealPlanResponse } from './dto/IPostMealPlanResponse';
 import type { IPutMealPlanRequest } from './dto/IPutMealPlanRequest';
+import { MealPlansService } from 'src/providers/meal-plans/meal-plans.service';
 
 @Controller('meal-plans')
 export class MealPlansController {
 
-  private mealPlans: IGetMealPlanResponse[] = [];
+  constructor(private readonly mealPlansService: MealPlansService) {}
 
   @Get()
-  public getMealPlans(): IGetMealPlanResponse[] {
-    return this.mealPlans;
+  public async getMealPlans() {
+    return await this.mealPlansService.getAll();
   }
 
   @Get(':id')
-  public getMealPlan(@Param('id') id: number): IGetMealPlanResponse | undefined {
-    return this.mealPlans.find(e => e.id == id);
+  public async getMealPlan(@Param('id') id: number) {
+    return await this.mealPlansService.getOne(id);
   }
 
   @Post()
@@ -32,15 +32,7 @@ export class MealPlansController {
     };
 
     if (request) {
-      const newMealPlan: IGetMealPlanResponse = {
-        id: this.mealPlans.length + 1,
-        nombre: request.nombre,
-        descripcion: request.descripcion,
-        precio: request.precio,
-        tipo: request.tipo,
-        activo: true,
-      };
-      this.mealPlans.push(newMealPlan);
+      await this.mealPlansService.create(request);
     }
 
     return response;
@@ -54,15 +46,9 @@ export class MealPlansController {
   ): Promise<Response> {
     if (isNaN(id)) return response.status(400).send();
 
-    this.mealPlans.find((plan) => {
-      if (plan.id == id) {
-        plan.nombre = request?.nombre ?? plan.nombre;
-        plan.descripcion = request?.descripcion ?? plan.descripcion;
-        plan.precio = request?.precio ?? plan.precio;
-        plan.tipo = request?.tipo ?? plan.tipo;
-        plan.activo = request?.activo ?? plan.activo;
-      }
-    });
+    const result = await this.mealPlansService.update(id, request);
+
+    if (!result) return response.status(404).send();
 
     return response.status(202).send();
   }
@@ -74,17 +60,9 @@ export class MealPlansController {
   ): Promise<Response> {
     if (isNaN(id)) return response.status(400).send();
 
-    let found = false;
+    const result = await this.mealPlansService.delete(id);
 
-    this.mealPlans = this.mealPlans.filter((plan) => {
-      if (plan.id == id) {
-        found = true;
-        return false;
-      }
-      return true;
-    });
-
-    if (!found) return response.status(404).send();
+    if (!result) return response.status(404).send();
 
     return response.status(200).send();
   }

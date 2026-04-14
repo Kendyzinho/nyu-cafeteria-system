@@ -1,23 +1,23 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, Res } from '@nestjs/common';
 import type { Response } from 'express';
-import type { IGetOrderResponse } from './dto/IGetOrderResponse';
 import type { IPostOrderRequest } from './dto/IPostOrderRequest';
 import type { IPostOrderResponse } from './dto/IPostOrderResponse';
 import type { IPutOrderRequest } from './dto/IPutOrderRequest';
+import { OrdersService } from 'src/providers/orders/orders.service';
 
 @Controller('orders')
 export class OrdersController {
 
-  private orders: IGetOrderResponse[] = [];
+  constructor(private readonly ordersService: OrdersService) {}
 
   @Get()
-  public getOrders(): IGetOrderResponse[] {
-    return this.orders;
+  public async getOrders() {
+    return await this.ordersService.getAll();
   }
 
   @Get(':id')
-  public getOrder(@Param('id') id: number): IGetOrderResponse | undefined {
-    return this.orders.find(e => e.id == id);
+  public async getOrder(@Param('id') id: number) {
+    return await this.ordersService.getOne(id);
   }
 
   @Post()
@@ -32,15 +32,7 @@ export class OrdersController {
     };
 
     if (request) {
-      const newOrder: IGetOrderResponse = {
-        id: this.orders.length + 1,
-        usuarioId: request.usuarioId,
-        items: request.items,
-        total: 0,
-        estado: 'pendiente',
-        fechaCreacion: new Date(),
-      };
-      this.orders.push(newOrder);
+      await this.ordersService.create(request);
     }
 
     return response;
@@ -54,12 +46,9 @@ export class OrdersController {
   ): Promise<Response> {
     if (isNaN(id)) return response.status(400).send();
 
-    this.orders.find((order) => {
-      if (order.id == id) {
-        order.estado = request?.estado ?? order.estado;
-        order.items = request?.items ?? order.items;
-      }
-    });
+    const result = await this.ordersService.update(id, request);
+
+    if (!result) return response.status(404).send();
 
     return response.status(202).send();
   }
@@ -71,17 +60,9 @@ export class OrdersController {
   ): Promise<Response> {
     if (isNaN(id)) return response.status(400).send();
 
-    let found = false;
+    const result = await this.ordersService.delete(id);
 
-    this.orders = this.orders.filter((order) => {
-      if (order.id == id) {
-        found = true;
-        return false;
-      }
-      return true;
-    });
-
-    if (!found) return response.status(404).send();
+    if (!result) return response.status(404).send();
 
     return response.status(200).send();
   }
