@@ -149,7 +149,7 @@ document.getElementById('plan-form').addEventListener('submit', async (e) => {
     year: +document.getElementById('plan-year').value,
   };
   const result = await postJSON(`${API}/meal-plans`, body);
-  showResult('plan-result', result);
+  showResult('plan-form-result', result);
 });
 
 // ─── UTILS ────────────────────────────────────────────────
