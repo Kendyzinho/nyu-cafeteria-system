@@ -1,0 +1,55 @@
+<div class="container page-section fade-up">
+
+  <div class="page-header">
+    <h2 class="page-title">Crear Stock</h2>
+  </div>
+
+  <div class="soft-card">
+    <div class="card-body">
+      <form [formGroup]="stockForm" (ngSubmit)="guardarStock()">
+
+        <div *ngIf="successMessage" class="alert alert-success mb-4">
+          {{ successMessage }}
+        </div>
+
+        <div *ngIf="errorMessage" class="alert alert-danger mb-4">
+          {{ errorMessage }}
+        </div>
+
+        <div class="row g-4">
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Menu Item ID</label>
+            <input type="number" class="form-control" formControlName="menuItemId">
+            <div class="text-danger mt-1" *ngIf="stockForm.get('menuItemId')?.touched && stockForm.get('menuItemId')?.invalid">
+              El campo Menu Item ID es obligatorio.
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Cantidad</label>
+            <input type="number" class="form-control" formControlName="cantidad">
+            <div class="text-danger mt-1" *ngIf="stockForm.get('cantidad')?.touched && stockForm.get('cantidad')?.invalid">
+              La cantidad es obligatoria y no puede ser negativa.
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Umbral mínimo</label>
+            <input type="number" class="form-control" formControlName="umbralMinimo">
+            <div class="text-danger mt-1" *ngIf="stockForm.get('umbralMinimo')?.touched && stockForm.get('umbralMinimo')?.invalid">
+              El umbral mínimo es obligatorio y no puede ser negativo.
+            </div>
+          </div>
+
+        </div>
+
+        <div class="d-flex gap-2 mt-4">
+          <button type="submit" class="btn btn-primary px-4">Guardar</button>
+          <a routerLink="/stock" class="btn btn-outline-secondary px-4">Volver</a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,67 @@
+.form-container {
+  max-width: 520px;
+  margin: 30px auto;
+}
+
+.form-group {
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  margin-top: 4px;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #1e3932;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(30, 57, 50, 0.1);
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-direction: row;
+}
+
+textarea {
+  min-height: 80px;
+  resize: none;
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.btn-link {
+  color: #6c757d;
+  text-decoration: none;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+}

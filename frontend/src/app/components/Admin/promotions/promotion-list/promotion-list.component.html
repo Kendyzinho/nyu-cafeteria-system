@@ -1,0 +1,67 @@
+<div class="container page-section fade-up">
+
+  <div class="page-header header-row">
+    <div>
+      <h2 class="page-title">Promociones</h2>
+    </div>
+
+    <a routerLink="/promotions/crear" class="btn btn-primary header-btn">
+      Nueva promoción
+    </a>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+    {{ errorMessage }}
+  </div>
+
+  <div class="row g-4 mt-1" *ngIf="promotions.length > 0">
+
+    <div class="col-md-6" *ngFor="let promo of promotions">
+      <div class="promo-card h-100">
+
+        <div class="promo-top">
+          <div>
+            <span class="promo-label">PROMOCIÓN</span>
+            <h3 class="promo-title">{{ promo.nombre }}</h3>
+          </div>
+
+          <span [ngClass]="promo.activa ? 'badge-pill badge-success' : 'badge-pill badge-danger'">
+            {{ promo.activa ? 'Activa' : 'Inactiva' }}
+          </span>
+        </div>
+
+        <p class="promo-description">
+          {{ promo.descripcion }}
+        </p>
+
+        <div class="promo-content">
+          <div class="promo-left">
+            <div class="promo-discount-box">
+              <span class="promo-discount-number">{{ promo.descuento }}%</span>
+              <span class="promo-discount-text">de descuento</span>
+            </div>
+          </div>
+
+          <div class="promo-right">
+            <div class="promo-dates">
+              <div><strong>Inicio:</strong> {{ promo.fechaInicio }}</div>
+              <div><strong>Fin:</strong> {{ promo.fechaFin }}</div>
+            </div>
+
+            <div class="promo-actions">
+              <button class="btn btn-outline-dark btn-sm rounded-pill px-3">Ver</button>
+              <button class="btn btn-outline-success btn-sm rounded-pill px-3">Editar</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div *ngIf="promotions.length === 0 && !errorMessage" class="alert alert-info mt-3">
+    No hay promociones registradas.
+  </div>
+
+</div>

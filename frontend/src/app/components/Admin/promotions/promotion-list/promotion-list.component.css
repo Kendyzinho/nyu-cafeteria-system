@@ -1,0 +1,118 @@
+.promo-card {
+  background: linear-gradient(135deg, #1e3932, #00754a);
+  color: white;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  height: 100%;
+}
+
+.promo-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.15);
+}
+
+.promo-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.promo-label {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  opacity: 0.8;
+  margin-bottom: 8px;
+}
+
+.promo-title {
+  margin: 0;
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: white;
+}
+
+.promo-description {
+  margin-top: 18px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.promo-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 32px;
+  margin-top: 22px;
+  flex-wrap: wrap;
+}
+
+.promo-left {
+  display: flex;
+  align-items: center;
+}
+
+.promo-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+.promo-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.promo-dates {
+  color: rgba(255, 255, 255, 0.94);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: right;
+}
+
+.promo-discount-box {
+  padding: 18px 22px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.14);
+  display: inline-flex;
+  flex-direction: column;
+  min-width: 140px;
+}
+
+.promo-discount-number {
+  font-size: 2.4rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.promo-discount-text {
+  font-size: 0.95rem;
+  margin-top: 6px;
+  opacity: 0.92;
+}
+
+.promo-dates {
+  color: rgba(255, 255, 255, 0.92);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.promo-card .btn-outline-dark,
+.promo-card .btn-outline-success {
+  background: white;
+  border: none;
+  color: #1e3932;
+  font-weight: 700;
+}
+
+.promo-card .btn-outline-dark:hover,
+.promo-card .btn-outline-success:hover {
+  background: #f3f4f6;
+  color: #1e3932;
+}

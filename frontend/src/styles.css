@@ -1,1 +1,208 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --primary: #1e3932;
+  --primary-dark: #163027;
+  --accent: #00754a;
+  --soft-green: #d4e9e2;
+  --bg: #f6f6f4;
+  --card-bg: #ffffff;
+  --text-main: #1f1f1f;
+  --text-muted: #6b7280;
+  --danger: #b42318;
+  --warning: #b58105;
+  --success: #15803d;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  --radius-lg: 20px;
+  --radius-md: 14px;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text-main);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h1, h2, h3, h4, h5 {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.page-section {
+  padding-top: 48px;
+  padding-bottom: 40px;
+}
+
+.page-header {
+  margin-bottom: 28px;
+}
+
+.page-title {
+  font-size: 2.4rem;
+  line-height: 1.1;
+  margin-bottom: 10px;
+  color: var(--primary);
+  font-weight: 800;
+}
+
+.page-subtitle {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  max-width: 680px;
+  margin-bottom: 0;
+}
+
+.soft-card {
+  background: var(--card-bg);
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.soft-card .card-body {
+  padding: 24px;
+}
+
+.btn {
+  border-radius: 999px;
+  font-weight: 600;
+  padding: 10px 18px;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-primary {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff !important;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+  color: #ffffff !important;
+}
+
+.btn-primary a,
+.btn-primary:visited,
+.btn-primary:focus {
+  color: #ffffff !important;
+  text-decoration: none;
+}
+
+.btn-success {
+  border-radius: 999px;
+}
+
+.btn-secondary {
+  border-radius: 999px;
+}
+
+.table {
+  margin-bottom: 0;
+}
+
+.table thead th {
+  background-color: var(--primary);
+  color: white;
+  border-bottom: none;
+  vertical-align: middle;
+}
+
+.table tbody td {
+  vertical-align: middle;
+}
+
+.table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background-color: #f2f7f5;
+}
+
+.form-control,
+.form-select,
+textarea {
+  border-radius: var(--radius-md);
+  min-height: 46px;
+  border: 1px solid #d6d6d6;
+  box-shadow: none;
+}
+
+.form-control:focus,
+.form-select:focus,
+textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 0.2rem rgba(0, 117, 74, 0.15);
+}
+
+.alert {
+  border: none;
+  border-radius: var(--radius-md);
+}
+
+.badge-pill {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.badge-success {
+  background-color: var(--success);
+}
+
+.badge-warning {
+  background-color: var(--warning);
+}
+
+.badge-danger {
+  background-color: var(--danger);
+}
+
+.fade-up {
+  animation: fadeUp 0.45s ease;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+}
+
+.form-check-input {
+  width: 2.6em;
+  height: 1.3em;
+  cursor: pointer;
+}
+
+.form-check-input:checked {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.header-btn {
+  min-width: 170px;
+}

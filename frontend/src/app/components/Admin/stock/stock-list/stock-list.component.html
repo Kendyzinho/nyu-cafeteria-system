@@ -1,0 +1,54 @@
+<div class="container page-section fade-up">
+
+  <div class="page-header header-row">
+    <div>
+      <h2 class="page-title">Gestión de Stock</h2>
+    </div>
+
+    <a routerLink="/stock/crear" class="btn btn-primary header-btn">
+      Nuevo stock
+    </a>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger mt-3 mb-4">
+    {{ errorMessage }}
+  </div>
+
+  <div class="soft-card mt-3" *ngIf="stocks.length > 0">
+    <div class="card-body">
+      <table class="table table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Menu Item</th>
+            <th>Cantidad</th>
+            <th>Umbral</th>
+            <th>Última actualización</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let item of stocks">
+            <td>{{ item.id }}</td>
+            <td>{{ item.menuItemId }}</td>
+            <td>{{ item.cantidad }}</td>
+            <td>{{ item.umbralMinimo }}</td>
+            <td>{{ item.ultimaActualizacion }}</td>
+            <td>
+              <span [ngClass]="getEstadoClase(item.cantidad, item.umbralMinimo)">
+                {{ getEstado(item.cantidad, item.umbralMinimo) }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div *ngIf="stocks.length === 0 && !errorMessage" class="empty-state mt-4">
+    <div class="empty-icon"></div>
+    <h4>No hay datos de stock</h4>
+  </div>
+
+</div>

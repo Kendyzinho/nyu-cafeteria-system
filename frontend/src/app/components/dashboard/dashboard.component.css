@@ -1,0 +1,28 @@
+.hero-only {
+  height: 500px;
+  background-image: url('https://i.imgur.com/UXVfYUB.jpeg');
+  background-size: cover;
+  background-position: center;
+}
+
+.hero-overlay {
+  width: 100%;
+  height: 100%;
+  background: rgba(30, 57, 50, 0.3); 
+  display: flex;
+  align-items: center;
+}
+.hero-content {
+  color: white;
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.hero-content p {
+  font-size: 1.1rem;
+  max-width: 500px;
+}

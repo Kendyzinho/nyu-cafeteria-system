@@ -1,0 +1,64 @@
+<div class="container page-section fade-up">
+
+  <div class="page-header header-row">
+    <div>
+      <h2 class="page-title">Planes Alimentarios</h2>
+    </div>
+
+    <a routerLink="/meal-plans/crear" class="btn btn-primary header-btn">
+     Nuevo plan
+    </a>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+    {{ errorMessage }}
+  </div>
+
+  <div class="row g-4 mt-1" *ngIf="mealPlans.length > 0">
+
+    <div class="col-12" *ngFor="let plan of mealPlans">
+      <div class="soft-card plan-card">
+        <div class="card-body">
+
+          <div class="plan-layout">
+
+            <div class="plan-left">
+              <div class="d-flex align-items-center gap-3 flex-wrap mb-3">
+                <h4 class="mb-0">{{ plan.nombre }}</h4>
+
+                <span [ngClass]="plan.activo ? 'badge-pill badge-success' : 'badge-pill badge-danger'">
+                  {{ plan.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </div>
+
+              <p class="text-muted mb-0">
+                {{ plan.descripcion }}
+              </p>
+            </div>
+
+            
+            <div class="plan-right">
+              <div class="plan-meta">
+                <div class="meal-type">Tipo: {{ plan.tipo }}</div>
+                <div class="meal-price">${{ plan.precio }}</div>
+              </div>
+
+              <div class="meal-actions">
+                <button class="btn btn-outline-dark btn-sm rounded-pill px-3">Ver</button>
+                <button class="btn btn-outline-success btn-sm rounded-pill px-3">Editar</button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div *ngIf="mealPlans.length === 0 && !errorMessage" class="alert alert-info mt-3">
+    No hay planes registrados.
+  </div>
+
+</div>
