@@ -1,0 +1,49 @@
+.card-menu {
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+  background-color: #FFFBF7;
+}
+
+.card-menu:hover {
+  transform: translateY(-5px);
+}
+
+.img-menu {
+  height: 200px;
+  object-fit: cover;
+}
+
+.bg-cafe-light {
+  background-color: #D7CCC8;
+  color: #4E342E;
+}
+
+.btn-cafeteria {
+  background-color: #6F4E37;
+  color: white;
+  border: none;
+}
+
+.btn-cafeteria:hover {
+  background-color: #4E342E;
+}
+
+.sold-out-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background-color: #d32f2f;
+  color: white;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+}
+
+.select-cafeteria {
+  border-color: #D7CCC8;
+  color: #4E342E;
+  font-weight: 500;
+}
