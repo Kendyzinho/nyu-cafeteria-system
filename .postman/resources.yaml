@@ -2,6 +2,10 @@
 workspace:
   id: feefda8f-3a32-4699-8fae-60a7083eb5f4
 
+cloudResources:
+  environments:
+    ..\postman\environments\NYU Cafetería.environment.yaml: 8127f7b7-48b3-56f0-92a6-5be993dff4d3
+
 # All resources in the `postman/` folder are automatically registered in Local View.
 # Point to additional files outside the `postman/` folder to register them individually. Example:
 #localResources:
