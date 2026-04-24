@@ -12,20 +12,11 @@ export class MenuComponent implements OnInit {
 
   constructor(private menuService: MenuService) {}
 
-  ngOnInit() {
-    this.menuService.getAll().subscribe(items => {
-      this.menuItems = items.map(item => ({
-        id: item.id,
-        name: item.nombre,
-        category: item.categoria,
-        description: item.descripcion,
-        price: item.precio,
-        studentPrice: item.precioEstudiante,
-        image: item.image,
-        isAvailable: item.disponible
-      }));
-    });
-  }
+ ngOnInit() {
+  this.menuService.getAll().subscribe(items => {
+    this.menuItems = items;
+  });
+}
 
   addToCart(item: any) {
     if (item.isAvailable) {
