@@ -29,4 +29,7 @@ export class MenuEntity {
 
   @Column()
   fechaDisponible!: Date;
+
+  @Column({ nullable: true })
+  image!: string;
 }

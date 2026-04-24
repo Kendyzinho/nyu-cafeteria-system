@@ -5,4 +5,5 @@ export interface IPostMenuRequest {
   categoria: string;
   stockActual: number;
   fechaDisponible: Date;
+  image: string;
 }

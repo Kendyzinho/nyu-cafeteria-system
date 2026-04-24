@@ -12,6 +12,19 @@ export class MenuService {
     private readonly menuRepository: Repository<MenuEntity>,
   ) {}
 
+  private toResponse(item: MenuEntity) {
+  return {
+    id: item.id,
+    name: item.nombre,
+    category: item.categoria,
+    description: item.descripcion,
+    price: Number(item.precio),
+    studentPrice: +(Number(item.precio) * 0.75).toFixed(0), 
+    image: item.image ?? '',
+    isAvailable: item.disponible,
+  };
+}
+
   public async getAll(): Promise<MenuEntity[]> {
     return await this.menuRepository.find();
   }
