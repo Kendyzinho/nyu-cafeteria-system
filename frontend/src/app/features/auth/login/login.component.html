@@ -1,0 +1,38 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="text-center mb-4">
+      <h2 class="nyu-title">Cafetería <span>NYU</span></h2>
+      <p class="text-muted small">Ingresa con tu credencial activa</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      
+      <div class="form-group mb-3">
+        <label for="email" class="fw-bold mb-1">Correo Universitario</label>
+        <div class="input-wrapper">
+          <span class="icon">✉️</span>
+          <input type="email" id="email" formControlName="email" class="form-control" placeholder="usuario@nyu.edu">
+        </div>
+      </div>
+
+      <div class="form-group mb-4">
+        <label for="password" class="fw-bold mb-1">Contraseña</label>
+        <div class="input-wrapper">
+          <span class="icon">🔒</span>
+          <input type="password" id="password" formControlName="password" class="form-control" placeholder="•••••••••••••">
+        </div>
+        <div class="text-end mt-1">
+          <a href="#" class="forgot-link small">¿Olvidaste tu contraseña?</a>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-cafeteria w-100" [disabled]="loginForm.invalid">
+        [ INICIAR SESIÓN ]
+      </button>
+    </form>
+
+    <div class="text-center mt-4 border-top pt-3">
+      <a href="#" class="support-link small">¿Problemas para ingresar? Portal de Soporte</a>
+    </div>
+  </div>
+</div>
