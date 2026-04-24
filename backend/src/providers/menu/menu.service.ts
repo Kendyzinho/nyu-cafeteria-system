@@ -25,16 +25,19 @@ export class MenuService {
   };
 }
 
-  public async getAll(): Promise<MenuEntity[]> {
-    return await this.menuRepository.find();
-  }
+  public async getAll() {
+  const items = await this.menuRepository.find();
+  return items.map(item => this.toResponse(item));
+}
 
-  public async getOne(id: number): Promise<MenuEntity | null> {
-    return await this.menuRepository
-      .createQueryBuilder('menu')
-      .where('menu.id = :id', { id })
-      .getOne();
-  }
+  public async getOne(id: number) {
+  const item = await this.menuRepository
+    .createQueryBuilder('menu')
+    .where('menu.id = :id', { id })
+    .getOne();
+  if (!item) return null;
+  return this.toResponse(item);
+}
 
   public async create(data: IPostMenuRequest): Promise<MenuEntity> {
     const item = this.menuRepository.create(data);
