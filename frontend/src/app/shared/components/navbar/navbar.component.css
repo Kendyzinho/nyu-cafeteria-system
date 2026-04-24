@@ -1,0 +1,29 @@
+.bg-cafeteria {
+  background-color: #6F4E37 !important; /* Café fuerte */
+}
+
+.text-pastel {
+  color: #D7CCC8 !important; /* Crema/Pastel */
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  letter-spacing: -0.5px;
+}
+
+.nav-link {
+  font-weight: 500;
+  margin: 0 10px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  background-color: #A98467;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  border: 2px solid #FFFBF7;
+}

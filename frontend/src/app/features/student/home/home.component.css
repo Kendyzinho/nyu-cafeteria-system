@@ -1,0 +1,24 @@
+.card-pastel {
+  background-color: #FFFBF7;
+  border-left: 5px solid #6F4E37 !important;
+}
+
+.btn-outline-cafeteria {
+  border-color: #6F4E37;
+  color: #6F4E37;
+}
+
+.btn-outline-cafeteria:hover {
+  background-color: #6F4E37;
+  color: white;
+}
+
+.bg-success-pastel {
+  background-color: #E8F5E9;
+  color: #2E7D32;
+}
+
+.bg-cafe-light {
+  background-color: #D7CCC8;
+  color: #4E342E;
+}
