@@ -1,0 +1,8 @@
+name: NYU Cafetería
+values:
+  - key: URL
+    enabled: true
+    value: ''
+  - key: MENU_API
+    enabled: true
+    value: ''
