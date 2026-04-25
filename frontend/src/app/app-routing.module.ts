@@ -13,6 +13,7 @@ import { ResidentGuard } from './core/guards/resident.guard';
 import { UsersListComponent } from './features/admin/pages/users-list/users-list.component';
 import { RoleGuard } from './core/guards/role.guard';
 import { RegisterComponent } from './features/auth/register/register.component';
+import { ProfilePageComponent } from './features/profile/pages/profile-page/profile-page.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -33,7 +34,8 @@ const routes: Routes = [
       { path: 'history', component: HistoryComponent },
       {  path: 'admin/users', component: UsersListComponent,
         canActivate: [RoleGuard] },// ESTO BLOQUEA A LOS CLIENTES 
-      { path: 'checkout', component: CheckoutComponent }
+      { path: 'checkout', component: CheckoutComponent },
+      { path: 'profile', component: ProfilePageComponent }
     ]
   }
 ];
