@@ -1,0 +1,55 @@
+<div class="container py-5" *ngIf="user">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      
+      <div class="card border-0 shadow-sm" style="border-radius: 15px; overflow: hidden;">
+        <div class="text-center p-5" style="background-color: #6F4E37; color: #FFFBF7;">
+          
+          <div class="mx-auto mb-3 d-flex align-items-center justify-content-center shadow" 
+               style="width: 100px; height: 100px; background-color: #A98467; border-radius: 50%; border: 4px solid #FFFBF7; font-size: 2.5rem; font-weight: bold;">
+            {{ initials }}
+          </div>
+          
+          <h3 class="fw-bold mb-0">{{ user.firstName }} {{ user.lastName }}</h3>
+          <p class="mb-0" style="color: #D7CCC8;">{{ user.email }}</p>
+        </div>
+
+        <div class="card-body p-4 bg-light">
+          <h6 class="text-muted text-uppercase fw-bold small mb-3">Información Académica</h6>
+          
+          <ul class="list-group list-group-flush mb-4">
+            
+            <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent px-0">
+              <span class="fw-bold" style="color: #4E342E;">Rol en el Sistema</span>
+              <span class="badge" [ngClass]="user.role === 'Administrador' ? 'bg-danger' : 'bg-secondary'">
+                {{ user.role }}
+              </span>
+            </li>
+            
+            <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent px-0">
+              <span class="fw-bold" style="color: #4E342E;">Estado de Residencia</span>
+              <span class="badge" [ngClass]="user.isResident ? 'bg-success' : 'bg-warning text-dark'">
+                {{ user.isResident ? 'Residente Activo' : 'No Residente' }}
+              </span>
+            </li>
+            
+            <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent px-0">
+              <span class="fw-bold" style="color: #4E342E;">Estado de la Cuenta</span>
+              <span class="badge" [ngClass]="user.isActive ? 'bg-success' : 'bg-danger'">
+                {{ user.isActive ? 'Activa' : 'Inactiva' }}
+              </span>
+            </li>
+            
+          </ul>
+
+          <div class="text-center">
+            <button class="btn w-100 fw-bold text-white" style="background-color: #4E342E; border-radius: 8px; padding: 10px;">
+              Solicitar Actualización de Datos
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

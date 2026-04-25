@@ -5,15 +5,18 @@ import { AuthService } from '../services/auth.service';
 @Injectable({
   providedIn: 'root'
 })
-export class ResidentGuard implements CanActivate {
+export class RoleGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
 
   canActivate(): boolean {
     const user = this.authService.getCurrentUser();
-    if (user && user.isResident) {
+    
+    // Verificamos si existe el usuario y si su rol es explícitamente Administrador
+    if (user && user.role === 'Administrador') {
       return true;
     }
-    // Si no es residente, lo mandamos al home
+    
+    // Si es un Cliente normal, lo devolvemos al inicio para proteger la ruta
     this.router.navigate(['/home']);
     return false;
   }

@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-cafeteria shadow">
+<<nav class="navbar navbar-expand-lg navbar-dark bg-cafeteria shadow">
   <div class="container">
     <a class="navbar-brand fw-bold" href="#">
       ☕ Cafetería <span class="text-pastel">NYU</span>
@@ -11,25 +11,39 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" routerLink="/home">Inicio</a>
+          <a class="nav-link" routerLink="/home" routerLinkActive="active">Inicio</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/menu">Menú del Día</a>
+          <a class="nav-link" routerLink="/menu" routerLinkActive="active">Menú del Día</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/resident-plan">Mi Plan</a>
+          <a class="nav-link" routerLink="/resident-plan" routerLinkActive="active">Mi Plan</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/history">Consumos</a>
+          <a class="nav-link" routerLink="/history" routerLinkActive="active">Consumos</a>
         </li>
       </ul>
       
-      <div class="d-flex align-items-center text-white">
+      <div class="d-flex align-items-center text-white" *ngIf="currentUser">
+        
         <div class="me-3 text-end d-none d-md-block">
-          <small class="d-block lh-1 fw-bold">Alejandro Ruiz</small>
-          <small class="text-pastel" style="font-size: 0.7rem;">Estudiante Activo</small>
+          <small class="d-block lh-1 fw-bold">{{ currentUser.firstName }} {{ currentUser.lastName }}</small>
+          <small class="text-pastel" style="font-size: 0.7rem;">
+            {{ currentUser.role }} <span *ngIf="currentUser.isResident">| Residente</span>
+          </small>
         </div>
-        <div class="avatar">AR</div>
+        
+        <div class="dropdown">
+          <div class="avatar" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
+            {{ initials }}
+          </div>
+          <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userMenu">
+            <li><a class="dropdown-item" href="#">Mi Perfil</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><button class="dropdown-item text-danger fw-bold" (click)="logout()">Cerrar Sesión</button></li>
+          </ul>
+        </div>
+
       </div>
     </div>
   </div>

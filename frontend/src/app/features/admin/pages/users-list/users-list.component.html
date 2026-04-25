@@ -1,0 +1,42 @@
+<div class="container py-4">
+  <div class="bg-white p-3 rounded shadow-sm mb-4">
+    <h3 class="fw-bold mb-0" style="color: #000;">Gestión de Usuarios</h3>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-secondary" role="status"></div>
+    <p class="text-muted mt-2">Cargando usuarios...</p>
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+  <div class="table-responsive bg-white rounded shadow-sm" *ngIf="!isLoading && !errorMessage">
+    <table class="table table-hover mb-0 align-middle">
+      <thead style="background-color: #f8f9fa;">
+        <tr>
+          <th scope="col" class="py-3 px-4 border-0">Correo</th>
+          <th scope="col" class="py-3 px-4 border-0">Nombres</th>
+          <th scope="col" class="py-3 px-4 border-0">Tipo de Plan</th>
+          <th scope="col" class="py-3 px-4 border-0">Estado</th>
+          <th scope="col" class="py-3 px-4 border-0 text-end">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td class="px-4 fw-bold" style="color: #000;">{{ user.email }}</td>
+          <td class="px-4 fw-bold" style="color: #000;">{{ user.firstName }}</td>
+          <td class="px-4 fw-bold" style="color: #000;">{{ user.planType || 'Sin Plan' }}</td>
+          <td class="px-4 fw-bold" style="color: #000;">
+            <span [ngClass]="user.isActive ? 'text-dark' : 'text-danger'">
+              {{ user.isActive ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+          <td class="px-4 text-end">
+            <button class="btn btn-sm text-white" style="background-color: #3e2723; border-radius: 6px; padding: 6px 15px;">
+              Ver Usuario
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

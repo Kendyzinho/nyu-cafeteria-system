@@ -11,7 +11,11 @@
         <label for="email" class="fw-bold mb-1">Correo Universitario</label>
         <div class="input-wrapper">
           <span class="icon">✉️</span>
-          <input type="email" id="email" formControlName="email" class="form-control" placeholder="usuario@nyu.edu">
+          <input type="email" id="email" formControlName="email" class="form-control" placeholder="usuario@nyu.edu"
+                 [ngClass]="{'is-invalid': loginForm.get('email')?.invalid && loginForm.get('email')?.touched}">
+        </div>
+        <div class="text-danger small mt-1" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+          Por favor, ingresa un correo universitario válido.
         </div>
       </div>
 
@@ -19,16 +23,29 @@
         <label for="password" class="fw-bold mb-1">Contraseña</label>
         <div class="input-wrapper">
           <span class="icon">🔒</span>
-          <input type="password" id="password" formControlName="password" class="form-control" placeholder="•••••••••••••">
+          <input type="password" id="password" formControlName="password" class="form-control" placeholder="•••••••••••••"
+                 [ngClass]="{'is-invalid': loginForm.get('password')?.invalid && loginForm.get('password')?.touched}">
+        </div>
+        <div class="text-danger small mt-1" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          La contraseña es obligatoria.
         </div>
         <div class="text-end mt-1">
           <a href="#" class="forgot-link small">¿Olvidaste tu contraseña?</a>
         </div>
       </div>
 
-      <button type="submit" class="btn-cafeteria w-100" [disabled]="loginForm.invalid">
-        [ INICIAR SESIÓN ]
+      <div *ngIf="errorMessage" class="alert alert-danger small p-2 mb-3 text-center" style="border-radius: 8px;">
+        {{ errorMessage }}
+      </div>
+
+      <button type="submit" class="btn-cafeteria w-100" [disabled]="loginForm.invalid || isLoading">
+        <span *ngIf="!isLoading">[ INICIAR SESIÓN ]</span>
+        <span *ngIf="isLoading">
+          Verificando... 
+          <span class="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true"></span>
+        </span>
       </button>
+
     </form>
 
     <div class="text-center mt-4 border-top pt-3">
