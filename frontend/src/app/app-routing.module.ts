@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { LoginComponent } from './features/auth/login/login.component';
 import { ClientLayoutComponent } from './features/layout/client-layout/client-layout.component';
+import { AdminLayoutComponent } from './features/layout/admin-layout/admin-layout.component';
 import { HomeComponent } from './features/student/home/home.component';
 import { MenuComponent } from './features/student/menu/menu.component';
 import { ResidentPlanComponent } from './features/student/resident-plan/resident-plan.component';
@@ -14,6 +15,11 @@ import { UsersListComponent } from './features/admin/pages/users-list/users-list
 import { RoleGuard } from './core/guards/role.guard';
 import { RegisterComponent } from './features/auth/register/register.component';
 import { ProfilePageComponent } from './features/profile/pages/profile-page/profile-page.component';
+
+import { AdminDashboardComponent } from './features/admin/admin-dashboard/admin-dashboard.component';
+import { StockAdminComponent } from './features/admin/stock-admin/stock-admin.component';
+import { PlansAdminComponent } from './features/admin/plans-admin/plans-admin.component';
+import { PromotionsAdminComponent } from './features/admin/promotions-admin/promotions-admin.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -37,7 +43,21 @@ const routes: Routes = [
       { path: 'checkout', component: CheckoutComponent },
       { path: 'profile', component: ProfilePageComponent }
     ]
-  }
+  },
+
+  // 🔹 ADMIN (IMPORTANTE: layout distinto)
+  {
+    path: 'admin',
+    component: AdminLayoutComponent,
+    children: [
+      { path: '', component: AdminDashboardComponent },
+      { path: 'stock', component: StockAdminComponent },
+      { path: 'plans', component: PlansAdminComponent },
+      { path: 'promotions', component: PromotionsAdminComponent }
+    ]
+  },
+
+  { path: '**', redirectTo: 'login' }
 ];
 
 @NgModule({

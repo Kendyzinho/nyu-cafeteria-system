@@ -1,3 +1,5 @@
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -15,6 +17,12 @@ import { OrderSuccessComponent } from './features/student/order-success/order-su
 import { ResidentPlanComponent } from './features/student/resident-plan/resident-plan.component';
 import { HistoryComponent } from './features/student/history/history.component';
 import { HelpComponent } from './features/student/help/help.component';
+import { AdminDashboardComponent } from './features/admin/admin-dashboard/admin-dashboard.component';
+import { StockAdminComponent } from './features/admin/stock-admin/stock-admin.component';
+import { PlansAdminComponent } from './features/admin/plans-admin/plans-admin.component';
+import { PromotionsAdminComponent } from './features/admin/promotions-admin/promotions-admin.component';
+import { AdminLayoutComponent } from './features/layout/admin-layout/admin-layout.component';
+import { NavbarAdminComponent } from './shared/components/navbar-admin/navbar-admin.component';
 
 // Importaremos el interceptor (lo crearemos en el Paso 3)
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
