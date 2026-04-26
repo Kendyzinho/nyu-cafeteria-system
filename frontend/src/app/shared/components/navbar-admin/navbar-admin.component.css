@@ -1,0 +1,22 @@
+.navbar {
+  min-height: 80px;
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  color: #c0a792 !important;
+}
+
+.nav-link {
+  color: #c0a792 !important;
+  font-weight: 600;
+  margin-right: 18px;
+}
+
+.nav-link:hover {
+  color: #ffffff !important;
+}
+
+.text-white {
+  color: #c0a792 !important;
+}
