@@ -1,0 +1,93 @@
+.login-container {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Paleta café cálido con imagen de cafetería */
+  background-color: #6F4E37; 
+  background-image: linear-gradient(rgba(111, 78, 55, 0.75), rgba(78, 52, 46, 0.9)), url('https://images.unsplash.com/photo-1554118811-1e0d58224f24?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+  background-size: cover;
+  background-position: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.login-card {
+  background: #FFFBF7; /* Tono pastel crema */
+  padding: 40px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 450px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.nyu-title {
+  color: #6F4E37; /* Café principal */
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.nyu-title span {
+  color: #A98467; /* Café con leche / acento */
+  font-weight: 400;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrapper .icon {
+  position: absolute;
+  left: 12px;
+  font-size: 1.2rem;
+  color: #8D6E63;
+}
+
+.input-wrapper input {
+  padding-left: 45px;
+  border-radius: 8px;
+  border: 1px solid #D7CCC8;
+  height: 48px;
+  background-color: #FFFFFF;
+}
+
+.input-wrapper input:focus {
+  border-color: #6F4E37;
+  box-shadow: 0 0 0 0.2rem rgba(111, 78, 55, 0.25);
+  outline: none;
+}
+
+.btn-cafeteria {
+  background-color: #6F4E37;
+  color: white;
+  font-weight: bold;
+  height: 50px;
+  border: none;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+}
+
+.btn-cafeteria:hover:not(:disabled) {
+  background-color: #4E342E; /* Café más oscuro al pasar el mouse */
+  color: white;
+  transform: translateY(-2px);
+}
+
+.btn-cafeteria:disabled {
+  background-color: #D7CCC8;
+  color: #8D6E63;
+  cursor: not-allowed;
+}
+
+.forgot-link, .support-link {
+  color: #8D6E63;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.forgot-link:hover, .support-link:hover {
+  color: #4E342E;
+  text-decoration: underline;
+}

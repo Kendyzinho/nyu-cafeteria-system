@@ -2,7 +2,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http'; // IMPORTANTE
 import { AppRoutingModule } from './app-routing.module';
+
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
 import { ClientLayoutComponent } from './features/layout/client-layout/client-layout.component';
@@ -21,6 +24,14 @@ import { PromotionsAdminComponent } from './features/admin/promotions-admin/prom
 import { AdminLayoutComponent } from './features/layout/admin-layout/admin-layout.component';
 import { NavbarAdminComponent } from './shared/components/navbar-admin/navbar-admin.component';
 
+// Importaremos el interceptor (lo crearemos en el Paso 3)
+import { AuthInterceptor } from './core/interceptors/auth.interceptor';
+import { UsersListComponent } from './features/admin/pages/users-list/users-list.component';
+import { RegisterComponent } from './features/auth/register/register.component';
+import { ProfilePageComponent } from './features/profile/pages/profile-page/profile-page.component';
+import { FooterComponent } from './shared/components/footer/footer.component';
+import { MenuItemComponent } from './features/student/menu/menu-item/menu-item.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -34,21 +45,22 @@ import { NavbarAdminComponent } from './shared/components/navbar-admin/navbar-ad
     ResidentPlanComponent,
     HistoryComponent,
     HelpComponent,
-    AdminDashboardComponent,
-    StockAdminComponent,
-    PlansAdminComponent,
-    PromotionsAdminComponent,
-    AdminLayoutComponent,
-    NavbarAdminComponent
+    UsersListComponent,
+    RegisterComponent,
+    ProfilePageComponent,
+    FooterComponent,
+    MenuItemComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    FormsModule,
-    HttpClientModule
+    HttpClientModule, // AÑADIDO AQUÍ
+    FormsModule
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true } // REGISTRO DEL INTERCEPTOR
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
