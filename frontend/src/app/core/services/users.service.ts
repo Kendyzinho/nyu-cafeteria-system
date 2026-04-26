@@ -1,58 +1,44 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { User } from '../models/user';
+import { Observable } from 'rxjs';
+import { AuthService, MockUser } from './auth.service'; // Importamos la fuente maestra
 
-// Extendemos la interfaz User original para no romper el modelo base de la app,
-// y le añadimos el planType que exige el diseño para la tabla del Administrador.
-export interface UserAdminView extends User {
-  planType?: string; 
-}
+// Creamos un alias de MockUser (que ya trae planType) para que tu componente 
+// UsersListComponent no se rompa y siga funcionando exactamente igual.
+export type UserAdminView = MockUser;
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsersService {
-  // Mantenemos tu variable de entorno lista para cuando conectes con el backend real
+  // Mantenemos tu variable de entorno intacta para tu futuro pase a producción
   private readonly API_URL = 'http://localhost:3000/api/users'; 
 
-  // 1. Base de datos en memoria (Mock estructurado cumpliendo estrictamente con la interfaz)
-  private initialUsers: UserAdminView[] = [
-    { id: 1, email: 'user1@gmail.com', firstName: 'Alexis', lastName: 'G.', role: 'Cliente', isActive: true, isResident: true, planType: 'Plan Basico' },
-    { id: 2, email: 'user2@gmail.com', firstName: 'Martin', lastName: 'S.', role: 'Cliente', isActive: true, isResident: true, planType: 'Plan Deluxe' },
-    { id: 3, email: 'user3@gmail.com', firstName: 'Álvaro', lastName: 'H.', role: 'Cliente', isActive: false, isResident: true, planType: 'Plan Premium' },
-    { id: 4, email: 'user4@gmail.com', firstName: 'Cristofer', lastName: 'M.', role: 'Cliente', isActive: true, isResident: true, planType: 'Plan Deluxe' }
-  ];
+  constructor(
+    private http: HttpClient, 
+    private authService: AuthService // Inyectamos el "cerebro" central de cuentas
+  ) { }
 
-  // 2. Estado Global Reactivo (El "Cerebro" que evita que los cambios se borren)
-  private usersSubject = new BehaviorSubject<UserAdminView[]>(this.initialUsers);
-  public users$ = this.usersSubject.asObservable();
-
-  // Mantenemos inyectado el HttpClient para tu futuro paso a producción
-  constructor(private http: HttpClient) { }
-
-  // Obtiene la lista completa de usuarios como un flujo de datos en tiempo real
+  /**
+   * 1. OBTENER USUARIOS: Ahora lee en vivo desde el AuthService.
+   * Si alguien se registra, esta tabla se entera automáticamente.
+   */
   getAllUsers(): Observable<UserAdminView[]> {
-    // Cuando el backend esté listo, cambiarás esta línea por:
+    // Cuando conectes tu backend real (NestJS), cambiarás esta línea por:
     // return this.http.get<UserAdminView[]>(this.API_URL);
-    return this.users$;
+    return this.authService.users$;
   }
 
-  // Alterna el estado del usuario (Activo/Inactivo) y lo guarda en memoria
+  /**
+   * 2. ACTUALIZAR ESTADO: Envía la orden al AuthService para que 
+   * guarde la persistencia (Single Source of Truth).
+   */
   toggleUserStatus(userId: number): void {
-    const currentUsers = this.usersSubject.value;
-    const userIndex = currentUsers.findIndex(u => u.id === userId);
+    // Le decimos al servicio maestro que actualice el estado globalmente
+    this.authService.updateUserStatus(userId);
     
-    if (userIndex !== -1) {
-      // Invertimos el estado
-      currentUsers[userIndex].isActive = !currentUsers[userIndex].isActive;
-      
-      // Emitimos la lista actualizada a toda la app para que Angular actualice la tabla sola
-      this.usersSubject.next([...currentUsers]);
-      
-      // Cuando el backend esté listo, descomentarás esta petición HTTP:
-      // this.http.patch(`${this.API_URL}/${userId}/status`, { isActive: currentUsers[userIndex].isActive }).subscribe();
-    }
+    // A futuro, cuando tengas base de datos real, también enviarás la petición HTTP aquí:
+    // this.http.patch(`${this.API_URL}/${userId}/status`, {}).subscribe();
   }
 }
 
