@@ -1,6 +1,7 @@
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
@@ -13,6 +14,12 @@ import { OrderSuccessComponent } from './features/student/order-success/order-su
 import { ResidentPlanComponent } from './features/student/resident-plan/resident-plan.component';
 import { HistoryComponent } from './features/student/history/history.component';
 import { HelpComponent } from './features/student/help/help.component';
+import { AdminDashboardComponent } from './features/admin/admin-dashboard/admin-dashboard.component';
+import { StockAdminComponent } from './features/admin/stock-admin/stock-admin.component';
+import { PlansAdminComponent } from './features/admin/plans-admin/plans-admin.component';
+import { PromotionsAdminComponent } from './features/admin/promotions-admin/promotions-admin.component';
+import { AdminLayoutComponent } from './features/layout/admin-layout/admin-layout.component';
+import { NavbarAdminComponent } from './shared/components/navbar-admin/navbar-admin.component';
 
 @NgModule({
   declarations: [
@@ -26,12 +33,20 @@ import { HelpComponent } from './features/student/help/help.component';
     OrderSuccessComponent,
     ResidentPlanComponent,
     HistoryComponent,
-    HelpComponent
+    HelpComponent,
+    AdminDashboardComponent,
+    StockAdminComponent,
+    PlansAdminComponent,
+    PromotionsAdminComponent,
+    AdminLayoutComponent,
+    NavbarAdminComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormsModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
