@@ -1,11 +1,10 @@
-import { HttpClientModule } from '@angular/common/http';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http'; // Añadido HTTP_INTERCEPTORS
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http'; // IMPORTANTE
 import { AppRoutingModule } from './app-routing.module';
 
+// Componentes
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
 import { ClientLayoutComponent } from './features/layout/client-layout/client-layout.component';
@@ -23,14 +22,14 @@ import { PlansAdminComponent } from './features/admin/plans-admin/plans-admin.co
 import { PromotionsAdminComponent } from './features/admin/promotions-admin/promotions-admin.component';
 import { AdminLayoutComponent } from './features/layout/admin-layout/admin-layout.component';
 import { NavbarAdminComponent } from './shared/components/navbar-admin/navbar-admin.component';
-
-// Importaremos el interceptor (lo crearemos en el Paso 3)
-import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { UsersListComponent } from './features/admin/pages/users-list/users-list.component';
 import { RegisterComponent } from './features/auth/register/register.component';
 import { ProfilePageComponent } from './features/profile/pages/profile-page/profile-page.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
 import { MenuItemComponent } from './features/student/menu/menu-item/menu-item.component';
+
+// Interceptores
+import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -49,17 +48,25 @@ import { MenuItemComponent } from './features/student/menu/menu-item/menu-item.c
     RegisterComponent,
     ProfilePageComponent,
     FooterComponent,
-    MenuItemComponent
+    MenuItemComponent,
+    
+    // --- LA SOLUCIÓN: Agregamos los componentes de Admin que faltaban ---
+    AdminLayoutComponent,
+    NavbarAdminComponent,
+    AdminDashboardComponent,
+    StockAdminComponent,
+    PlansAdminComponent,
+    PromotionsAdminComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    HttpClientModule, // AÑADIDO AQUÍ
+    HttpClientModule, 
     FormsModule
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true } // REGISTRO DEL INTERCEPTOR
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })
