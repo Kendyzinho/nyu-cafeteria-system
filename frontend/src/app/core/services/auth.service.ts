@@ -21,17 +21,18 @@ export class AuthService {
   // MOCK DEL LOGIN
   login(email: string, password: string): Observable<any> {
     
-    // DINAMISMO: Si el correo incluye la palabra "admin", le damos el rol de Administrador.
-    const isAdmin = email.toLowerCase().includes('admin');
+    // 1. EL CEREBRO: Si el correo incluye "admin", es Administrador. Si no, es Cliente.
+    const isAdmin = email ? email.toLowerCase().includes('admin') : false;
 
+    // 2. EL USUARIO DINÁMICO
     const mockUser: User = {
       id: isAdmin ? 1 : 99,
-      email: email,
-      firstName: isAdmin ? 'Staff' : 'Alejandro',
-      lastName: isAdmin ? 'Cafetería' : 'Ruiz',
-      role: isAdmin ? 'Administrador' : 'Cliente',
+      email: email || 'usuario@nyu.edu',
+      firstName: isAdmin ? 'Staff' : 'Estudiante',
+      lastName: isAdmin ? 'Cafetería' : 'Demo',
+      role: isAdmin ? 'Administrador' : 'Cliente', // <-- AQUÍ ESTÁ LA REGLA
       isActive: true,
-      isResident: !isAdmin // El estudiante es residente, el admin no lo necesita
+      isResident: !isAdmin // Si es estudiante, lo hacemos residente para que vea "Mi Plan"
     };
     
     const mockResponse = {
@@ -47,7 +48,7 @@ export class AuthService {
       })
     );
   }
-
+  
   // MOCK DEL REGISTRO (Para arreglar el error: Property 'register' does not exist)
   register(userData: any): Observable<any> {
     return of({ success: true }).pipe(

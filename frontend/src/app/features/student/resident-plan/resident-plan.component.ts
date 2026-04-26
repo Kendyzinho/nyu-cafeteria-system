@@ -6,32 +6,75 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./resident-plan.component.css']
 })
 export class ResidentPlanComponent implements OnInit {
-  // Datos simulados del plan del estudiante
-  planDetails = {
-    name: 'Plan Residente Premium',
-    totalMeals: 45,
-    consumed: 30,
-    remaining: 15,
-    nextRenewal: '01-06-2026',
-    status: 'Activo'
+  // 1. Estado del Plan Actual
+  mealsConsumed = 15;
+  totalMeals = 30;
+  renewalDate = '1 de mayo';
+  currentPlanId = 2; // Suponemos que tiene el Estándar por defecto
+
+  // 2. Modelo para Preferencias (Two-Way Binding)
+  preferences = {
+    vegano: true,
+    vegetariano: false,
+    sinGluten: false,
+    halal: false
   };
 
-  // El menú que le corresponde hoy por su plan
-  todayMenu = [
-    { type: 'Entrada', name: 'Sopa de Calabaza Asada', icon: '🍲' },
-    { type: 'Fondo', name: 'Bowl de Quinoa y Pollo Grill', icon: '🥗' },
-    { type: 'Postre', name: 'Mousse de Maracuyá', icon: '🍨' },
-    { type: 'Bebida', name: 'Jugo de Frambuesa Natural', icon: '🥤' }
+  // 3. Modelo para el Ticket
+  selectedTime: string = '';
+
+  // 4. Catálogo Dinámico de Planes
+  availablePlans = [
+    { 
+      id: 1, 
+      name: 'Plan Flex (15 Comidas)', 
+      price: 300000, 
+      description: 'Ahorra en tus comidas y mantén flexibilidad. Ideal para quienes cocinan ocasionalmente.',
+      image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80'
+    },
+    { 
+      id: 2, 
+      name: 'Plan Residente Estándar (30 Comidas)', 
+      price: 500000, 
+      description: 'El plan más popular. Cubre 1 almuerzo al día, de lunes a viernes + algunos fines de semana.',
+      image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80'
+    },
+    { 
+      id: 3, 
+      name: 'Plan Premium Full (60 comidas)', 
+      price: 900000, 
+      description: 'Cobertura total. Almuerzo y cena todos los días. Máxima comodidad.',
+      image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80'
+    }
   ];
 
   constructor() { }
 
-  ngOnInit(): void {
-    // Aquí a futuro llamaremos a un PlanService para obtener estos datos del backend
+  ngOnInit(): void {}
+
+  // Métodos de interacción
+  savePreferences() {
+    alert('Tus preferencias alimentarias han sido guardadas en el sistema.');
   }
 
-  // Calcula el porcentaje para la barra de progreso
-  get progressPercentage(): number {
-    return (this.planDetails.consumed / this.planDetails.totalMeals) * 100;
+  generateTicket() {
+    if (!this.selectedTime) {
+      alert('Por favor selecciona un horario de canje.');
+      return;
+    }
+    if (this.mealsConsumed >= this.totalMeals) {
+      alert('No te quedan comidas disponibles este mes.');
+      return;
+    }
+    
+    // Descontamos una comida mágicamente en vivo
+    this.mealsConsumed++;
+    alert(`¡Éxito! Ticket generado para las ${this.selectedTime}. Presenta tu TUI en la cafetería.`);
+    this.selectedTime = ''; // Reiniciamos el select
+  }
+
+  selectPlan(planId: number) {
+    this.currentPlanId = planId;
+    // A futuro aquí se llamaría a la pasarela de pago para el upgrade
   }
 }

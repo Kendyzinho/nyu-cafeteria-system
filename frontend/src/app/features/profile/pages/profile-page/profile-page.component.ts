@@ -14,10 +14,17 @@ export class ProfilePageComponent implements OnInit {
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
-    // Obtenemos el usuario de la sesión actual
-    this.user = this.authService.getCurrentUser();
-    if (this.user) {
-      this.initials = `${this.user.firstName.charAt(0)}${this.user.lastName.charAt(0)}`.toUpperCase();
-    }
+    // Escuchamos al observable para que si el nombre cambia, el perfil también
+    this.authService.currentUser$.subscribe(userData => {
+      this.user = userData;
+      if (this.user) {
+        this.initials = `${this.user.firstName.charAt(0)}${this.user.lastName.charAt(0)}`.toUpperCase();
+      }
+    });
+  }
+
+  // Simulación de una acción profesional
+  onUpdatePhoto() {
+    alert('Funcionalidad de carga de imagen vinculada al repositorio de SIB-NYU (Simulado)');
   }
 }
