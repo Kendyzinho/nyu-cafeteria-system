@@ -33,13 +33,17 @@ export class LoginComponent {
       this.authService.login(email, password).subscribe({
         next: (response) => {
           this.isLoading = false;
-          console.log('Login exitoso:', response.user.email);
-          this.router.navigate(['/home']); 
+          
+          // RÚBRICA: Enrutamiento basado en roles
+          if (response.user.role === 'Administrador') {
+            this.router.navigate(['/admin/users']); // Manda al staff al panel de control
+          } else {
+            this.router.navigate(['/home']); // Manda al estudiante a la tienda
+          }
         },
         error: (error) => {
           this.isLoading = false;
           this.errorMessage = 'Credenciales inválidas. Verifica tu correo y contraseña.';
-          console.error('Error de login:', error);
         }
       });
     }

@@ -20,19 +20,22 @@ export class AuthService {
 
   // MOCK DEL LOGIN
   login(email: string, password: string): Observable<any> {
-    // Declaramos explícitamente que mockUser es de tipo User para evitar el error de Tipado
+    
+    // DINAMISMO: Si el correo incluye la palabra "admin", le damos el rol de Administrador.
+    const isAdmin = email.toLowerCase().includes('admin');
+
     const mockUser: User = {
-      id: 1,
-      email: email || 'estudiante@nyu.edu',
-      firstName: 'Alejandro',
-      lastName: 'Ruiz',
-      role: 'Administrador', // Ahora TypeScript acepta esto
+      id: isAdmin ? 1 : 99,
+      email: email,
+      firstName: isAdmin ? 'Staff' : 'Alejandro',
+      lastName: isAdmin ? 'Cafetería' : 'Ruiz',
+      role: isAdmin ? 'Administrador' : 'Cliente',
       isActive: true,
-      isResident: true
+      isResident: !isAdmin // El estudiante es residente, el admin no lo necesita
     };
     
     const mockResponse = {
-      access_token: 'token-falso-para-pruebas-123',
+      access_token: isAdmin ? 'token-admin-123' : 'token-estudiante-456',
       user: mockUser
     };
 
