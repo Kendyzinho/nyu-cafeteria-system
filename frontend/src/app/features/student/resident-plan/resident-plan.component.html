@@ -1,1 +1,69 @@
-<p>resident-plan works!</p>
+<div class="container py-4">
+  <h2 class="fw-bold mb-4" style="color: #4E342E;">Mi Plan de Alimentación</h2>
+
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="card border-0 shadow-sm rounded-4 h-100" style="background-color: #FFFBF7;">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0 text-uppercase" style="color: #6F4E37;">{{ planDetails.name }}</h5>
+            <span class="badge bg-success">{{ planDetails.status }}</span>
+          </div>
+          
+          <hr style="border-color: #D7CCC8;">
+
+          <div class="text-center my-4">
+            <h1 class="display-1 fw-bold mb-0" style="color: #4E342E;">{{ planDetails.remaining }}</h1>
+            <p class="text-muted text-uppercase fw-bold">Comidas Restantes</p>
+          </div>
+
+          <div class="mb-2 d-flex justify-content-between small fw-bold">
+            <span class="text-muted">Consumidas: {{ planDetails.consumed }}</span>
+            <span class="text-muted">Total: {{ planDetails.totalMeals }}</span>
+          </div>
+          
+          <div class="progress mb-4" style="height: 12px; border-radius: 10px;">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" 
+                 [style.width.%]="progressPercentage" 
+                 style="background-color: #A98467;">
+            </div>
+          </div>
+
+          <div class="alert alert-warning small border-0 d-flex align-items-center" style="background-color: #FFF3E0; color: #E65100;">
+            <span class="me-2 fs-5">📅</span>
+            <span>Tu plan se renovará automáticamente el <strong>{{ planDetails.nextRenewal }}</strong>.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-7">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body p-4">
+          <h5 class="fw-bold mb-4 border-bottom pb-3" style="color: #4E342E;">
+            Menú Asignado para Hoy
+          </h5>
+
+          <div class="list-group list-group-flush">
+            <div class="list-group-item d-flex align-items-center p-3 border-0 rounded-3 mb-2" 
+                 style="background-color: #f8f9fa;"
+                 *ngFor="let item of todayMenu">
+              <div class="display-6 me-3">{{ item.icon }}</div>
+              <div>
+                <small class="text-muted text-uppercase fw-bold">{{ item.type }}</small>
+                <h6 class="fw-bold mb-0" style="color: #4E342E;">{{ item.name }}</h6>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 text-center">
+            <p class="small text-muted mb-3">Presenta tu TUI (Tarjeta Universitaria) en el mesón de residentes para retirar tu bandeja.</p>
+            <button class="btn btn-cafeteria px-5 py-2 fw-bold w-100" routerLink="/menu">
+              SOLICITAR CAMBIO DE MENÚ
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

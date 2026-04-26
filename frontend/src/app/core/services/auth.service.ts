@@ -1,33 +1,55 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap, BehaviorSubject } from 'rxjs';
-import { LoginResponse, User } from '../models/user';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { User } from '../models/user';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly API_URL = 'http://localhost:3000/api/auth'; 
-  
-  // Usamos BehaviorSubject para que el Navbar reaccione en tiempo real
-  private currentUserSubject = new BehaviorSubject<User | null>(this.getUserFromStorage());
+  private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient) { }
-
-  login(email: string, password: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.API_URL}/login`, { email, password })
-      .pipe(
-        tap(response => {
-          localStorage.setItem('jwt_token', response.access_token);
-          localStorage.setItem('current_user', JSON.stringify(response.user));
-          this.currentUserSubject.next(response.user);
-        })
-      );
+  constructor(private http: HttpClient) {
+    const storedUser = localStorage.getItem('current_user');
+    if (storedUser) {
+      this.currentUserSubject.next(JSON.parse(storedUser));
+    }
   }
-  // Método para registrar un nuevo usuario
+
+  // MOCK DEL LOGIN
+  login(email: string, password: string): Observable<any> {
+    // Declaramos explícitamente que mockUser es de tipo User para evitar el error de Tipado
+    const mockUser: User = {
+      id: 1,
+      email: email || 'estudiante@nyu.edu',
+      firstName: 'Alejandro',
+      lastName: 'Ruiz',
+      role: 'Administrador', // Ahora TypeScript acepta esto
+      isActive: true,
+      isResident: true
+    };
+    
+    const mockResponse = {
+      access_token: 'token-falso-para-pruebas-123',
+      user: mockUser
+    };
+
+    return of(mockResponse).pipe(
+      tap(response => {
+        localStorage.setItem('jwt_token', response.access_token);
+        localStorage.setItem('current_user', JSON.stringify(response.user));
+        this.currentUserSubject.next(response.user);
+      })
+    );
+  }
+
+  // MOCK DEL REGISTRO (Para arreglar el error: Property 'register' does not exist)
   register(userData: any): Observable<any> {
-    return this.http.post(`${this.API_URL}/register`, userData);
+    return of({ success: true }).pipe(
+      tap(() => console.log('Registro simulado exitoso'))
+    );
   }
 
   logout(): void {
@@ -36,20 +58,15 @@ export class AuthService {
     this.currentUserSubject.next(null);
   }
 
-  isAuthenticated(): boolean {
-    return !!localStorage.getItem('jwt_token');
+  getCurrentUser(): User | null {
+    return this.currentUserSubject.value;
   }
 
   getToken(): string | null {
     return localStorage.getItem('jwt_token');
   }
 
-  getCurrentUser(): User | null {
-    return this.currentUserSubject.value;
-  }
-
-  private getUserFromStorage(): User | null {
-    const userStr = localStorage.getItem('current_user');
-    return userStr ? JSON.parse(userStr) : null;
+  isAuthenticated(): boolean {
+    return !!this.getToken();
   }
 }
