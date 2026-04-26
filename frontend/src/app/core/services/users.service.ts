@@ -1,4 +1,36 @@
 import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
+import { delay } from 'rxjs/operators';
+
+export interface UserAdminView {
+  email: string;
+  firstName: string;
+  planType: string;
+  isActive: boolean;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class UsersService {
+  constructor() { }
+
+  // Simulamos la respuesta de la base de datos basándonos ESTRICTAMENTE en el prototipo
+  getAllUsers(): Observable<UserAdminView[]> {
+    const mockUsers: UserAdminView[] = [
+      { email: 'user1@gmail.com', firstName: 'Alexis', planType: 'Plan Basico', isActive: true },
+      { email: 'user2@gmail.com', firstName: 'Martin', planType: 'Plan Deluxe', isActive: true },
+      { email: 'user3@gmail.com', firstName: 'Álvaro', planType: 'Plan Premium', isActive: false },
+      { email: 'user4@gmail.com', firstName: 'Cristofer', planType: 'Plan Deluxe', isActive: true }
+    ];
+
+    // Agregamos un pequeño retraso de medio segundo para simular la red real
+    return of(mockUsers).pipe(delay(500));
+  }
+}
+
+/*
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from '../models/user';
@@ -27,3 +59,4 @@ export class UsersService {
     return this.http.patch<UserAdminView>(`${this.API_URL}/${userId}/status`, { isActive });
   }
 }
+  */

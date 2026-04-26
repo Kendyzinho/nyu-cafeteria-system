@@ -39,3 +39,29 @@ body {
 .card-pastel { background-color: var(--nyu-pastel); }
 .bg-success-pastel { background-color: #d4edda; color: #155724; }
 .bg-cafe-light { background-color: #eaddd7; color: var(--nyu-brown); }
+
+/* Efecto de cinta (ribbon) para productos agotados */
+.ribbon-wrapper {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.ribbon {
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: #FFF;
+  text-align: center;
+  transform: rotate(45deg);
+  position: relative;
+  padding: 5px 0;
+  left: 15px;
+  top: 15px;
+  width: 120px;
+  background-color: #dc3545; /* Rojo de error/agotado */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}

@@ -1,8 +1,8 @@
 <div class="card h-100 border-0 shadow-sm card-menu" [ngClass]="{'opacity-75': !item.isAvailable}">
   <img [src]="item.image" class="card-img-top img-menu" [alt]="item.name" style="height: 180px; object-fit: cover;">
   
-  <div *ngIf="!item.isAvailable" class="position-absolute top-50 start-50 translate-middle bg-dark text-white px-3 py-1 fw-bold rounded shadow" style="opacity: 0.9; z-index: 10;">
-    AGOTADO
+  <div class="ribbon-wrapper" *ngIf="!item.isAvailable">
+    <div class="ribbon">AGOTADO</div>
   </div>
 
   <div class="card-body d-flex flex-column">

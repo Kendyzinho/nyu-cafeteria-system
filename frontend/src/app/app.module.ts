@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http'; // IMPORTANTE
 import { AppRoutingModule } from './app-routing.module';
 
@@ -47,7 +47,8 @@ import { MenuItemComponent } from './features/student/menu/menu-item/menu-item.c
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    HttpClientModule // AÑADIDO AQUÍ
+    HttpClientModule, // AÑADIDO AQUÍ
+    FormsModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true } // REGISTRO DEL INTERCEPTOR
