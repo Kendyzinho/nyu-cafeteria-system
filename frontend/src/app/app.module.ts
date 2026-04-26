@@ -21,6 +21,8 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { UsersListComponent } from './features/admin/pages/users-list/users-list.component';
 import { RegisterComponent } from './features/auth/register/register.component';
 import { ProfilePageComponent } from './features/profile/pages/profile-page/profile-page.component';
+import { FooterComponent } from './shared/components/footer/footer.component';
+import { MenuItemComponent } from './features/student/menu/menu-item/menu-item.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +39,9 @@ import { ProfilePageComponent } from './features/profile/pages/profile-page/prof
     HelpComponent,
     UsersListComponent,
     RegisterComponent,
-    ProfilePageComponent
+    ProfilePageComponent,
+    FooterComponent,
+    MenuItemComponent
   ],
   imports: [
     BrowserModule,
