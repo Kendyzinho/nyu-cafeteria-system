@@ -38,8 +38,11 @@ export class UsersListComponent implements OnInit {
 
   // 2: Interactividad para cambiar estado
   toggleStatus(user: UserAdminView): void {
-    // Cambiamos el estado visualmente en caliente
-    user.isActive = !user.isActive;
+    // Le avisamos al servicio que guarde el cambio globalmente
+    this.usersService.toggleUserStatus(user.id);
+    
+    // Volvemos a aplicar el filtro para que la vista se actualice
+    this.filterUsers();
     
     // A futuro, aquí se llama al backend:
     // this.usersService.toggleUserStatus(user.id, user.isActive).subscribe(...)
