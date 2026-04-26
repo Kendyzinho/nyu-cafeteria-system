@@ -1,14 +1,20 @@
 /* Paleta de Colores NYU Cafetería */
 :root {
-  --nyu-brown: #4E342E;
   --nyu-light-brown: #6F4E37;
   --nyu-sand: #A98467;
   --nyu-pastel: #FFFBF7;
+  --nyu-dark: #31211D; /* Color del header superior */
+  --nyu-brown: #4A3A36; /* Color de la franja de botones */
+  --nyu-beige: #CBB9A8; /* Color de fondo general de la app */
+  --nyu-text: #FFFFFF;
 }
 
 body {
-  background-color: #f8f9fa;
-  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--nyu-beige);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .text-pastel { color: var(--nyu-pastel) !important; }
