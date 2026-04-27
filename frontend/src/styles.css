@@ -1,67 +1,83 @@
-/* Paleta de Colores NYU Cafetería */
+/* PALETA CAFETERIA NYU ADMIN */
 :root {
-  --nyu-light-brown: #6F4E37;
-  --nyu-sand: #A98467;
-  --nyu-pastel: #FFFBF7;
-  --nyu-dark: #31211D; /* Color del header superior */
-  --nyu-brown: #4A3A36; /* Color de la franja de botones */
-  --nyu-beige: #CBB9A8; /* Color de fondo general de la app */
-  --nyu-text: #FFFFFF;
+  --coffee-dark: #3e2c23;
+  --coffee-main: #795238;
+  --coffee-light: #a67c52;
+  --cream-bg: #f8f4ef;
+  --green-soft: #6c9a8b;
+  --red-soft: #c46b6b;
+  --yellow-soft: #d8b384;
+  --gray-soft: #6c757d;
 }
 
-body {
-  background-color: var(--nyu-beige);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+/* Tablas */
+.table thead th {
+  background-color: var(--coffee-dark) !important;
+  color: #ffffff !important;
+  border-color: #5b4032 !important;
 }
 
-.text-pastel { color: var(--nyu-pastel) !important; }
-.bg-cafeteria { background-color: var(--nyu-brown) !important; }
-.btn-cafeteria {
-  background-color: var(--nyu-light-brown);
+.table tbody tr:hover {
+  background-color: var(--cream-bg);
+}
+
+/* Badges */
+.badge-success-custom {
+  background-color: var(--green-soft);
+  color: white;
+}
+
+.badge-danger-custom {
+  background-color: var(--red-soft);
+  color: white;
+}
+
+.badge-warning-custom {
+  background-color: var(--yellow-soft);
+  color: var(--coffee-dark);
+}
+
+.badge-info-custom {
+  background-color: var(--coffee-light);
+  color: white;
+}
+
+.badge-neutral-custom {
+  background-color: var(--gray-soft);
+  color: white;
+}
+
+/* Botones */
+.btn-coffee {
+  background-color: var(--coffee-main);
   color: white;
   border: none;
 }
-.btn-cafeteria:hover {
-  background-color: var(--nyu-brown);
+
+.btn-coffee:hover {
+  background-color: var(--coffee-dark);
   color: white;
 }
-.btn-outline-cafeteria {
-  color: var(--nyu-light-brown);
-  border-color: var(--nyu-light-brown);
-}
-.btn-outline-cafeteria:hover {
-  background-color: var(--nyu-light-brown);
-  color: white;
-}
-.card-pastel { background-color: var(--nyu-pastel); }
-.bg-success-pastel { background-color: #d4edda; color: #155724; }
-.bg-cafe-light { background-color: #eaddd7; color: var(--nyu-brown); }
 
-/* Efecto de cinta (ribbon) para productos agotados */
-.ribbon-wrapper {
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  width: 100px;
-  height: 100px;
-  overflow: hidden;
-  z-index: 10;
+
+/* CARDS ADMIN */
+.card-coffee {
+  border: 1px solid #e0d6cf;
+  border-radius: 12px;
+  transition: all 0.2s ease;
 }
 
-.ribbon {
-  font-size: 0.75rem;
-  font-weight: bold;
-  color: #FFF;
-  text-align: center;
-  transform: rotate(45deg);
-  position: relative;
-  padding: 5px 0;
-  left: 15px;
-  top: 15px;
-  width: 120px;
-  background-color: #dc3545; /* Rojo de error/agotado */
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+.card-coffee:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+/* TITULOS */
+h2 {
+  color: #3e2c23;
+}
+
+/* TEXTO */
+.card-text {
+  color: #6c757d;
 }

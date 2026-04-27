@@ -1,51 +1,32 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PlanService {
+  private apiUrl = 'http://localhost:3000/api/meal-plans';
 
-  private planes = [
-    {
-      id: 1,
-      estudiante: 'Alejandro Ruiz',
-      residenciaActiva: true,
-      nombrePlan: 'Plan mensual residente',
-      planActivo: true,
-      consumos: 12,
-      limiteConsumos: 30
-    },
-    {
-      id: 2,
-      estudiante: 'Camila Torres',
-      residenciaActiva: true,
-      nombrePlan: 'Plan mensual residente',
-      planActivo: false,
-      consumos: 0,
-      limiteConsumos: 30
-    },
-    {
-      id: 3,
-      estudiante: 'Matías Rojas',
-      residenciaActiva: false,
-      nombrePlan: 'Plan mensual residente',
-      planActivo: false,
-      consumos: 0,
-      limiteConsumos: 30
-    }
-  ];
+  constructor(private http: HttpClient) {}
 
-  getPlanes() {
-    return this.planes;
+  getPlanes(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl);
   }
 
-  activarPlan(plan: any) {
-    const index = this.planes.findIndex(p => p.id === plan.id);
+  getPlan(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  }
 
-    if (index !== -1) {
-      this.planes[index].planActivo = true;
-    }
+  crearPlan(plan: any): Observable<any> {
+    return this.http.post(this.apiUrl, plan);
+  }
 
-    return this.planes[index];
+  actualizarPlan(id: number, plan: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, plan);
+  }
+
+  eliminarPlan(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }

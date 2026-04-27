@@ -22,5 +22,11 @@ export class UserEntity {
   password!: string;
 
   @Column()
-  tipo!: string;
+  tipo!: string; // 'admin' | 'student'
+
+  @Column({ default: false })
+  matriculaActiva!: boolean; // Integración con Sistema de Matrícula y Gestión Académica
+
+  @Column({ default: false })
+  residenciaActiva!: boolean; // Integración con Sistema de Alojamiento Universitario
 }

@@ -11,10 +11,10 @@ import { AuthService } from '../../../core/services/auth.service';
 export class LoginComponent {
   loginForm: FormGroup;
   errorMessage: string = '';
-  isLoading: boolean = false;
+  loading: boolean = false;
 
   constructor(
-    private fb: FormBuilder, 
+    private fb: FormBuilder,
     private router: Router,
     private authService: AuthService
   ) {
@@ -26,23 +26,23 @@ export class LoginComponent {
 
   onSubmit() {
     if (this.loginForm.valid) {
-      this.isLoading = true;
+      this.loading = true;
       this.errorMessage = '';
+
       const { email, password } = this.loginForm.value;
 
       this.authService.login(email, password).subscribe({
         next: (response) => {
-          this.isLoading = false;
-          
-          // RÚBRICA: Enrutamiento basado en roles
-          if (response.user.role === 'Administrador') {
-            this.router.navigate(['/admin/users']); // Manda al staff al panel de control
+          this.loading = false;
+          // Redirigir según el tipo de usuario
+          if (response.user.tipo === 'admin') {
+            this.router.navigate(['/admin']);
           } else {
-            this.router.navigate(['/home']); // Manda al estudiante a la tienda
+            this.router.navigate(['/home']);
           }
         },
         error: (error) => {
-          this.isLoading = false;
+          this.loading = false;
           this.errorMessage = 'Credenciales inválidas. Verifica tu correo y contraseña.';
         }
       });

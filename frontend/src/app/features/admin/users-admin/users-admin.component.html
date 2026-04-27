@@ -1,0 +1,98 @@
+<div class="container mt-4">
+  <h2>Gestión de Usuarios</h2>
+  <p class="text-muted">Administración de usuarios, verificación de matrícula y residencia</p>
+
+  <!-- Formulario para agregar usuario -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h6 class="fw-bold mb-3">➕ Registrar nuevo usuario</h6>
+      <div class="row g-2 align-items-end">
+        <div class="col-md-2">
+          <label class="form-label small">Nombre *</label>
+          <input type="text" class="form-control form-control-sm" [(ngModel)]="nuevoUsuario.nombre" placeholder="Nombre">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label small">Apellido</label>
+          <input type="text" class="form-control form-control-sm" [(ngModel)]="nuevoUsuario.apellido" placeholder="Apellido">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Email *</label>
+          <input type="email" class="form-control form-control-sm" [(ngModel)]="nuevoUsuario.email" placeholder="correo@nyu.edu">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label small">Contraseña *</label>
+          <input type="password" class="form-control form-control-sm" [(ngModel)]="nuevoUsuario.password" placeholder="••••••">
+        </div>
+        <div class="col-md-1">
+          <label class="form-label small">Rol</label>
+          <select class="form-select form-select-sm" [(ngModel)]="nuevoUsuario.tipo">
+            <option value="student">Estudiante</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-coffee btn-sm w-100" (click)="registrarUsuario()">Registrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla de usuarios -->
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Rol</th>
+        <th>Matrícula</th>
+        <th>Residencia</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let usuario of usuarios">
+        <td>{{ usuario.id }}</td>
+        <td>{{ usuario.nombre }} {{ usuario.apellido }}</td>
+        <td>{{ usuario.email }}</td>
+        <td>
+          <span class="badge" [ngClass]="usuario.tipo === 'admin' ? 'badge-info-custom' : 'badge-neutral-custom'">
+            {{ usuario.tipo === 'admin' ? 'Administrador' : 'Estudiante' }}
+          </span>
+        </td>
+
+        <td class="text-center">
+          <button
+            class="btn btn-sm"
+            [ngClass]="usuario.matriculaActiva ? 'btn-success' : 'btn-outline-secondary'"
+            (click)="toggleMatricula(usuario)"
+            [title]="usuario.matriculaActiva ? 'Desactivar matrícula' : 'Activar matrícula'"
+          >
+            {{ usuario.matriculaActiva ? '✅ Activa' : '❌ Inactiva' }}
+          </button>
+        </td>
+
+        <td class="text-center">
+          <button
+            class="btn btn-sm"
+            [ngClass]="usuario.residenciaActiva ? 'btn-success' : 'btn-outline-secondary'"
+            (click)="toggleResidencia(usuario)"
+            [title]="usuario.residenciaActiva ? 'Desactivar residencia' : 'Activar residencia'"
+          >
+            {{ usuario.residenciaActiva ? '✅ Activa' : '❌ Inactiva' }}
+          </button>
+        </td>
+
+        <td>
+          <button class="btn btn-danger btn-sm" (click)="eliminarUsuario(usuario)">
+            🗑️ Eliminar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="usuarios.length === 0" class="text-center text-muted py-4">
+    No hay usuarios registrados
+  </div>
+</div>

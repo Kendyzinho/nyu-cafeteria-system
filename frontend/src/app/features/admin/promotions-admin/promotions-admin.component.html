@@ -1,80 +1,182 @@
 <div class="container mt-4">
   <h2>Gestión de Promociones</h2>
-  <p class="text-muted">
-    Aplicación de descuentos según validaciones externas del sistema
-  </p>
+  <p class="text-muted">Crear y administrar descuentos por perfil de usuario y productos</p>
 
-  <table class="table table-bordered table-hover mt-3">
+  <!-- Formulario para agregar promoción -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h6 class="fw-bold mb-3">➕ Crear nueva promoción</h6>
+
+      <div class="row g-2 mb-2">
+        <div class="col-md-3">
+          <label class="form-label small">Nombre *</label>
+          <input type="text" class="form-control form-control-sm" [(ngModel)]="nuevaPromo.nombre" placeholder="Nombre de la promoción">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Descripción</label>
+          <input type="text" class="form-control form-control-sm" [(ngModel)]="nuevaPromo.descripcion" placeholder="Descripción breve">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label small">Descuento % *</label>
+          <input type="number" class="form-control form-control-sm" [(ngModel)]="nuevaPromo.descuento" min="0" max="100">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label small">Fecha inicio</label>
+          <input type="date" class="form-control form-control-sm" [(ngModel)]="nuevaPromo.fechaInicio">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label small">Fecha fin</label>
+          <input type="date" class="form-control form-control-sm" [(ngModel)]="nuevaPromo.fechaFin">
+        </div>
+      </div>
+
+      <div class="row g-2 mb-3">
+        <div class="col-md-2">
+          <label class="form-label small">Aplica a</label>
+          <select class="form-select form-select-sm" [(ngModel)]="nuevaPromo.tipoAplicacion">
+            <option value="todo">Todo el menú</option>
+            <option value="categoria">Categoría</option>
+            <option value="producto">Productos</option>
+          </select>
+        </div>
+        <div class="col-md-2" *ngIf="nuevaPromo.tipoAplicacion === 'categoria'">
+          <label class="form-label small">Categoría</label>
+          <select class="form-select form-select-sm" [(ngModel)]="nuevaPromo.categoria">
+            <option *ngFor="let cat of categorias" [value]="cat">{{ cat }}</option>
+          </select>
+        </div>
+        <div class="col-md-4" *ngIf="nuevaPromo.tipoAplicacion === 'producto'">
+          <label class="form-label small">Productos</label>
+          <div class="d-flex flex-wrap gap-1">
+            <button *ngFor="let prod of productos"
+              class="btn btn-sm"
+              [ngClass]="productoSeleccionado(nuevaPromo, prod.id) ? 'btn-coffee' : 'btn-outline-secondary'"
+              (click)="toggleProducto(nuevaPromo, prod.id)">
+              {{ prod.nombre }}
+            </button>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label small d-block">Requisitos</label>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" [(ngModel)]="nuevaPromo.reqMatricula" id="newReqMat">
+            <label class="form-check-label small" for="newReqMat">Matrícula</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" [(ngModel)]="nuevaPromo.reqResidencia" id="newReqRes">
+            <label class="form-check-label small" for="newReqRes">Residencia</label>
+          </div>
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <button class="btn btn-coffee btn-sm w-100" (click)="crearPromocion()">Crear promoción</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla de promociones -->
+  <table class="table table-bordered table-hover">
     <thead>
       <tr>
-        <th>Promoción</th>
+        <th>Nombre</th>
         <th>Descuento</th>
-        <th>Estudiante activo</th>
-        <th>Residencia activa</th>
-        <th>Pago aprobado</th>
-        <th>Validaciones externas</th>
+        <th>Aplica a</th>
+        <th>Requisitos</th>
+        <th>Vigencia</th>
         <th>Estado</th>
-        <th>Acción</th>
+        <th>Acciones</th>
       </tr>
     </thead>
-
     <tbody>
       <tr *ngFor="let promo of promociones">
-        <td>{{ promo.nombre }}</td>
 
-        <td>{{ promo.descuento }}%</td>
+        <!-- Modo lectura -->
+        <ng-container *ngIf="editandoId !== promo.id">
+          <td>
+            <strong>{{ promo.nombre }}</strong>
+            <div class="text-muted small">{{ promo.descripcion }}</div>
+          </td>
+          <td class="fw-bold">{{ promo.descuento }}%</td>
+          <td>
+            <span class="badge badge-neutral-custom me-1">{{ promo.tipoAplicacion | titlecase }}</span>
+            <span *ngIf="promo.tipoAplicacion === 'categoria'" class="badge badge-info-custom">{{ promo.categoria }}</span>
+            <span *ngIf="promo.tipoAplicacion === 'producto'" class="small text-muted d-block mt-1">
+              {{ getNombresProductos(promo.productosIds) }}
+            </span>
+          </td>
+          <td>
+            <span *ngIf="promo.reqMatricula" class="badge badge-info-custom me-1">Matrícula</span>
+            <span *ngIf="promo.reqResidencia" class="badge badge-warning-custom me-1">Residencia</span>
+            <span *ngIf="!promo.reqMatricula && !promo.reqResidencia" class="text-muted small">Sin requisitos</span>
+          </td>
+          <td class="small">
+            {{ promo.fechaInicio | date:'dd/MM/yyyy' }} -<br>
+            {{ promo.fechaFin | date:'dd/MM/yyyy' }}
+          </td>
+          <td>
+            <span class="badge" [ngClass]="promo.activa ? 'badge-success-custom' : 'badge-danger-custom'">
+              {{ promo.activa ? 'Activa' : 'Inactiva' }}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-outline-primary btn-sm me-1" (click)="editarPromocion(promo)">✏️ Editar</button>
+            <button class="btn btn-danger btn-sm" (click)="eliminarPromocion(promo)">🗑️</button>
+          </td>
+        </ng-container>
 
-        <td>
-          <span
-            class="badge"
-            [ngClass]="promo.estudianteActivo ? 'badge-success-custom' : 'badge-danger-custom'"
-          >
-            {{ promo.estudianteActivo ? 'Sí' : 'No' }}
-          </span>
-        </td>
+        <!-- Modo edición -->
+        <ng-container *ngIf="editandoId === promo.id">
+          <td>
+            <input type="text" class="form-control form-control-sm mb-1" [(ngModel)]="promo.nombre">
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="promo.descripcion" placeholder="Descripción">
+          </td>
+          <td>
+            <input type="number" class="form-control form-control-sm" [(ngModel)]="promo.descuento" min="0" max="100">
+          </td>
+          <td>
+            <select class="form-select form-select-sm mb-1" [(ngModel)]="promo.tipoAplicacion">
+              <option value="todo">Todo</option>
+              <option value="categoria">Categoría</option>
+              <option value="producto">Productos</option>
+            </select>
+            <select *ngIf="promo.tipoAplicacion === 'categoria'" class="form-select form-select-sm" [(ngModel)]="promo.categoria">
+              <option *ngFor="let cat of categorias" [value]="cat">{{ cat }}</option>
+            </select>
+            <div *ngIf="promo.tipoAplicacion === 'producto'" class="d-flex flex-wrap gap-1 mt-1">
+              <button *ngFor="let prod of productos"
+                class="btn btn-sm"
+                [ngClass]="productoSeleccionado(promo, prod.id) ? 'btn-coffee' : 'btn-outline-secondary'"
+                (click)="toggleProducto(promo, prod.id)"
+                style="font-size: 0.7rem;">
+                {{ prod.nombre }}
+              </button>
+            </div>
+          </td>
+          <td>
+            <div class="form-check"><input class="form-check-input" type="checkbox" [(ngModel)]="promo.reqMatricula"><label class="form-check-label small">Matrícula</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" [(ngModel)]="promo.reqResidencia"><label class="form-check-label small">Residencia</label></div>
+          </td>
+          <td>
+            <input type="date" class="form-control form-control-sm mb-1" [(ngModel)]="promo.fechaInicio">
+            <input type="date" class="form-control form-control-sm" [(ngModel)]="promo.fechaFin">
+          </td>
+          <td>
+            <select class="form-select form-select-sm" [(ngModel)]="promo.activa">
+              <option [ngValue]="true">Activa</option>
+              <option [ngValue]="false">Inactiva</option>
+            </select>
+          </td>
+          <td>
+            <button class="btn btn-success btn-sm me-1" (click)="guardarEdicion(promo)">💾</button>
+            <button class="btn btn-secondary btn-sm" (click)="cancelarEdicion()">✖</button>
+          </td>
+        </ng-container>
 
-        <td>
-          <span
-            class="badge"
-            [ngClass]="promo.residenciaActiva ? 'badge-success-custom' : 'badge-danger-custom'"
-          >
-            {{ promo.residenciaActiva ? 'Sí' : 'No' }}
-          </span>
-        </td>
-
-        <td>
-          <span
-            class="badge"
-            [ngClass]="promo.pagoAprobado ? 'badge-success-custom' : 'badge-danger-custom'"
-          >
-            {{ promo.pagoAprobado ? 'Sí' : 'No' }}
-          </span>
-        </td>
-
-        <td>
-          <span class="badge badge-info-custom me-1">Matrícula</span>
-          <span class="badge badge-warning-custom me-1">Residencia</span>
-          <span class="badge badge-success-custom">Pagos</span>
-        </td>
-
-        <td>
-          <span
-            class="badge"
-            [ngClass]="promo.activa ? 'badge-success-custom' : 'badge-neutral-custom'"
-          >
-            {{ promo.activa ? 'Activa' : 'Inactiva' }}
-          </span>
-        </td>
-
-        <td>
-          <button
-            class="btn btn-coffee btn-sm"
-            (click)="aplicarPromocion(promo)"
-          >
-            Aplicar
-          </button>
-        </td>
       </tr>
     </tbody>
   </table>
+
+  <div *ngIf="promociones.length === 0" class="text-center text-muted py-4">
+    No hay promociones registradas
+  </div>
 </div>

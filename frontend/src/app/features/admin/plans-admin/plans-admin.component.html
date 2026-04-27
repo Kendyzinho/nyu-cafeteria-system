@@ -1,64 +1,109 @@
 <div class="container mt-4">
   <h2>Gestión de Planes Alimentarios</h2>
-  <p class="text-muted">
-    Administración de planes según residencia y validaciones externas
-  </p>
+  <p class="text-muted">Crear, editar y administrar planes de alimentación para estudiantes</p>
 
-  <table class="table table-bordered table-hover mt-3">
+  <!-- Formulario para agregar plan -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h6 class="fw-bold mb-3">➕ Agregar nuevo plan</h6>
+      <div class="row g-2 align-items-end">
+        <div class="col-md-3">
+          <label class="form-label small">Nombre *</label>
+          <input type="text" class="form-control form-control-sm" [(ngModel)]="nuevoPlan.nombre" placeholder="Nombre del plan">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Descripción</label>
+          <input type="text" class="form-control form-control-sm" [(ngModel)]="nuevoPlan.descripcion" placeholder="Descripción breve">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label small">Precio *</label>
+          <input type="number" class="form-control form-control-sm" [(ngModel)]="nuevoPlan.precio" min="0" step="0.01">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label small">Tipo</label>
+          <select class="form-select form-select-sm" [(ngModel)]="nuevoPlan.tipo">
+            <option value="residente">Residente</option>
+            <option value="regular">Regular</option>
+            <option value="todos">Todos</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-coffee btn-sm w-100" (click)="crearPlan()">Crear plan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla de planes -->
+  <table class="table table-bordered table-hover">
     <thead>
       <tr>
-        <th>Estudiante</th>
-        <th>Residencia</th>
-        <th>Plan</th>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th>Precio</th>
+        <th>Tipo</th>
         <th>Estado</th>
-        <th>Consumos</th>
-        <th>Validación externa</th>
-        <th>Acción</th>
+        <th>Acciones</th>
       </tr>
     </thead>
-
     <tbody>
       <tr *ngFor="let plan of planes">
-        <td>{{ plan.estudiante }}</td>
 
-        <td>
-          <span
-            class="badge"
-            [ngClass]="plan.residenciaActiva ? 'badge-success-custom' : 'badge-danger-custom'"
-          >
-            {{ plan.residenciaActiva ? 'Activa' : 'Inactiva' }}
-          </span>
-        </td>
+        <!-- Modo lectura -->
+        <ng-container *ngIf="editandoId !== plan.id">
+          <td>{{ plan.nombre }}</td>
+          <td>{{ plan.descripcion }}</td>
+          <td>${{ plan.precio }}</td>
+          <td>
+            <span class="badge"
+              [ngClass]="{
+                'badge-info-custom': plan.tipo === 'residente',
+                'badge-neutral-custom': plan.tipo === 'regular',
+                'badge-success-custom': plan.tipo === 'todos'
+              }">
+              {{ plan.tipo | titlecase }}
+            </span>
+          </td>
+          <td>
+            <span class="badge" [ngClass]="plan.activo ? 'badge-success-custom' : 'badge-danger-custom'">
+              {{ plan.activo ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-outline-primary btn-sm me-1" (click)="editarPlan(plan)">✏️ Editar</button>
+            <button class="btn btn-danger btn-sm" (click)="eliminarPlan(plan)">🗑️</button>
+          </td>
+        </ng-container>
 
-        <td>{{ plan.nombrePlan }}</td>
+        <!-- Modo edición -->
+        <ng-container *ngIf="editandoId === plan.id">
+          <td><input type="text" class="form-control form-control-sm" [(ngModel)]="plan.nombre"></td>
+          <td><input type="text" class="form-control form-control-sm" [(ngModel)]="plan.descripcion"></td>
+          <td><input type="number" class="form-control form-control-sm" [(ngModel)]="plan.precio" min="0" step="0.01"></td>
+          <td>
+            <select class="form-select form-select-sm" [(ngModel)]="plan.tipo">
+              <option value="residente">Residente</option>
+              <option value="regular">Regular</option>
+              <option value="todos">Todos</option>
+            </select>
+          </td>
+          <td>
+            <select class="form-select form-select-sm" [(ngModel)]="plan.activo">
+              <option [ngValue]="true">Activo</option>
+              <option [ngValue]="false">Inactivo</option>
+            </select>
+          </td>
+          <td>
+            <button class="btn btn-success btn-sm me-1" (click)="guardarEdicion(plan)">💾 Guardar</button>
+            <button class="btn btn-secondary btn-sm" (click)="cancelarEdicion()">Cancelar</button>
+          </td>
+        </ng-container>
 
-        <td>
-          <span
-            class="badge"
-            [ngClass]="plan.planActivo ? 'badge-success-custom' : 'badge-neutral-custom'"
-          >
-            {{ plan.planActivo ? 'Plan activo' : 'Sin plan' }}
-          </span>
-        </td>
-
-        <td>{{ plan.consumos }} / {{ plan.limiteConsumos }}</td>
-
-        <td>
-          <span class="badge badge-info-custom">
-            Residencia validada
-          </span>
-        </td>
-
-        <td>
-          <button
-            class="btn btn-coffee btn-sm"
-            (click)="activarPlan(plan)"
-            [disabled]="!plan.residenciaActiva"
-          >
-            Activar plan
-          </button>
-        </td>
       </tr>
     </tbody>
   </table>
+
+  <div *ngIf="planes.length === 0" class="text-center text-muted py-4">
+    No hay planes alimentarios registrados
+  </div>
 </div>

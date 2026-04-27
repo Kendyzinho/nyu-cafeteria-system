@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MenuController } from './menu/menu.controller';
 import { OrdersController } from './orders/orders.controller';
 import { MealPlansController } from './meal-plans/meal-plans.controller';
@@ -19,6 +21,9 @@ import { MealPlansService } from 'src/providers/meal-plans/meal-plans.service';
 import { StockService } from 'src/providers/stock/stock.service';
 import { PromotionsService } from 'src/providers/promotions/promotions.service';
 import { UsersService } from 'src/providers/users/users.service';
+import { AuthService } from 'src/providers/auth/auth.service';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/guards/roles.guard';
 
 @Module({
   imports: [
@@ -30,6 +35,14 @@ import { UsersService } from 'src/providers/users/users.service';
       PromotionEntity,
       UserEntity,
     ]),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '24h' },
+      }),
+      inject: [ConfigService],
+    }),
   ],
   controllers: [
     MenuController,
@@ -47,6 +60,9 @@ import { UsersService } from 'src/providers/users/users.service';
     StockService,
     PromotionsService,
     UsersService,
+    AuthService,
+    JwtAuthGuard,
+    RolesGuard,
   ],
 })
 export class ControllersModule {}

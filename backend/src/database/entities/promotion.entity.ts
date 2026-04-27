@@ -16,7 +16,7 @@ export class PromotionEntity {
   descripcion!: string;
 
   @Column('decimal', { precision: 10, scale: 2 })
-  descuento!: number;
+  descuento!: number; // Porcentaje de descuento
 
   @Column()
   fechaInicio!: Date;
@@ -26,4 +26,23 @@ export class PromotionEntity {
 
   @Column({ default: true })
   activa!: boolean;
+
+  // === Requisitos del estudiante para calificar ===
+
+  @Column({ default: false })
+  reqMatricula!: boolean; // ¿Requiere matrícula activa?
+
+  @Column({ default: false })
+  reqResidencia!: boolean; // ¿Requiere residencia activa?
+
+  // === A qué productos aplica ===
+
+  @Column({ default: 'todo' })
+  tipoAplicacion!: string; // 'producto' | 'categoria' | 'todo'
+
+  @Column({ nullable: true })
+  categoria!: string; // Categoría del menú (cuando tipoAplicacion = 'categoria')
+
+  @Column('json', { nullable: true })
+  productosIds!: number[]; // IDs de productos (cuando tipoAplicacion = 'producto')
 }

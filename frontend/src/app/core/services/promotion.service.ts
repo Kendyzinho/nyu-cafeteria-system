@@ -1,51 +1,32 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PromotionService {
+  private apiUrl = 'http://localhost:3000/api/promotions';
 
-  private promociones = [
-    {
-      id: 1,
-      nombre: 'Descuento estudiante activo',
-      descuento: 15,
-      estudianteActivo: true,
-      residenciaActiva: false,
-      pagoAprobado: true,
-      activa: false
-    },
-    {
-      id: 2,
-      nombre: 'Beneficio residente NYU',
-      descuento: 25,
-      estudianteActivo: true,
-      residenciaActiva: true,
-      pagoAprobado: true,
-      activa: false
-    },
-    {
-      id: 3,
-      nombre: 'Promoción pendiente por pago',
-      descuento: 10,
-      estudianteActivo: true,
-      residenciaActiva: true,
-      pagoAprobado: false,
-      activa: false
-    }
-  ];
+  constructor(private http: HttpClient) {}
 
-  getPromociones() {
-    return this.promociones;
+  getPromociones(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl);
   }
 
-  aplicarPromocion(promo: any) {
-    const index = this.promociones.findIndex(p => p.id === promo.id);
+  getPromocion(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  }
 
-    if (index !== -1) {
-      this.promociones[index].activa = true;
-    }
+  crearPromocion(promo: any): Observable<any> {
+    return this.http.post(this.apiUrl, promo);
+  }
 
-    return this.promociones[index];
+  actualizarPromocion(id: number, promo: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, promo);
+  }
+
+  eliminarPromocion(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }

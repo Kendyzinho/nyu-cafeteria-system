@@ -1,11 +1,16 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Res } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, Res, UseGuards } from '@nestjs/common';
 import type { Response } from 'express';
 import type { IPostUserRequest } from './dto/IPostUserRequest';
 import type { IPostUserResponse } from './dto/IPostUserResponse';
 import type { IPutUserRequest } from './dto/IPutUserRequest';
 import { UsersService } from 'src/providers/users/users.service';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/guards/roles.guard';
+import { Roles } from 'src/decorators/roles.decorator';
 
 @Controller('users')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('admin')
 export class UsersController {
 
   constructor(private readonly usersService: UsersService) {}
