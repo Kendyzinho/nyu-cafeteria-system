@@ -9,7 +9,7 @@ import type { IPostMenuRequest } from 'src/controllers/menu/dto/IPostMenuRequest
 export class MenuService {
 
   constructor(
-    // inyecta el repositorio de TypeORM para operar sobre la tabla 'menu'
+    // inyecta el repositorio para operar sobre la tabla 'menu'
     @InjectRepository(MenuEntity)
     private readonly menuRepository: Repository<MenuEntity>,
   ) {}
