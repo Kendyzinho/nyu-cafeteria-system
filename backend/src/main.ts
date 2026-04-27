@@ -1,9 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
-  // crea la aplicación NestJS con el módulo principal
   const app = await NestFactory.create(AppModule);
 
   // permite peticiones desde otros orígenes (ej. Angular en localhost:4200)
@@ -18,8 +18,18 @@ async function bootstrap() {
     },
   }));
 
-  // todas las rutas quedan bajo el prefijo /api (ej. /api/menu, /api/users)
+  // todas las rutas quedan bajo el prefijo /api
   app.setGlobalPrefix('api');
+
+  // configuración de Swagger
+  const config = new DocumentBuilder()
+    .setTitle('NYU Cafetería API')
+    .setDescription('Documentación de los endpoints del sistema de cafetería')
+    .setVersion('1.0')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document); // disponible en /docs
 
   // inicia el servidor en el puerto 3000
   await app.listen(3000);
