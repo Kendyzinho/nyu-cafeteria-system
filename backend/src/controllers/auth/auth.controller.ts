@@ -1,32 +1,30 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Res } from '@nestjs/common';
+import type { Response } from 'express';
 import type { ILoginRequest } from './dto/ILoginRequest';
-import type { ILoginResponse } from './dto/ILoginResponse';
 import type { IRegisterRequest } from './dto/IRegisterRequest';
-import type { IRegisterResponse } from './dto/IRegisterResponse';
+import { AuthService } from 'src/providers/auth/auth.service';
 
 @Controller('auth')
 export class AuthController {
+  constructor(private readonly authService: AuthService) {}
 
   @Post('login')
   async login(
-    @Body() request: ILoginRequest
-  ): Promise<ILoginResponse> {
-    return {
-      accessToken: 'token_placeholder',
-      statusCode: 200,
-      statusDescription: 'Login exitoso',
-    };
+    @Body() request: ILoginRequest,
+    @Res() response: Response,
+  ): Promise<Response> {
+    const result = await this.authService.login(request.email, request.password);
+    if (!result) return response.status(401).json({ message: 'Credenciales inválidas' });
+    return response.status(200).json(result);
   }
 
   @Post('register')
   async register(
-    @Body() request: IRegisterRequest
-  ): Promise<IRegisterResponse> {
-    return {
-      data: null,
-      statusCode: 200,
-      statusDescription: 'Usuario registrado',
-      errors: null,
-    };
+    @Body() request: IRegisterRequest,
+    @Res() response: Response,
+  ): Promise<Response> {
+    const result = await this.authService.register(request);
+    if (!result) return response.status(409).json({ message: 'El correo ya está registrado' });
+    return response.status(201).json({ message: 'Usuario registrado exitosamente' });
   }
 }

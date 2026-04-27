@@ -19,6 +19,7 @@ import { MealPlansService } from 'src/providers/meal-plans/meal-plans.service';
 import { StockService } from 'src/providers/stock/stock.service';
 import { PromotionsService } from 'src/providers/promotions/promotions.service';
 import { UsersService } from 'src/providers/users/users.service';
+import { AuthService } from 'src/providers/auth/auth.service';
 
 @Module({
   imports: [
@@ -41,12 +42,13 @@ import { UsersService } from 'src/providers/users/users.service';
     AuthController,
   ],
   providers: [
-    MenuService,
-    OrdersService,
-    MealPlansService,
-    StockService,
-    PromotionsService,
-    UsersService,
+  MenuService,
+  OrdersService,
+  MealPlansService,
+  StockService,
+  PromotionsService,
+  UsersService,
+  AuthService,
   ],
 })
 export class ControllersModule {}

@@ -6,3 +6,6 @@ values:
   - key: MENU_API
     enabled: true
     value: ''
+  - key: AUTH_API
+    enabled: true
+    value: ''

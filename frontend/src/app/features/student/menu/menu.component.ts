@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MenuService } from '../../../core/services/menu.service';
 
 @Component({
@@ -8,20 +8,24 @@ import { MenuService } from '../../../core/services/menu.service';
 })
 export class MenuComponent implements OnInit {
 
+  @ViewChild('filtroCategoria') filtroSelect!: ElementRef;
+
   menuItems: any[] = [];
 
   constructor(private menuService: MenuService) {}
 
- ngOnInit() {
-  this.menuService.getAll().subscribe(items => {
-    this.menuItems = items;
-  });
-}
+  ngOnInit() {
+    this.menuService.getAll().subscribe(items => {
+      this.menuItems = items;
+    });
+  }
 
-  addToCart(item: any) {
-    if (item.isAvailable) {
-      console.log('Agregado al carrito:', item.name);
-      alert(`${item.name} agregado a tu pedido.`);
-    }
+  handleAddToCart(itemRecibido: any) {
+    console.log('El componente hijo envió:', itemRecibido.name);
+    alert(`Has agregado "${itemRecibido.name}" a tu pedido por $${itemRecibido.studentPrice}`);
+  }
+
+  resetFiltro() {
+    this.filtroSelect.nativeElement.value = 'todos';
   }
 }
