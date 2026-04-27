@@ -1,27 +1,60 @@
-# Frontend
+# ☕ Sistema de Gestión Integrado - Cafetería Estudiantil
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.2.11.
+![Angular](https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)
 
-## Development server
+Este proyecto corresponde al desarrollo del frontend (Single Page Application) para la resolución del **Problema 4: Gestión de Cafetería**, desarrollado como proyecto semestral de Ingeniería de Software en la Universidad de Tarapacá (Sede Arica). 
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+El sistema digitaliza y optimiza el flujo de atención, inventario y suscripción de planes de alimentación para la comunidad universitaria.
 
-## Code scaffolding
+## 📋 Descripción General
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+La plataforma actúa como un ecosistema dual que atiende tanto a los estudiantes (clientes) como al personal de la cafetería (administradores). Su arquitectura permite una gestión de estado reactiva en tiempo real sin necesidad de recargar la página, ofreciendo una experiencia fluida.
 
-## Build
+### 🎯 Objetivos del Proyecto (Sprints)
+- Digitalizar el menú y permitir compras ágiles.
+- Gestionar planes residenciales y beneficios de alimentación.
+- Proveer al staff de un panel de control para inventario y usuarios.
+- Implementar seguridad mediante enrutamiento basado en roles (JWT simulado).
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+---
 
-## Running unit tests
+## 🚀 Tecnologías y Arquitectura
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+* **Framework Core:** Angular (TypeScript)
+* **Estilos y UI:** Bootstrap 5 (Responsive Design)
+* **Gestión de Estado:** RxJS (`BehaviorSubject` y Observables para sincronización en tiempo real entre componentes).
+* **Seguridad:** Angular Route Guards (`AuthGuard`, `RoleGuard`) e Interceptors.
+* **Mocking:** Servicios inyectables con bases de datos en memoria para el desarrollo del Frontend previo a la integración con la API RESTful.
 
-## Running end-to-end tests
+---
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+## ⚙️ Características Principales (Módulos)
 
-## Further help
+### 🧑‍🎓 Módulo Estudiante / Residente
+* **Autenticación:** Registro e inicio de sesión inteligente.
+* **Mi Perfil:** Visualización de credenciales y estado del beneficio universitario.
+* **Gestión de Plan:** Panel de control ("Mi Plan") para visualizar comidas restantes, renovaciones automáticas y definición de preferencias alimentarias (Vegano, Celiaco, etc.).
+* **Catálogo Interactivo:** Menú reactivo que refleja la disponibilidad de productos en tiempo real.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+### 🛡️ Módulo Administrador / Staff
+* **Gestión de Usuarios:** Tabla dinámica con persistencia para suspender/activar cuentas de estudiantes o ver sus planes asociados.
+* **Control de Stock Vivo:** Panel de inventario que calcula automáticamente el estado del producto ("Agotado", "Poco Stock", "Disponible") basado en umbrales mínimos, bloqueando las ventas en el catálogo del cliente si el stock llega a 0.
+
+---
+
+## 📁 Estructura del Proyecto
+
+El código fuente sigue las mejores prácticas de modularidad de Angular:
+
+```text
+src/
+├── app/
+│   ├── core/           # Servicios (Auth, Menu, Users), Modelos, Guards e Interceptors.
+│   ├── features/       # Módulos principales (Auth, Admin, Student).
+│   ├── shared/         # Componentes reutilizables (Navbar, Footer, Loaders).
+│   ├── layouts/        # Estructuras de página (ClientLayout vs AuthLayout).
+│   └── app.module.ts   # Módulo raíz.
+├── assets/             # Imágenes y recursos estáticos.
+└── styles.css          # Estilos globales y variables de color (Paleta Corporativa).
