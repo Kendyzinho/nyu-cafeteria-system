@@ -1,30 +1,52 @@
-<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #795238;">
-  <div class="container">
-    <a class="navbar-brand fw-bold" routerLink="/admin">
-      ☕ Cafetería NYU - Admin
+<nav class="navbar navbar-expand-lg shadow-sm" style="background-color: var(--nyu-dark, #1c1c1c);">
+  <div class="container-fluid px-4 py-2">
+    
+    <a class="navbar-brand fw-bold text-white d-flex align-items-center" routerLink="/admin/users">
+      <span class="badge text-dark me-2" style="background-color: var(--nyu-sand, #d9c59a);">STAFF</span>
+      Cafetería NYU
     </a>
 
-    <ul class="navbar-nav me-auto ms-4">
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/admin">Panel</a>
-      </li>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar" style="filter: invert(1);">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/admin/stock">Stock</a>
-      </li>
+    <div class="collapse navbar-collapse" id="adminNavbar">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-4 gap-3">
+        
+        <li class="nav-item">
+          <a class="nav-link text-white opacity-75" routerLink="/admin/users" routerLinkActive="opacity-100 fw-bold border-bottom">
+            Usuarios y Cuentas
+          </a>
+        </li>
+        
+        <li class="nav-item">
+          <a class="nav-link text-white opacity-75" routerLink="/admin/stock" routerLinkActive="opacity-100 fw-bold border-bottom">
+            Inventario
+          </a>
+        </li>
 
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/admin/plans">Planes</a>
-      </li>
+        <li class="nav-item">
+          <a class="nav-link text-white opacity-75" routerLink="/admin/plans" routerLinkActive="opacity-100 fw-bold border-bottom">
+            Planes
+          </a>
+        </li>
 
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/admin/promotions">Promociones</a>
-      </li>
-    </ul>
+        <li class="nav-item">
+          <a class="nav-link text-white opacity-75" routerLink="/admin/promotions" routerLinkActive="opacity-100 fw-bold border-bottom">
+            Promociones
+          </a>
+        </li>
+      </ul>
 
-    <div class="text-white text-end">
-      <strong>Jhon Alarcon</strong><br>
-      <small>Administrador</small>
+      <div class="d-flex align-items-center gap-3">
+        <span class="text-white small">
+          Hola, <strong>{{ currentUser?.firstName }}</strong>
+        </span>
+        <button class="btn btn-sm text-white fw-bold px-3" style="background-color: var(--nyu-brown, #6c4e3d);" (click)="logout()">
+          Cerrar Sesión
+        </button>
+      </div>
     </div>
+
   </div>
 </nav>
