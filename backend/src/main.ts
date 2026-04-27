@@ -1,3 +1,10 @@
+// --- INICIO DEL PARCHE PARA NODE 18 ---
+import * as crypto from 'crypto';
+if (!global.crypto) {
+  (global as any).crypto = { randomUUID: crypto.randomUUID };
+}
+// --- FIN DEL PARCHE ---
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
