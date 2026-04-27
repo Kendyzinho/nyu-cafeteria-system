@@ -1,0 +1,82 @@
+<div class="container py-5" *ngIf="user">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+      
+      <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+        
+        <div class="p-5 text-center position-relative" style="background-color: var(--nyu-dark); color: white;">
+          
+          <div class="avatar-container mx-auto mb-3 shadow-lg d-flex align-items-center justify-content-center"
+               style="width: 120px; height: 120px; background-color: var(--nyu-sand); border: 5px solid white; border-radius: 50%; font-size: 3rem; font-weight: bold; cursor: pointer;"
+               (click)="onUpdatePhoto()">
+            {{ initials }}
+          </div>
+          
+          <h2 class="fw-bold mb-1">{{ user.firstName }} {{ user.lastName }}</h2>
+          <span class="badge rounded-pill px-3 py-2" 
+                [ngClass]="user.role === 'Administrador' ? 'bg-danger' : 'bg-light text-dark'">
+            {{ user.role }}
+          </span>
+          <p class="mt-3 opacity-75">{{ user.email }}</p>
+        </div>
+
+        <div class="card-body p-4 p-md-5 bg-white">
+          <div class="row g-4">
+            
+            <div class="col-md-6">
+              <h5 class="fw-bold mb-4 border-bottom pb-2" style="color: var(--nyu-dark);">Datos de Cuenta</h5>
+              
+              <div class="mb-3">
+                <label class="text-muted small fw-bold text-uppercase">ID de Usuario</label>
+                <p class="fw-bold text-dark">#NYU-{{ user.id | number:'4.0-0' }}</p>
+              </div>
+
+              <div class="mb-3">
+                <label class="text-muted small fw-bold text-uppercase">Estado del Sistema</label>
+                <p class="d-flex align-items-center gap-2">
+                  <span class="rounded-circle bg-success" style="width: 10px; height: 10px;"></span>
+                  <span class="fw-bold text-success">Cuenta Verificada y Activa</span>
+                </p>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <h5 class="fw-bold mb-4 border-bottom pb-2" style="color: var(--nyu-dark);">Atributos Universitarios</h5>
+              
+              <div class="mb-3">
+                <label class="text-muted small fw-bold text-uppercase">Residencia Universitaria</label>
+                <p class="fw-bold" [style.color]="user.isResident ? 'var(--nyu-brown)' : 'orange'">
+                  {{ user.isResident ? 'Estudiante Residente (Alojamientos)' : 'Estudiante Regular' }}
+                </p>
+              </div>
+
+              <div class="mb-3">
+                <label class="text-muted small fw-bold text-uppercase">Beneficio de Alimentación</label>
+                <p class="fw-bold text-dark">
+                  {{ user.isResident ? 'Habilitado (Plan de Comidas)' : 'Habilitado (Descuento General)' }}
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="mt-5 pt-4 border-top">
+            <div class="d-flex flex-wrap gap-3 justify-content-center">
+              <button class="btn btn-outline-dark fw-bold px-4 rounded-3 py-2">
+                Cambiar Contraseña
+              </button>
+              <button class="btn text-white fw-bold px-4 rounded-3 py-2 shadow-sm" style="background-color: var(--nyu-brown);">
+                Actualizar Datos Personales
+              </button>
+            </div>
+            <p class="text-center text-muted small mt-4">
+              Para cambios de correo o rol, contactar directamente a <strong>soporte@nyu.edu</strong>
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,13 @@
+.avatar-container {
+    transition: all 0.3s ease;
+}
+
+.avatar-container:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+    box-shadow: 0 0 20px rgba(169, 132, 103, 0.4) !important;
+}
+
+.card {
+    border-radius: 20px;
+}

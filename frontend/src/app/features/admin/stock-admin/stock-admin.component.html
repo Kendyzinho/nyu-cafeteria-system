@@ -1,0 +1,51 @@
+<div class="container mt-4">
+  <h2>Gestión de Stock</h2>
+  <p class="text-muted">Administrador de productos disponibles en cafetería</p>
+
+  <table class="table table-bordered table-hover mt-3">
+    <thead>
+      <tr>
+        <th>Producto</th>
+        <th>Categoría</th>
+        <th>Stock</th>
+        <th>Estado</th>
+        <th>Actualizar stock</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let producto of productos">
+        <td>{{ producto.nombre }}</td>
+        <td>{{ producto.categoria }}</td>
+        <td>{{ producto.stock }}</td>
+
+        <td>
+          <span
+            class="badge"
+            [ngClass]="producto.stock > 0 ? 'badge-success-custom' : 'badge-danger-custom'"
+          >
+            {{ producto.stock > 0 ? 'Disponible' : 'Agotado / Bloqueado' }}
+          </span>
+        </td>
+
+        <td>
+          <div class="d-flex gap-2">
+            <input
+              type="number"
+              class="form-control"
+              [(ngModel)]="producto.stock"
+              min="0"
+            />
+
+            <button
+              class="btn btn-coffee"
+              (click)="actualizarStock(producto)"
+            >
+              Guardar
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
