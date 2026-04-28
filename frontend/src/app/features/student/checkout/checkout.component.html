@@ -1,1 +1,106 @@
-<p>checkout works!</p>
+<div class="checkout-container">
+  <div class="header">
+    <h1>Finalizar Pedido</h1>
+    <p>Revisa tu carrito y aplica tus beneficios universitarios.</p>
+  </div>
+
+  <div class="content-grid" *ngIf="cartItems.length > 0; else emptyCart">
+    <!-- Lista de Items -->
+    <div class="cart-section">
+      <div class="card">
+        <h2>Tu Carrito</h2>
+        
+        <div class="item-list">
+          <div class="item" *ngFor="let item of cartItems">
+            <div class="item-info">
+              <span class="item-name">{{ item.producto.nombre }}</span>
+              <span class="item-category badge">{{ item.producto.categoria }}</span>
+            </div>
+            <div class="item-actions">
+              <span class="item-qty">Cant: {{ item.cantidad }}</span>
+              <span class="item-price">${{ item.producto.precio * item.cantidad | number:'1.0-0' }}</span>
+              <button class="btn-remove" (click)="removeItem(item.producto.id)">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Retiro Programado -->
+      <div class="card mt-20">
+        <h2>Retiro Programado</h2>
+        <div class="form-group">
+          <label for="fechaRetiro">Selecciona fecha y hora de retiro (Opcional)</label>
+          <input type="datetime-local" id="fechaRetiro" [(ngModel)]="fechaRetiro" (change)="onTimeChange()" class="form-control">
+        </div>
+
+        <div class="alert warning" *ngIf="highDemandWarning">
+          <i class="fas fa-exclamation-triangle"></i>
+          <strong>Integración con Biblioteca:</strong> Alerta de demanda crítica proyectada en este horario. Los tiempos de espera pueden ser mayores.
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumen y Pago -->
+    <div class="summary-section">
+      <div class="card summary-card">
+        <h2>Resumen de Compra</h2>
+        
+        <div *ngIf="loadingCalculation" class="loader-container">
+          <div class="spinner"></div>
+          <p>Calculando beneficios...</p>
+        </div>
+
+        <div *ngIf="!loadingCalculation && calculation">
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span>${{ calculation.subtotal | number:'1.0-0' }}</span>
+          </div>
+
+          <!-- Descuentos Aplicados -->
+          <div class="discounts-container" *ngIf="calculation.descuentosAplicados?.length > 0">
+            <h3 class="discounts-title">Beneficios Aplicados</h3>
+            <div class="discount-item" *ngFor="let desc of calculation.descuentosAplicados">
+              <div class="discount-info">
+                <i class="fas fa-tag"></i>
+                <span class="discount-name">{{ desc.promocion }} ({{ desc.producto }})</span>
+              </div>
+              <span class="discount-amount">-${{ desc.montoDescontado | number:'1.0-0' }}</span>
+            </div>
+          </div>
+
+          <div class="summary-row total">
+            <span>Total a Pagar</span>
+            <span>${{ calculation.total | number:'1.0-0' }}</span>
+          </div>
+
+          <div class="alert error" *ngIf="paymentError">
+            <i class="fas fa-times-circle"></i> {{ paymentError }}
+          </div>
+
+          <button 
+            class="btn-primary w-100 mt-20" 
+            (click)="checkout()" 
+            [disabled]="processingPayment">
+            <span *ngIf="!processingPayment">
+              <i class="fas fa-credit-card"></i> Pagar con Sistema de Tesorería
+            </span>
+            <span *ngIf="processingPayment">
+              <i class="fas fa-spinner fa-spin"></i> Procesando pago...
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #emptyCart>
+    <div class="empty-state">
+      <i class="fas fa-shopping-basket"></i>
+      <h2>Tu carrito está vacío</h2>
+      <p>Agrega productos desde el menú para realizar un pedido.</p>
+      <button class="btn-primary mt-20" routerLink="/student/menu">Ir al Menú</button>
+    </div>
+  </ng-template>
+</div>

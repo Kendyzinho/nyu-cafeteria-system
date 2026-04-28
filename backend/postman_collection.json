@@ -1,0 +1,53 @@
+{
+  "info": {
+    "name": "API Cafetería y Planes de Alimentación (Fase 1)",
+    "description": "APIs expuestas por el módulo de Cafetería para que Tesorería, Alojamiento y Matrícula puedan consumir el historial de compras y los planes disponibles.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Obtener Planes de Alimentación",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/meal-plans",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "meal-plans"
+          ]
+        },
+        "description": "Devuelve la lista de planes de alimentación disponibles y su estado."
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener Historial de Consumo de Estudiante",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/orders/history/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "orders",
+            "history",
+            "1"
+          ]
+        },
+        "description": "Devuelve el historial de órdenes pagadas de un estudiante, incluyendo la evidencia de descuentos aplicados (Beneficios Universitarios)."
+      },
+      "response": []
+    }
+  ]
+}

@@ -23,4 +23,10 @@ export class OrderEntity {
 
   @Column()
   fechaCreacion!: Date;
+
+  @Column({ nullable: true })
+  fechaRetiro?: Date;
+
+  @Column('json', { nullable: true })
+  descuentosAplicados?: any[];
 }

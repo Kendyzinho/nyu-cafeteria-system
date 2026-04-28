@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { CartService } from '../../../core/services/cart.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-menu',
@@ -9,7 +11,11 @@ import { HttpClient } from '@angular/common/http';
 export class MenuComponent implements OnInit {
   menuItems: any[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private cartService: CartService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.fetchMenu();
@@ -21,11 +27,13 @@ export class MenuComponent implements OnInit {
         // Mapear los datos del backend a la estructura que espera el HTML
         this.menuItems = data.map(item => ({
           id: item.id,
+          nombre: item.nombre, // guardamos el original para el carrito
+          precio: Number(item.precio), // guardamos el original para el carrito
+          categoria: item.categoria,
           name: item.nombre,
           category: item.categoria,
           description: item.descripcion,
           price: Number(item.precio),
-          studentPrice: Number(item.precio) * 0.75, // 25% de descuento para estudiantes
           image: this.getImageForCategory(item.categoria),
           isAvailable: item.disponible && item.stockActual > 0
         }));
@@ -48,8 +56,11 @@ export class MenuComponent implements OnInit {
 
   addToCart(item: any) {
     if(item.isAvailable) {
-      console.log('Agregado al carrito:', item.name);
-      alert(`${item.name} agregado a tu pedido.`);
+      this.cartService.addToCart({ id: item.id, nombre: item.nombre, precio: item.precio, categoria: item.categoria }, 1);
     }
+  }
+
+  goToCheckout() {
+    this.router.navigate(['/student/checkout']);
   }
 }

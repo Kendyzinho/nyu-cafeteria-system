@@ -1,1 +1,48 @@
-<p>resident-plan works!</p>
+<div class="plans-container">
+  <div class="header">
+    <h1>Planes de Alimentación</h1>
+    <p>Adquiere planes mensuales. Los planes residenciales requieren verificación con el Sistema de Alojamiento Universitario.</p>
+  </div>
+
+  <div class="alert success" *ngIf="paymentSuccess">
+    <i class="fas fa-check-circle"></i> Integración exitosa: Pago aprobado por Tesorería Central. Plan contratado.
+  </div>
+
+  <div class="alert warning" *ngIf="!residenciaActiva">
+    <i class="fas fa-exclamation-triangle"></i> 
+    El Sistema de Alojamiento indica que no tienes una residencia activa. Los planes exclusivos para residentes están bloqueados.
+  </div>
+
+  <div *ngIf="loading" class="loader-container">
+    <div class="spinner"></div>
+    <p>Cargando planes disponibles...</p>
+  </div>
+
+  <div class="plans-grid" *ngIf="!loading">
+    <div class="plan-card" *ngFor="let plan of plans" [class.disabled-card]="plan.tipo === 'residente' && !residenciaActiva">
+      
+      <div class="plan-badge {{ plan.tipo }}">
+        {{ plan.tipo === 'residente' ? 'Exclusivo Residentes' : 'Plan Regular' }}
+      </div>
+
+      <h2 class="plan-name">{{ plan.nombre }}</h2>
+      <div class="plan-price">${{ plan.precio | number:'1.0-0' }} <span>/ mes</span></div>
+      
+      <p class="plan-desc">{{ plan.descripcion }}</p>
+
+      <div class="plan-features">
+        <div class="feature"><i class="fas fa-check"></i> Acceso a comedor NYU</div>
+        <div class="feature"><i class="fas fa-check"></i> Soporte nutricional</div>
+        <div class="feature" *ngIf="plan.tipo === 'residente'"><i class="fas fa-check"></i> Entregas a la habitación</div>
+      </div>
+
+      <button 
+        class="btn-primary" 
+        (click)="buyPlan(plan)"
+        [disabled]="plan.tipo === 'residente' && !residenciaActiva">
+        {{ (plan.tipo === 'residente' && !residenciaActiva) ? 'Requiere Residencia' : 'Contratar Plan' }}
+      </button>
+
+    </div>
+  </div>
+</div>
