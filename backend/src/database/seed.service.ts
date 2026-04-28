@@ -19,7 +19,8 @@ export class SeedService implements OnApplicationBootstrap {
 
   private async seedUsers() {
     const repo = this.dataSource.getRepository(UserEntity);
-    if ((await repo.count()) > 0) return;
+    // Forzamos la actualización de usuarios para asegurar la contraseña 123456
+    await repo.query('DELETE FROM user'); 
 
     const hash = await bcrypt.hash('123456', 10);
     await repo.save([
