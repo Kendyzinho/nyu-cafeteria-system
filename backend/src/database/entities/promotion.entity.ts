@@ -40,9 +40,9 @@ export class PromotionEntity {
   @Column({ default: 'todo' })
   tipoAplicacion!: string; // 'producto' | 'categoria' | 'todo'
 
-  @Column({ nullable: true })
-  categoria!: string; // Categoría del menú (cuando tipoAplicacion = 'categoria')
+  @Column({ type: 'varchar', nullable: true })
+  categoria?: string | null; // Categoría del menú (cuando tipoAplicacion = 'categoria')
 
   @Column('json', { nullable: true })
-  productosIds!: number[]; // IDs de productos (cuando tipoAplicacion = 'producto')
+  productosIds?: number[] | null; // IDs de productos (cuando tipoAplicacion = 'producto')
 }
