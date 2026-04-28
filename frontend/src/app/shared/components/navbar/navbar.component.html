@@ -24,12 +24,16 @@
         </li>
       </ul>
       
-      <div class="d-flex align-items-center text-white">
+      <div class="d-flex align-items-center text-white" *ngIf="user">
         <div class="me-3 text-end d-none d-md-block">
-          <small class="d-block lh-1 fw-bold">Alejandro Ruiz</small>
-          <small class="text-pastel" style="font-size: 0.7rem;">Estudiante Activo</small>
+          <small class="d-block lh-1 fw-bold">{{ user.nombre }}</small>
+          <small class="text-pastel" style="font-size: 0.7rem;">
+            {{ user.tipo === 'admin' ? 'Administrador' : (user.matriculaActiva ? 'Estudiante Activo' : 'Estudiante Inactivo') }}
+          </small>
         </div>
-        <div class="avatar">AR</div>
+        <div class="avatar dropdown" style="cursor: pointer;" (click)="logout()">
+          {{ initials }}
+        </div>
       </div>
     </div>
   </div>

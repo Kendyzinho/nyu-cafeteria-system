@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { PlanService } from '../../../core/services/plan.service';
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -11,18 +12,33 @@ export class ResidentPlanComponent implements OnInit {
   plans: any[] = [];
   loading = true;
   residenciaActiva = false;
+  matriculaActiva = false;
   paymentSuccess = false;
 
   constructor(
     private planService: PlanService,
-    private authService: AuthService
+    private authService: AuthService,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
-    // Verificar si el estudiante actual tiene residencia activa en el JWT/perfil
     const user = this.authService.getUser();
-    if (user && user.email === 'juan@nyu.edu') {
-      this.residenciaActiva = true; // Hardcodeado por simplificación
+    if (user) {
+      // Obtener datos frescos del usuario desde el backend
+      this.http.get<any>(`http://localhost:3000/api/users/${user.id}`).subscribe({
+        next: (freshUser) => {
+          this.residenciaActiva = !!freshUser.residenciaActiva;
+          this.matriculaActiva = !!freshUser.matriculaActiva;
+          // Actualizar localStorage con datos frescos
+          const updatedUser = { ...user, residenciaActiva: freshUser.residenciaActiva, matriculaActiva: freshUser.matriculaActiva };
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+        },
+        error: () => {
+          // Fallback a datos de localStorage
+          this.residenciaActiva = !!user.residenciaActiva;
+          this.matriculaActiva = !!user.matriculaActiva;
+        }
+      });
     }
     this.loadPlans();
   }
@@ -45,6 +61,11 @@ export class ResidentPlanComponent implements OnInit {
       return;
     }
 
+    if (plan.tipo === 'matriculado' && !this.matriculaActiva) {
+      alert('Error de Integración (Sistema de Matrícula): No tienes una matrícula activa registrada para contratar este plan.');
+      return;
+    }
+
     // Simulamos integración con tesorería
     const confirm = window.confirm(`¿Autorizas el cobro de $${plan.precio} por el plan ${plan.nombre} a través del Sistema de Tesorería?`);
     if (confirm) {
@@ -53,3 +74,4 @@ export class ResidentPlanComponent implements OnInit {
     }
   }
 }
+

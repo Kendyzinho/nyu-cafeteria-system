@@ -13,16 +13,21 @@
     El Sistema de Alojamiento indica que no tienes una residencia activa. Los planes exclusivos para residentes están bloqueados.
   </div>
 
+  <div class="alert warning" *ngIf="!matriculaActiva">
+    <i class="fas fa-exclamation-triangle"></i> 
+    El Sistema de Matrícula indica que no tienes una matrícula activa. Los planes para matriculados están bloqueados.
+  </div>
+
   <div *ngIf="loading" class="loader-container">
     <div class="spinner"></div>
     <p>Cargando planes disponibles...</p>
   </div>
 
   <div class="plans-grid" *ngIf="!loading">
-    <div class="plan-card" *ngFor="let plan of plans" [class.disabled-card]="plan.tipo === 'residente' && !residenciaActiva">
+    <div class="plan-card" *ngFor="let plan of plans" [class.disabled-card]="(plan.tipo === 'residente' && !residenciaActiva) || (plan.tipo === 'matriculado' && !matriculaActiva)">
       
       <div class="plan-badge {{ plan.tipo }}">
-        {{ plan.tipo === 'residente' ? 'Exclusivo Residentes' : 'Plan Regular' }}
+        {{ plan.tipo === 'residente' ? 'Exclusivo Residentes' : (plan.tipo === 'matriculado' ? 'Matriculado' : 'Abierto a Todos') }}
       </div>
 
       <h2 class="plan-name">{{ plan.nombre }}</h2>
@@ -34,13 +39,14 @@
         <div class="feature"><i class="fas fa-check"></i> Acceso a comedor NYU</div>
         <div class="feature"><i class="fas fa-check"></i> Soporte nutricional</div>
         <div class="feature" *ngIf="plan.tipo === 'residente'"><i class="fas fa-check"></i> Entregas a la habitación</div>
+        <div class="feature" *ngIf="plan.tipo === 'matriculado'"><i class="fas fa-check"></i> Beneficios de matrícula</div>
       </div>
 
       <button 
         class="btn-primary" 
         (click)="buyPlan(plan)"
-        [disabled]="plan.tipo === 'residente' && !residenciaActiva">
-        {{ (plan.tipo === 'residente' && !residenciaActiva) ? 'Requiere Residencia' : 'Contratar Plan' }}
+        [disabled]="(plan.tipo === 'residente' && !residenciaActiva) || (plan.tipo === 'matriculado' && !matriculaActiva)">
+        {{ (plan.tipo === 'residente' && !residenciaActiva) ? 'Requiere Residencia' : ((plan.tipo === 'matriculado' && !matriculaActiva) ? 'Requiere Matrícula' : 'Contratar Plan') }}
       </button>
 
     </div>

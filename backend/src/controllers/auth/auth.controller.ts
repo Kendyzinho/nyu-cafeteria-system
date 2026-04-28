@@ -1,7 +1,7 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from 'src/providers/auth/auth.service';
-import type { ILoginRequest } from './dto/ILoginRequest';
-import type { IRegisterRequest } from './dto/IRegisterRequest';
+import { ILoginRequest } from './dto/ILoginRequest';
+import { IRegisterRequest } from './dto/IRegisterRequest';
 
 @Controller('auth')
 export class AuthController {

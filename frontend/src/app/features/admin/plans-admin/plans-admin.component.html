@@ -23,7 +23,7 @@
           <label class="form-label small">Tipo</label>
           <select class="form-select form-select-sm" [(ngModel)]="nuevoPlan.tipo">
             <option value="residente">Residente</option>
-            <option value="regular">Regular</option>
+            <option value="matriculado">Matriculado</option>
             <option value="todos">Todos</option>
           </select>
         </div>
@@ -53,12 +53,12 @@
         <ng-container *ngIf="editandoId !== plan.id">
           <td>{{ plan.nombre }}</td>
           <td>{{ plan.descripcion }}</td>
-          <td>${{ plan.precio }}</td>
+          <td>${{ plan.precio | number:'1.0-0' }}</td>
           <td>
             <span class="badge"
               [ngClass]="{
                 'badge-info-custom': plan.tipo === 'residente',
-                'badge-neutral-custom': plan.tipo === 'regular',
+                'badge-neutral-custom': plan.tipo === 'matriculado',
                 'badge-success-custom': plan.tipo === 'todos'
               }">
               {{ plan.tipo | titlecase }}
@@ -70,8 +70,8 @@
             </span>
           </td>
           <td>
-            <button class="btn btn-outline-primary btn-sm me-1" (click)="editarPlan(plan)">✏️ Editar</button>
-            <button class="btn btn-danger btn-sm" (click)="eliminarPlan(plan)">🗑️</button>
+            <button class="btn btn-outline-warning btn-sm me-1 text-dark" (click)="editarPlan(plan)"><i class="fas fa-edit"></i> Editar</button>
+            <button class="btn btn-danger btn-sm" title="Eliminar" (click)="eliminarPlan(plan)"><i class="fas fa-trash text-white"></i></button>
           </td>
         </ng-container>
 
@@ -83,7 +83,7 @@
           <td>
             <select class="form-select form-select-sm" [(ngModel)]="plan.tipo">
               <option value="residente">Residente</option>
-              <option value="regular">Regular</option>
+              <option value="matriculado">Matriculado</option>
               <option value="todos">Todos</option>
             </select>
           </td>
@@ -94,7 +94,7 @@
             </select>
           </td>
           <td>
-            <button class="btn btn-success btn-sm me-1" (click)="guardarEdicion(plan)">💾 Guardar</button>
+            <button class="btn btn-coffee btn-sm me-1 text-white" (click)="guardarEdicion(plan)">💾 Guardar</button>
             <button class="btn btn-secondary btn-sm" (click)="cancelarEdicion()">Cancelar</button>
           </td>
         </ng-container>

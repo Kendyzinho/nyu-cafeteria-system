@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 import { UserEntity } from 'src/database/entities/user.entity';
-import type { IPostUserRequest } from 'src/controllers/users/dto/IPostUserRequest';
-import type { IPutUserRequest } from 'src/controllers/users/dto/IPutUserRequest';
+import { IPostUserRequest } from 'src/controllers/users/dto/IPostUserRequest';
+import { IPutUserRequest } from 'src/controllers/users/dto/IPutUserRequest';
 
 @Injectable()
 export class UsersService {
@@ -28,7 +29,16 @@ export class UsersService {
   }
 
   public async create(data: IPostUserRequest): Promise<UserEntity> {
-    const item = this.userRepository.create(data);
+    const existingUser = await this.findByEmail(data.email);
+    if (existingUser) {
+      throw new ConflictException('El email ya está registrado');
+    }
+
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const item = this.userRepository.create({
+      ...data,
+      password: hashedPassword,
+    });
     return await this.userRepository.save(item);
   }
 

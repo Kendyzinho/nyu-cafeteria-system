@@ -9,6 +9,8 @@ import { HttpClient } from '@angular/common/http';
 export class UsersAdminComponent implements OnInit {
   usuarios: any[] = [];
   apiUrl = 'http://localhost:3000/api';
+  editandoId: number | null = null;
+  private _backup: any = null;
 
   // Formulario de nuevo usuario
   nuevoUsuario = {
@@ -67,6 +69,29 @@ export class UsersAdminComponent implements OnInit {
         usuario.residenciaActiva = nuevoEstado;
       },
       error: () => alert('Error al actualizar residencia')
+    });
+  }
+
+  editarUsuario(usuario: any) {
+    this._backup = { nombre: usuario.nombre, apellido: usuario.apellido, email: usuario.email, tipo: usuario.tipo };
+    this.editandoId = usuario.id;
+  }
+
+  cancelarEdicion(usuario: any) {
+    Object.assign(usuario, this._backup);
+    this.editandoId = null;
+    this._backup = null;
+  }
+
+  guardarEdicion(usuario: any) {
+    this.http.put(`${this.apiUrl}/users/${usuario.id}`, {
+      nombre: usuario.nombre,
+      apellido: usuario.apellido,
+      email: usuario.email,
+      tipo: usuario.tipo,
+    }).subscribe({
+      next: () => { this.editandoId = null; this._backup = null; },
+      error: () => alert('Error al guardar cambios')
     });
   }
 

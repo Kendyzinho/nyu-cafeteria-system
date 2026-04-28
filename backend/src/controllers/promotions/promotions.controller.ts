@@ -1,13 +1,17 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Res } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, Res, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import type { Response } from 'express';
-import type { IPostPromotionRequest } from './dto/IPostPromotionRequest';
+import { IPostPromotionRequest } from './dto/IPostPromotionRequest';
 import type { IPostPromotionResponse } from './dto/IPostPromotionResponse';
-import type { IPutPromotionRequest } from './dto/IPutPromotionRequest';
+import { IPutPromotionRequest } from './dto/IPutPromotionRequest';
 import { PromotionsService } from 'src/providers/promotions/promotions.service';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/guards/roles.guard';
+import { Roles } from 'src/decorators/roles.decorator';
 
+@ApiTags('Promotions')
 @Controller('promotions')
 export class PromotionsController {
-
   constructor(private readonly promotionsService: PromotionsService) {}
 
   @Get()
@@ -20,6 +24,9 @@ export class PromotionsController {
     return await this.promotionsService.getOne(id);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   @Post()
   async postPromotion(
     @Body() request: IPostPromotionRequest
@@ -38,6 +45,9 @@ export class PromotionsController {
     return response;
   }
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   @Put(':id')
   async putPromotion(
     @Param('id') id: number,
@@ -53,6 +63,9 @@ export class PromotionsController {
     return response.status(202).send();
   }
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   @Delete(':id')
   async deletePromotion(
     @Param('id') id: number,

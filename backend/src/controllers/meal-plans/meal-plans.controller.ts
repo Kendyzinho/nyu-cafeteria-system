@@ -1,13 +1,17 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Res } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, Res, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import type { Response } from 'express';
-import type { IPostMealPlanRequest } from './dto/IPostMealPlanRequest';
+import { IPostMealPlanRequest } from './dto/IPostMealPlanRequest';
 import type { IPostMealPlanResponse } from './dto/IPostMealPlanResponse';
-import type { IPutMealPlanRequest } from './dto/IPutMealPlanRequest';
+import { IPutMealPlanRequest } from './dto/IPutMealPlanRequest';
 import { MealPlansService } from 'src/providers/meal-plans/meal-plans.service';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/guards/roles.guard';
+import { Roles } from 'src/decorators/roles.decorator';
 
+@ApiTags('Meal Plans')
 @Controller('meal-plans')
 export class MealPlansController {
-
   constructor(private readonly mealPlansService: MealPlansService) {}
 
   @Get()
@@ -20,6 +24,9 @@ export class MealPlansController {
     return await this.mealPlansService.getOne(id);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   @Post()
   async postMealPlan(
     @Body() request: IPostMealPlanRequest
@@ -38,6 +45,9 @@ export class MealPlansController {
     return response;
   }
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   @Put(':id')
   async putMealPlan(
     @Param('id') id: number,
@@ -53,6 +63,9 @@ export class MealPlansController {
     return response.status(202).send();
   }
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   @Delete(':id')
   async deleteMealPlan(
     @Param('id') id: number,

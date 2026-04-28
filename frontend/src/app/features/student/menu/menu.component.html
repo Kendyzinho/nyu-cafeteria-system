@@ -1,34 +1,88 @@
-<div class="d-flex justify-content-between align-items-center mb-4">
+<!-- Header del menú -->
+<div class="d-flex justify-content-between align-items-center mb-3">
   <div>
     <h2 class="fw-bold" style="color: #4E342E;">Menú del Día 🍽️</h2>
     <p class="text-muted">Explora nuestras opciones y arma tu pedido.</p>
   </div>
-  
-  <div class="d-flex gap-3">
+
+  <div class="d-flex gap-2 align-items-center">
     <select class="form-select w-auto select-cafeteria shadow-sm">
       <option value="todos">Todas las categorías</option>
       <option value="almuerzos">Almuerzos</option>
       <option value="ligeras">Opciones Ligeras</option>
       <option value="bebidas">Bebidas</option>
     </select>
-    <button class="btn btn-primary shadow-sm" (click)="goToCheckout()" style="background-color: #57068c; border: none;">
-      <i class="fas fa-shopping-cart"></i> Ir a Pagar
+
+    <button class="btn btn-cafeteria shadow-sm" (click)="goToCheckout()" style="border: none;">
+      <i class="fas fa-credit-card me-1"></i> Ir a Pagar
     </button>
   </div>
 </div>
 
+<!-- Backdrop -->
+<div class="cart-backdrop" *ngIf="showCart" (click)="showCart = false"></div>
+
+<!-- Drawer lateral derecho -->
+<div class="cart-drawer" [class.open]="showCart">
+  <div class="cart-drawer-header">
+    <span><i class="fas fa-shopping-cart me-2"></i>Tu Carrito</span>
+    <button class="btn-close-cart" (click)="showCart = false">✕</button>
+  </div>
+
+  <div class="cart-drawer-body">
+    <div *ngIf="cartItems.length === 0" class="cart-empty">
+      <i class="fas fa-shopping-basket"></i>
+      <p>Tu carrito está vacío</p>
+      <small>Agrega productos desde el menú</small>
+    </div>
+
+    <div *ngIf="cartItems.length > 0">
+      <div class="cart-item" *ngFor="let item of cartItems">
+        <div class="cart-item-info">
+          <span class="cart-item-name">{{ item.producto.nombre }}</span>
+          <span class="cart-item-cat">{{ item.producto.categoria }}</span>
+        </div>
+        <div class="cart-item-right">
+          <span class="cart-item-qty">x{{ item.cantidad }}</span>
+          <span class="cart-item-price">${{ item.producto.precio * item.cantidad | number:'1.0-0' }}</span>
+          <button class="btn-remove-item" (click)="removeFromCart(item.producto.id)" title="Eliminar">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cart-drawer-footer" *ngIf="cartItems.length > 0">
+    <div class="cart-total">
+      <span>Total estimado</span>
+      <span class="cart-total-price">${{ totalPrice | number:'1.0-0' }}</span>
+    </div>
+    <button class="btn btn-cafeteria w-100 fw-bold py-2" (click)="goToCheckout()">
+      <i class="fas fa-credit-card me-1"></i> Confirmar y Pagar
+    </button>
+  </div>
+</div>
+
+<!-- Botón flotante del carrito (esquina inferior derecha) -->
+<button class="cart-fab" (click)="showCart = !showCart" title="Ver carrito">
+  <i class="fas fa-shopping-cart"></i>
+  <span class="cart-badge" *ngIf="totalItems > 0">{{ totalItems }}</span>
+</button>
+
+<!-- Grid de productos -->
 <div class="row g-4">
   <div class="col-md-6 col-lg-4" *ngFor="let item of menuItems">
     <div class="card h-100 border-0 shadow-sm card-menu" [ngClass]="{'opacity-75': !item.isAvailable}">
       <img [src]="item.image" class="card-img-top img-menu" [alt]="item.name">
-      
+
       <div *ngIf="!item.isAvailable" class="sold-out-badge">AGOTADO</div>
 
       <div class="card-body d-flex flex-column">
         <span class="badge bg-cafe-light w-auto mb-2 align-self-start">{{ item.category }}</span>
         <h5 class="fw-bold mb-1" style="color: #4E342E;">{{ item.name }}</h5>
         <p class="text-muted small mb-3 flex-grow-1">{{ item.description }}</p>
-        
+
         <div class="d-flex justify-content-between align-items-end mb-3">
           <div>
             <div class="fs-5 fw-bold" style="color: #6F4E37;">${{ item.price | number:'1.0-0' }}</div>
@@ -36,8 +90,8 @@
           </div>
         </div>
 
-        <button 
-          class="btn w-100 fw-bold" 
+        <button
+          class="btn w-100 fw-bold"
           [ngClass]="item.isAvailable ? 'btn-cafeteria' : 'btn-secondary'"
           [disabled]="!item.isAvailable"
           (click)="addToCart(item)">

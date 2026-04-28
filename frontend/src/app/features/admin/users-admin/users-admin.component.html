@@ -52,42 +52,73 @@
     </thead>
     <tbody>
       <tr *ngFor="let usuario of usuarios">
-        <td>{{ usuario.id }}</td>
-        <td>{{ usuario.nombre }} {{ usuario.apellido }}</td>
-        <td>{{ usuario.email }}</td>
-        <td>
-          <span class="badge" [ngClass]="usuario.tipo === 'admin' ? 'badge-info-custom' : 'badge-neutral-custom'">
-            {{ usuario.tipo === 'admin' ? 'Administrador' : 'Estudiante' }}
-          </span>
-        </td>
 
-        <td class="text-center">
-          <button
-            class="btn btn-sm"
-            [ngClass]="usuario.matriculaActiva ? 'btn-success' : 'btn-outline-secondary'"
-            (click)="toggleMatricula(usuario)"
-            [title]="usuario.matriculaActiva ? 'Desactivar matrícula' : 'Activar matrícula'"
-          >
-            {{ usuario.matriculaActiva ? '✅ Activa' : '❌ Inactiva' }}
-          </button>
-        </td>
+        <!-- Modo lectura -->
+        <ng-container *ngIf="editandoId !== usuario.id">
+          <td>{{ usuario.id }}</td>
+          <td>{{ usuario.nombre }} {{ usuario.apellido }}</td>
+          <td>{{ usuario.email }}</td>
+          <td>
+            <span class="badge" [ngClass]="usuario.tipo === 'admin' ? 'badge-info-custom' : 'badge-neutral-custom'">
+              {{ usuario.tipo === 'admin' ? 'Administrador' : 'Estudiante' }}
+            </span>
+          </td>
+          <td class="text-center">
+            <button class="btn btn-sm" [ngClass]="usuario.matriculaActiva ? 'btn-success' : 'btn-outline-secondary'"
+              [disabled]="true">
+              {{ usuario.matriculaActiva ? '✅ Activa' : '❌ Inactiva' }}
+            </button>
+          </td>
+          <td class="text-center">
+            <button class="btn btn-sm" [ngClass]="usuario.residenciaActiva ? 'btn-success' : 'btn-outline-secondary'"
+              [disabled]="true">
+              {{ usuario.residenciaActiva ? '✅ Activa' : '❌ Inactiva' }}
+            </button>
+          </td>
+          <td>
+            <button class="btn btn-outline-warning btn-sm me-1 text-dark" (click)="editarUsuario(usuario)">
+              <i class="fas fa-edit"></i> Editar
+            </button>
+            <button class="btn btn-danger btn-sm" title="Eliminar" (click)="eliminarUsuario(usuario)">
+              <i class="fas fa-trash text-white"></i>
+            </button>
+          </td>
+        </ng-container>
 
-        <td class="text-center">
-          <button
-            class="btn btn-sm"
-            [ngClass]="usuario.residenciaActiva ? 'btn-success' : 'btn-outline-secondary'"
-            (click)="toggleResidencia(usuario)"
-            [title]="usuario.residenciaActiva ? 'Desactivar residencia' : 'Activar residencia'"
-          >
-            {{ usuario.residenciaActiva ? '✅ Activa' : '❌ Inactiva' }}
-          </button>
-        </td>
+        <!-- Modo edición -->
+        <ng-container *ngIf="editandoId === usuario.id">
+          <td>{{ usuario.id }}</td>
+          <td>
+            <input type="text" class="form-control form-control-sm mb-1" [(ngModel)]="usuario.nombre" placeholder="Nombre">
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="usuario.apellido" placeholder="Apellido">
+          </td>
+          <td>
+            <input type="email" class="form-control form-control-sm" [(ngModel)]="usuario.email">
+          </td>
+          <td>
+            <select class="form-select form-select-sm" [(ngModel)]="usuario.tipo">
+              <option value="student">Estudiante</option>
+              <option value="admin">Admin</option>
+            </select>
+          </td>
+          <td class="text-center">
+            <button class="btn btn-sm" [ngClass]="usuario.matriculaActiva ? 'btn-success' : 'btn-outline-secondary'"
+              (click)="toggleMatricula(usuario)">
+              {{ usuario.matriculaActiva ? '✅ Activa' : '❌ Inactiva' }}
+            </button>
+          </td>
+          <td class="text-center">
+            <button class="btn btn-sm" [ngClass]="usuario.residenciaActiva ? 'btn-success' : 'btn-outline-secondary'"
+              (click)="toggleResidencia(usuario)">
+              {{ usuario.residenciaActiva ? '✅ Activa' : '❌ Inactiva' }}
+            </button>
+          </td>
+          <td>
+            <button class="btn btn-success-soft btn-sm me-1" (click)="guardarEdicion(usuario)">💾</button>
+            <button class="btn btn-outline-secondary btn-sm" (click)="cancelarEdicion(usuario)">✖</button>
+          </td>
+        </ng-container>
 
-        <td>
-          <button class="btn btn-danger btn-sm" (click)="eliminarUsuario(usuario)">
-            🗑️ Eliminar
-          </button>
-        </td>
       </tr>
     </tbody>
   </table>

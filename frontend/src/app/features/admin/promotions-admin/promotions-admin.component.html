@@ -119,8 +119,8 @@
             </span>
           </td>
           <td>
-            <button class="btn btn-outline-primary btn-sm me-1" (click)="editarPromocion(promo)">✏️ Editar</button>
-            <button class="btn btn-danger btn-sm" (click)="eliminarPromocion(promo)">🗑️</button>
+            <button class="btn btn-outline-warning btn-sm me-1 text-dark" (click)="editarPromocion(promo)"><i class="fas fa-edit"></i> Editar</button>
+            <button class="btn btn-danger btn-sm" title="Eliminar" (click)="eliminarPromocion(promo)"><i class="fas fa-trash text-white"></i></button>
           </td>
         </ng-container>
 
@@ -167,8 +167,8 @@
             </select>
           </td>
           <td>
-            <button class="btn btn-success btn-sm me-1" (click)="guardarEdicion(promo)">💾</button>
-            <button class="btn btn-secondary btn-sm" (click)="cancelarEdicion()">✖</button>
+            <button class="btn btn-success-soft btn-sm me-1" (click)="guardarEdicion(promo)">💾</button>
+            <button class="btn btn-outline-coffee btn-sm" (click)="cancelarEdicion()">✖</button>
           </td>
         </ng-container>
 

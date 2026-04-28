@@ -43,6 +43,8 @@ export class AuthService {
         apellido: user.apellido,
         email: user.email,
         tipo: user.tipo,
+        matriculaActiva: user.matriculaActiva,
+        residenciaActiva: user.residenciaActiva,
       },
     };
   }

@@ -23,9 +23,9 @@ export class StockService {
   }
 
   actualizarStock(producto: any): Observable<any> {
-    // Solo enviamos el campo stockActual para que se actualice en la base de datos
     return this.http.put(`${this.apiUrl}/${producto.id}`, {
-      stockActual: producto.stock
+      stockActual: producto.stock,
+      disponible: producto.stock > 0
     });
   }
 }

@@ -1,10 +1,18 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Res } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, Res, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import type { Response } from 'express';
-import type { IPostStockRequest } from './dto/IPostStockRequest';
+import { IPostStockRequest } from './dto/IPostStockRequest';
 import type { IPostStockResponse } from './dto/IPostStockResponse';
-import type { IPutStockRequest } from './dto/IPutStockRequest';
+import { IPutStockRequest } from './dto/IPutStockRequest';
 import { StockService } from 'src/providers/stock/stock.service';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/guards/roles.guard';
+import { Roles } from 'src/decorators/roles.decorator';
 
+@ApiTags('Stock')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('admin')
 @Controller('stock')
 export class StockController {
 

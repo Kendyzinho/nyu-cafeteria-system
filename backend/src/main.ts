@@ -39,14 +39,14 @@ async function bootstrap() {
     .setTitle('NYU Cafeteria System API')
     .setDescription('Documentación de endpoints del backend')
     .setVersion('1.0.0')
-    // .addBearerAuth()  // Descomentar si se quiere soporte JWT en Swagger UI
+    .addBearerAuth()
     .build();
 
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
 
-  // El primer argumento es la ruta relativa al prefijo global.
-  // Con globalPrefix='api', la UI queda en /api/docs y el JSON en /api/docs-json.
-  SwaggerModule.setup('docs', app, swaggerDocument);
+  // El primer argumento es la ruta absoluta (no relativa al prefijo global).
+  // La UI queda en /api/docs y el JSON en /api/docs-json.
+  SwaggerModule.setup('api/docs', app, swaggerDocument);
 
   await app.listen(3000);
 }

@@ -1,13 +1,17 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Res } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, Res, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import type { Response } from 'express';
-import type { IPostMenuRequest } from './dto/IPostMenuRequest';
+import { IPostMenuRequest } from './dto/IPostMenuRequest';
 import type { IPostMenuResponse } from './dto/IPostMenuResponse';
-import type { IPutMenuRequest } from './dto/IPutMenuRequest';
+import { IPutMenuRequest } from './dto/IPutMenuRequest';
 import { MenuService } from 'src/providers/menu/menu.service';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/guards/roles.guard';
+import { Roles } from 'src/decorators/roles.decorator';
 
+@ApiTags('Menu')
 @Controller('menu')
 export class MenuController {
-
   constructor(private readonly menuService: MenuService) {}
 
   @Get()
@@ -20,6 +24,9 @@ export class MenuController {
     return await this.menuService.getOne(id);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   @Post()
   async postMenuItem(
     @Body() request: IPostMenuRequest
@@ -38,6 +45,9 @@ export class MenuController {
     return response;
   }
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   @Put(':id')
   async putMenuItem(
     @Param('id') id: number,
@@ -53,6 +63,9 @@ export class MenuController {
     return response.status(202).send();
   }
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   @Delete(':id')
   async deleteMenuItem(
     @Param('id') id: number,

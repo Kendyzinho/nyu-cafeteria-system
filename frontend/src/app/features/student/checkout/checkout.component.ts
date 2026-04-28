@@ -99,7 +99,7 @@ export class CheckoutComponent implements OnInit {
         this.processingPayment = false;
         this.cartService.clearCart();
         // Redirect to success or history
-        this.router.navigate(['/student/history'], { queryParams: { success: 'true' } });
+        this.router.navigate(['/history'], { queryParams: { success: 'true' } });
       },
       error: (err) => {
         this.processingPayment = false;

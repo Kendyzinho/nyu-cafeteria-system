@@ -59,6 +59,39 @@
   color: white;
 }
 
+.btn-outline-coffee {
+  background-color: transparent;
+  color: var(--coffee-main);
+  border: 1px solid var(--coffee-main);
+}
+
+.btn-outline-coffee:hover {
+  background-color: var(--coffee-main);
+  color: white;
+}
+
+.btn-danger-soft {
+  background-color: var(--red-soft);
+  color: white;
+  border: none;
+}
+
+.btn-danger-soft:hover {
+  background-color: #b05a5a;
+  color: white;
+}
+
+.btn-success-soft {
+  background-color: var(--green-soft);
+  color: white;
+  border: none;
+}
+
+.btn-success-soft:hover {
+  background-color: #5a8778;
+  color: white;
+}
+
 
 /* CARDS ADMIN */
 .card-coffee {
