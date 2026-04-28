@@ -34,6 +34,8 @@ import { PromotionEntity } from './entities/promotion.entity';
         ],
         synchronize: true,
         autoLoadEntities: true,
+        retryAttempts: 10,
+        retryDelay: 3000,
       }),
       inject: [ConfigService],
     }),
