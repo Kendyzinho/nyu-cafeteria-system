@@ -21,7 +21,7 @@ export class SeedService implements OnApplicationBootstrap {
     const repo = this.dataSource.getRepository(UserEntity);
     if ((await repo.count()) > 0) return;
 
-    const hash = await bcrypt.hash('1234', 10);
+    const hash = await bcrypt.hash('123456', 10);
     await repo.save([
       { nombre: 'Cristian', apellido: 'Admin', email: 'admin@nyu.edu', password: hash, tipo: 'admin', matriculaActiva: true, residenciaActiva: false },
       { nombre: 'Juan', apellido: 'Pérez', email: 'juan@nyu.edu', password: hash, tipo: 'student', matriculaActiva: false, residenciaActiva: true },
