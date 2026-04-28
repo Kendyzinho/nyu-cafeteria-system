@@ -1,1 +1,67 @@
-<p>history works!</p>
+<div class="history-container">
+  <div class="alert success-alert" *ngIf="showSuccessMessage">
+    <i class="fas fa-check-circle"></i>
+    <span>¡Tu pedido ha sido procesado con éxito! El pago por el Sistema de Tesorería fue aprobado.</span>
+  </div>
+
+  <div class="header">
+    <h1>Historial de Consumos</h1>
+    <p>Revisa tus pedidos anteriores y los beneficios que se han aplicado a tu cuenta.</p>
+  </div>
+
+  <div *ngIf="loading" class="loader-container">
+    <div class="spinner"></div>
+    <p>Cargando historial...</p>
+  </div>
+
+  <div *ngIf="!loading && orders.length === 0" class="empty-state">
+    <i class="fas fa-receipt"></i>
+    <h2>Sin registros</h2>
+    <p>Aún no has realizado ningún pedido en la cafetería.</p>
+  </div>
+
+  <div class="orders-list" *ngIf="!loading && orders.length > 0">
+    <div class="order-card" *ngFor="let order of orders">
+      <div class="order-header">
+        <div class="order-meta">
+          <span class="order-id">Orden #{{ order.id }}</span>
+          <span class="order-date">{{ order.fechaCreacion | date:'medium' }}</span>
+        </div>
+        <span class="badge status-pagado">Pagado</span>
+      </div>
+
+      <div class="order-body">
+        <div class="items-summary">
+          <h4>Productos ({{ order.items.length }})</h4>
+          <ul>
+            <li *ngFor="let item of order.items">
+              {{ item.cantidad }}x {{ item.nombre }}
+            </li>
+          </ul>
+        </div>
+        
+        <div class="pickup-info" *ngIf="order.fechaRetiro">
+          <i class="fas fa-clock"></i>
+          <div>
+            <strong>Retiro Programado:</strong><br>
+            {{ order.fechaRetiro | date:'shortTime' }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Evidencia de Descuentos -->
+      <div class="discounts-evidence" *ngIf="order.descuentosAplicados?.length > 0">
+        <h4><i class="fas fa-star"></i> Evidencia de Beneficios Universitarios</h4>
+        <div class="discount-pill" *ngFor="let desc of order.descuentosAplicados">
+          <span class="d-promo">{{ desc.promocion }}</span>
+          <span class="d-amount">-${{ desc.montoDescontado | number:'1.0-0' }}</span>
+        </div>
+      </div>
+
+      <div class="order-footer">
+        <span class="total-label">Total Pagado:</span>
+        <span class="total-amount">${{ order.total | number:'1.0-0' }}</span>
+      </div>
+    </div>
+  </div>
+</div>
