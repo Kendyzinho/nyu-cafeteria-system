@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http'; // Añadido HTTP_INTERCEPTORS
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'; // Añadido HTTP_INTERCEPTORS
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 
@@ -31,43 +31,36 @@ import { MenuItemComponent } from './features/student/menu/menu-item/menu-item.c
 // Interceptores
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    NavbarComponent,
-    ClientLayoutComponent,
-    LoginComponent,
-    HomeComponent,
-    MenuComponent,
-    CheckoutComponent,
-    OrderSuccessComponent,
-    ResidentPlanComponent,
-    HistoryComponent,
-    HelpComponent,
-    UsersListComponent,
-    RegisterComponent,
-    ProfilePageComponent,
-    FooterComponent,
-    MenuItemComponent,
-    
-    // --- LA SOLUCIÓN: Agregamos los componentes de Admin que faltaban ---
-    AdminLayoutComponent,
-    NavbarAdminComponent,
-    AdminDashboardComponent,
-    StockAdminComponent,
-    PlansAdminComponent,
-    PromotionsAdminComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    ReactiveFormsModule,
-    HttpClientModule, 
-    FormsModule
-  ],
-  providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
-  ],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        NavbarComponent,
+        ClientLayoutComponent,
+        LoginComponent,
+        HomeComponent,
+        MenuComponent,
+        CheckoutComponent,
+        OrderSuccessComponent,
+        ResidentPlanComponent,
+        HistoryComponent,
+        HelpComponent,
+        UsersListComponent,
+        RegisterComponent,
+        ProfilePageComponent,
+        FooterComponent,
+        MenuItemComponent,
+        // --- LA SOLUCIÓN: Agregamos los componentes de Admin que faltaban ---
+        AdminLayoutComponent,
+        NavbarAdminComponent,
+        AdminDashboardComponent,
+        StockAdminComponent,
+        PlansAdminComponent,
+        PromotionsAdminComponent
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        AppRoutingModule,
+        ReactiveFormsModule,
+        FormsModule], providers: [
+        { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule { }
