@@ -1,27 +1,31 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StockService {
+  private apiUrl = 'http://localhost:3000/api/menu';
 
-  private productos = [
-    { id: 1, nombre: 'Almuerzo vegetariano', categoria: 'Almuerzo', stock: 10 },
-    { id: 2, nombre: 'Sandwich de pollo', categoria: 'Snack', stock: 5 },
-    { id: 3, nombre: 'Jugo natural', categoria: 'Bebida', stock: 0 }
-  ];
+  constructor(private http: HttpClient) {}
 
-  getProductos() {
-    return this.productos;
+  getProductos(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl).pipe(
+      map(items => items.map(item => ({
+        id: item.id,
+        nombre: item.nombre,
+        categoria: item.categoria,
+        stock: item.stockActual
+      })))
+    );
   }
 
-  actualizarStock(producto: any) {
-    const index = this.productos.findIndex(p => p.id === producto.id);
-
-    if (index !== -1) {
-      this.productos[index].stock = producto.stock;
-    }
-
-    return this.productos[index];
+  actualizarStock(producto: any): Observable<any> {
+    // Solo enviamos el campo stockActual para que se actualice en la base de datos
+    return this.http.put(`${this.apiUrl}/${producto.id}`, {
+      stockActual: producto.stock
+    });
   }
 }

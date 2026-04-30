@@ -1,44 +1,55 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.css']
 })
-export class MenuComponent {
-  // 3. RÚBRICA: @ViewChild() para manipular elementos de la vista directamente
-  @ViewChild('filtroCategoria') filtroSelect!: ElementRef;
+export class MenuComponent implements OnInit {
+  menuItems: any[] = [];
 
-  // Tu lista de datos original intacta
-  menuItems = [
-    {
-      id: 1, name: 'Bowl de Quinoa y Pollo Grill', category: 'Almuerzos', 
-      description: 'Proteína premium, vegetales frescos y aderezo artesanal.', 
-      price: 7500, studentPrice: 5625, 
-      image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80', isAvailable: true
-    },
-    {
-      id: 2, name: 'Wrap Vegetariano', category: 'Opciones Ligeras', 
-      description: 'Hummus, espinaca, tomate y falafel en tortilla de maíz.', 
-      price: 4000, studentPrice: 3000, 
-      image: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=300&q=80', isAvailable: false 
-    },
-    {
-      id: 3, name: 'Café Latte Vainilla', category: 'Bebidas', 
-      description: 'Café de especialidad con leche texturizada y vainilla.', 
-      price: 2500, studentPrice: 1875, 
-      image: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=300&q=80', isAvailable: true
-    }
-  ];
+  constructor(private http: HttpClient) {}
 
-  // Función que atrapa el evento emitido por el Hijo
-  handleAddToCart(itemRecibido: any) {
-    console.log('El componente hijo envió:', itemRecibido.name);
-    alert(`Has agregado "${itemRecibido.name}" a tu pedido por $${itemRecibido.studentPrice}`);
+  ngOnInit() {
+    this.fetchMenu();
   }
 
-  resetFiltro() {
-    // Uso práctico del ViewChild para resetear el select a su valor por defecto
-    this.filtroSelect.nativeElement.value = 'todos';
+  fetchMenu() {
+    this.http.get<any[]>('http://localhost:3000/api/menu').subscribe({
+      next: (data) => {
+        // Mapear los datos del backend a la estructura que espera el HTML
+        this.menuItems = data.map(item => ({
+          id: item.id,
+          name: item.nombre,
+          category: item.categoria,
+          description: item.descripcion,
+          price: Number(item.precio),
+          studentPrice: Number(item.precio) * 0.75, // 25% de descuento para estudiantes
+          image: this.getImageForCategory(item.categoria),
+          isAvailable: item.disponible && item.stockActual > 0
+        }));
+      },
+      error: (error) => {
+        console.error('Error fetching menu:', error);
+      }
+    });
+  }
+
+  getImageForCategory(categoria: string): string {
+    // Retornar una imagen de prueba basada en la categoría
+    if (categoria.toLowerCase().includes('bebida')) {
+      return 'https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=300&q=80';
+    } else if (categoria.toLowerCase().includes('saludable')) {
+      return 'https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=300&q=80';
+    }
+    return 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80';
+  }
+
+  addToCart(item: any) {
+    if(item.isAvailable) {
+      console.log('Agregado al carrito:', item.name);
+      alert(`${item.name} agregado a tu pedido.`);
+    }
   }
 }

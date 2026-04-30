@@ -11,11 +11,7 @@
         <label for="email" class="fw-bold mb-1">Correo Universitario</label>
         <div class="input-wrapper">
           <span class="icon">✉️</span>
-          <input type="email" id="email" formControlName="email" class="form-control" placeholder="usuario@nyu.edu"
-                 [ngClass]="{'is-invalid': loginForm.get('email')?.invalid && loginForm.get('email')?.touched}">
-        </div>
-        <div class="text-danger small mt-1" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
-          Por favor, ingresa un correo universitario válido.
+          <input type="email" id="email" formControlName="email" class="form-control" placeholder="usuario@nyu.edu">
         </div>
       </div>
 
@@ -23,37 +19,21 @@
         <label for="password" class="fw-bold mb-1">Contraseña</label>
         <div class="input-wrapper">
           <span class="icon">🔒</span>
-          <input type="password" id="password" formControlName="password" class="form-control" placeholder="•••••••••••••"
-                 [ngClass]="{'is-invalid': loginForm.get('password')?.invalid && loginForm.get('password')?.touched}">
-        </div>
-        <div class="text-danger small mt-1" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-          La contraseña es obligatoria.
+          <input type="password" id="password" formControlName="password" class="form-control" placeholder="•••••••••••••">
         </div>
         <div class="text-end mt-1">
           <a href="#" class="forgot-link small">¿Olvidaste tu contraseña?</a>
         </div>
       </div>
 
-      <div *ngIf="errorMessage" class="alert alert-danger small p-2 mb-3 text-center" style="border-radius: 8px;">
+      <div *ngIf="errorMessage" class="alert alert-danger text-center py-2 mb-3" style="font-size: 0.85rem;">
         {{ errorMessage }}
       </div>
 
-      <button type="submit" class="btn-cafeteria w-100" [disabled]="loginForm.invalid || isLoading">
-        <span *ngIf="!isLoading">[ INICIAR SESIÓN ]</span>
-        <span *ngIf="isLoading">
-          Verificando... 
-          <span class="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true"></span>
-        </span>
+      <button type="submit" class="btn-cafeteria w-100" [disabled]="loginForm.invalid || loading">
+        {{ loading ? 'Verificando...' : '[ INICIAR SESIÓN ]' }}
       </button>
-
     </form>
-    <div class="text-center mt-4">
-      <span class="text-muted small">¿No tienes cuenta en la cafetería?</span> 
-      <br>
-      <a routerLink="/register" class="fw-bold text-decoration-none" style="color: var(--nyu-dark);">
-        Crea tu cuenta de estudiante aquí
-      </a>
-    </div>
 
     <div class="text-center mt-4 border-top pt-3">
       <a href="#" class="support-link small">¿Problemas para ingresar? Portal de Soporte</a>
