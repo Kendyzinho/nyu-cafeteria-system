@@ -3,26 +3,61 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { LoginComponent } from './features/auth/login/login.component';
 import { ClientLayoutComponent } from './features/layout/client-layout/client-layout.component';
+import { AdminLayoutComponent } from './features/layout/admin-layout/admin-layout.component';
 import { HomeComponent } from './features/student/home/home.component';
 import { MenuComponent } from './features/student/menu/menu.component';
 import { ResidentPlanComponent } from './features/student/resident-plan/resident-plan.component';
 import { HistoryComponent } from './features/student/history/history.component';
 import { CheckoutComponent } from './features/student/checkout/checkout.component';
+import { AuthGuard } from './core/guards/auth.guard';
+import { ResidentGuard } from './core/guards/resident.guard';
+import { UsersListComponent } from './features/admin/pages/users-list/users-list.component';
+import { RoleGuard } from './core/guards/role.guard';
+import { RegisterComponent } from './features/auth/register/register.component';
+import { ProfilePageComponent } from './features/profile/pages/profile-page/profile-page.component';
+
+import { AdminDashboardComponent } from './features/admin/admin-dashboard/admin-dashboard.component';
+import { StockAdminComponent } from './features/admin/stock-admin/stock-admin.component';
+import { PlansAdminComponent } from './features/admin/plans-admin/plans-admin.component';
+import { PromotionsAdminComponent } from './features/admin/promotions-admin/promotions-admin.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
   { 
     path: '', 
     component: ClientLayoutComponent, 
+    canActivate: [AuthGuard], // <-- PROTEGER TODO EL LAYOUT
     children: [
       { path: 'home', component: HomeComponent },
       { path: 'menu', component: MenuComponent },
-      { path: 'resident-plan', component: ResidentPlanComponent },
+      { 
+        path: 'resident-plan', 
+        component: ResidentPlanComponent,
+        canActivate: [ResidentGuard] // <-- REGLA ESTRICTA DE LA RÚBRICA
+      },
       { path: 'history', component: HistoryComponent },
-      { path: 'checkout', component: CheckoutComponent }
+      {  path: 'admin/users', component: UsersListComponent,
+        canActivate: [RoleGuard] },// ESTO BLOQUEA A LOS CLIENTES 
+      { path: 'checkout', component: CheckoutComponent },
+      { path: 'profile', component: ProfilePageComponent }
     ]
-  }
+  },
+
+  // 🔹 ADMIN (IMPORTANTE: layout distinto)
+  {
+    path: 'admin',
+    component: AdminLayoutComponent,
+    children: [
+      { path: '', component: AdminDashboardComponent },
+      { path: 'stock', component: StockAdminComponent },
+      { path: 'plans', component: PlansAdminComponent },
+      { path: 'promotions', component: PromotionsAdminComponent }
+    ]
+  },
+
+  { path: '**', redirectTo: 'login' }
 ];
 
 @NgModule({
@@ -30,3 +65,5 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
+
+//

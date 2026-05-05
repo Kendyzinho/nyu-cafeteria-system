@@ -1,0 +1,64 @@
+<div class="container mt-4">
+  <h2>Gestión de Planes Alimentarios</h2>
+  <p class="text-muted">
+    Administración de planes según residencia y validaciones externas
+  </p>
+
+  <table class="table table-bordered table-hover mt-3">
+    <thead>
+      <tr>
+        <th>Estudiante</th>
+        <th>Residencia</th>
+        <th>Plan</th>
+        <th>Estado</th>
+        <th>Consumos</th>
+        <th>Validación externa</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let plan of planes">
+        <td>{{ plan.estudiante }}</td>
+
+        <td>
+          <span
+            class="badge"
+            [ngClass]="plan.residenciaActiva ? 'badge-success-custom' : 'badge-danger-custom'"
+          >
+            {{ plan.residenciaActiva ? 'Activa' : 'Inactiva' }}
+          </span>
+        </td>
+
+        <td>{{ plan.nombrePlan }}</td>
+
+        <td>
+          <span
+            class="badge"
+            [ngClass]="plan.planActivo ? 'badge-success-custom' : 'badge-neutral-custom'"
+          >
+            {{ plan.planActivo ? 'Plan activo' : 'Sin plan' }}
+          </span>
+        </td>
+
+        <td>{{ plan.consumos }} / {{ plan.limiteConsumos }}</td>
+
+        <td>
+          <span class="badge badge-info-custom">
+            Residencia validada
+          </span>
+        </td>
+
+        <td>
+          <button
+            class="btn btn-coffee btn-sm"
+            (click)="activarPlan(plan)"
+            [disabled]="!plan.residenciaActiva"
+          >
+            Activar plan
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

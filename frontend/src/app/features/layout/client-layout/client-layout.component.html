@@ -1,4 +1,11 @@
-<app-navbar></app-navbar>
-<main class="container py-4">
-  <router-outlet></router-outlet>
-</main>
+<div class="d-flex flex-column min-vh-100 bg-light">
+  
+  <app-navbar></app-navbar>
+
+  <main class="container py-5 flex-grow-1">
+    <router-outlet></router-outlet>
+  </main>
+
+  <app-footer></app-footer>
+
+</div>

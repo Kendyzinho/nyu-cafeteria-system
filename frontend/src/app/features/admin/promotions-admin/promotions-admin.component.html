@@ -1,0 +1,80 @@
+<div class="container mt-4">
+  <h2>Gestión de Promociones</h2>
+  <p class="text-muted">
+    Aplicación de descuentos según validaciones externas del sistema
+  </p>
+
+  <table class="table table-bordered table-hover mt-3">
+    <thead>
+      <tr>
+        <th>Promoción</th>
+        <th>Descuento</th>
+        <th>Estudiante activo</th>
+        <th>Residencia activa</th>
+        <th>Pago aprobado</th>
+        <th>Validaciones externas</th>
+        <th>Estado</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let promo of promociones">
+        <td>{{ promo.nombre }}</td>
+
+        <td>{{ promo.descuento }}%</td>
+
+        <td>
+          <span
+            class="badge"
+            [ngClass]="promo.estudianteActivo ? 'badge-success-custom' : 'badge-danger-custom'"
+          >
+            {{ promo.estudianteActivo ? 'Sí' : 'No' }}
+          </span>
+        </td>
+
+        <td>
+          <span
+            class="badge"
+            [ngClass]="promo.residenciaActiva ? 'badge-success-custom' : 'badge-danger-custom'"
+          >
+            {{ promo.residenciaActiva ? 'Sí' : 'No' }}
+          </span>
+        </td>
+
+        <td>
+          <span
+            class="badge"
+            [ngClass]="promo.pagoAprobado ? 'badge-success-custom' : 'badge-danger-custom'"
+          >
+            {{ promo.pagoAprobado ? 'Sí' : 'No' }}
+          </span>
+        </td>
+
+        <td>
+          <span class="badge badge-info-custom me-1">Matrícula</span>
+          <span class="badge badge-warning-custom me-1">Residencia</span>
+          <span class="badge badge-success-custom">Pagos</span>
+        </td>
+
+        <td>
+          <span
+            class="badge"
+            [ngClass]="promo.activa ? 'badge-success-custom' : 'badge-neutral-custom'"
+          >
+            {{ promo.activa ? 'Activa' : 'Inactiva' }}
+          </span>
+        </td>
+
+        <td>
+          <button
+            class="btn btn-coffee btn-sm"
+            (click)="aplicarPromocion(promo)"
+          >
+            Aplicar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

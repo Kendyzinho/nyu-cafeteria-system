@@ -1,0 +1,96 @@
+<div class="container py-4">
+  
+  <div class="row align-items-center mb-4 g-3">
+    <div class="col-md-6">
+      <h2 class="fw-bold mb-0" style="color: var(--nyu-dark);">Gestión de Usuarios</h2>
+      <p class="text-muted mb-0">Administración integral de cuentas de estudiantes y staff.</p>
+    </div>
+    
+    <div class="col-md-6 text-md-end">
+      <div class="input-group shadow-sm ms-auto" style="max-width: 350px;">
+        <span class="input-group-text bg-white border-end-0">🔍</span>
+        <input type="text" class="form-control border-start-0" 
+               placeholder="Buscar por nombre o correo..." 
+               [(ngModel)]="searchTerm" (ngModelChange)="filterUsers()">
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border" style="color: var(--nyu-brown);" role="status"></div>
+    <p class="text-muted mt-3 fw-bold">Sincronizando base de datos...</p>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-4 overflow-hidden" *ngIf="!isLoading">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0 align-middle">
+        <thead style="background-color: var(--nyu-dark); color: white;">
+          <tr>
+            <th class="py-3 px-4 fw-normal text-uppercase small">Usuario</th>
+            <th class="py-3 px-4 fw-normal text-uppercase small">Tipo de Plan</th>
+            <th class="py-3 px-4 fw-normal text-uppercase small text-center">Estado</th>
+            <th class="py-3 px-4 fw-normal text-uppercase small text-end">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="filteredUsers.length === 0">
+            <td colspan="4" class="text-center py-5 text-muted">
+              <span class="fs-1 d-block mb-2">🕵️‍♂️</span>
+              No se encontraron usuarios que coincidan con "<strong>{{ searchTerm }}</strong>".
+            </td>
+          </tr>
+
+          <tr *ngFor="let user of filteredUsers">
+            
+            <td class="py-3 px-4">
+              <div class="d-flex align-items-center">
+                <div class="rounded-circle d-flex justify-content-center align-items-center me-3 shadow-sm text-white fw-bold" 
+                     style="width: 45px; height: 45px; background-color: var(--nyu-sand); font-size: 1.2rem;">
+                  {{ user.firstName.charAt(0) }}
+                </div>
+                <div>
+                  <div class="fw-bold text-dark">{{ user.firstName }}</div>
+                  <div class="small text-muted">{{ user.email }}</div>
+                </div>
+              </div>
+            </td>
+            
+            <td class="py-3 px-4 fw-bold" style="color: var(--nyu-brown);">
+              {{ user.planType }}
+            </td>
+            
+            <td class="py-3 px-4 text-center">
+              <span class="badge rounded-pill px-3 py-2" 
+                    [ngClass]="user.isActive ? 'bg-success-pastel text-success' : 'bg-danger text-white'">
+                {{ user.isActive ? 'Activo' : 'Suspendido' }}
+              </span>
+            </td>
+            
+            <td class="py-3 px-4 text-end">
+              <button class="btn btn-sm btn-light border shadow-sm me-2" title="Ver Detalles">
+                👁️
+              </button>
+              <button class="btn btn-sm fw-bold text-white shadow-sm" 
+                      style="width: 100px;"
+                      [ngClass]="user.isActive ? 'btn-danger' : 'btn-success'"
+                      (click)="toggleStatus(user)">
+                {{ user.isActive ? 'Suspender' : 'Activar' }}
+              </button>
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="card-footer bg-light border-0 py-3 px-4 d-flex justify-content-between align-items-center">
+      <small class="text-muted fw-bold">
+        Mostrando {{ filteredUsers.length }} usuarios
+      </small>
+      <small class="text-success fw-bold">
+        Cuentas Activas: {{ getActiveCount() }}
+      </small>
+    </div>
+  </div>
+
+</div>

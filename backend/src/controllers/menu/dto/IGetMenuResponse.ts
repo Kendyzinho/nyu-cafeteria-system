@@ -7,4 +7,6 @@ export interface IGetMenuResponse {
   disponible: boolean;
   stockActual: number;
   fechaDisponible: Date;
+  precioEstudiante: number;
+  image: string;
 }

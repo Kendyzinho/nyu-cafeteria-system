@@ -4,22 +4,27 @@ import type { IPostMealPlanRequest } from './dto/IPostMealPlanRequest';
 import type { IPostMealPlanResponse } from './dto/IPostMealPlanResponse';
 import type { IPutMealPlanRequest } from './dto/IPutMealPlanRequest';
 import { MealPlansService } from 'src/providers/meal-plans/meal-plans.service';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
+@ApiTags('Meal Plans')
 @Controller('meal-plans')
 export class MealPlansController {
 
   constructor(private readonly mealPlansService: MealPlansService) {}
 
+  @ApiOperation({ summary: 'Obtener todos los planes' })
   @Get()
   public async getMealPlans() {
     return await this.mealPlansService.getAll();
   }
 
+  @ApiOperation({ summary: 'Obtener un plan por id' })
   @Get(':id')
   public async getMealPlan(@Param('id') id: number) {
     return await this.mealPlansService.getOne(id);
   }
 
+  @ApiOperation({ summary: 'Crear un nuevo plan' })
   @Post()
   async postMealPlan(
     @Body() request: IPostMealPlanRequest
@@ -38,6 +43,7 @@ export class MealPlansController {
     return response;
   }
 
+  @ApiOperation({ summary: 'Actualizar un plan' })
   @Put(':id')
   async putMealPlan(
     @Param('id') id: number,
@@ -53,6 +59,7 @@ export class MealPlansController {
     return response.status(202).send();
   }
 
+  @ApiOperation({ summary: 'Eliminar un plan' })
   @Delete(':id')
   async deleteMealPlan(
     @Param('id') id: number,

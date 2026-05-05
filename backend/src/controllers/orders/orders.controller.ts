@@ -4,22 +4,27 @@ import type { IPostOrderRequest } from './dto/IPostOrderRequest';
 import type { IPostOrderResponse } from './dto/IPostOrderResponse';
 import type { IPutOrderRequest } from './dto/IPutOrderRequest';
 import { OrdersService } from 'src/providers/orders/orders.service';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
+@ApiTags('Orders')
 @Controller('orders')
 export class OrdersController {
 
   constructor(private readonly ordersService: OrdersService) {}
 
+  @ApiOperation({ summary: 'Obtener todas las órdenes' })
   @Get()
   public async getOrders() {
     return await this.ordersService.getAll();
   }
 
+  @ApiOperation({ summary: 'Obtener una orden por id' })
   @Get(':id')
   public async getOrder(@Param('id') id: number) {
     return await this.ordersService.getOne(id);
   }
 
+  @ApiOperation({ summary: 'Crear una nueva orden' })
   @Post()
   async postOrder(
     @Body() request: IPostOrderRequest
@@ -38,6 +43,7 @@ export class OrdersController {
     return response;
   }
 
+  @ApiOperation({ summary: 'Actualizar una orden' })
   @Put(':id')
   async putOrder(
     @Param('id') id: number,
@@ -53,6 +59,7 @@ export class OrdersController {
     return response.status(202).send();
   }
 
+  @ApiOperation({ summary: 'Eliminar una orden' })
   @Delete(':id')
   async deleteOrder(
     @Param('id') id: number,
@@ -67,3 +74,4 @@ export class OrdersController {
     return response.status(200).send();
   }
 }
+
