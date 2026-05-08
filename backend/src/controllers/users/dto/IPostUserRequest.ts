@@ -1,4 +1,11 @@
-import { IsString, IsEmail, IsNotEmpty } from 'class-validator';
+import {
+  IsString,
+  IsEmail,
+  IsNotEmpty,
+  IsBoolean,
+  IsOptional,
+  MinLength,
+} from 'class-validator';
 
 export class IPostUserRequest {
   @IsString()
@@ -14,9 +21,14 @@ export class IPostUserRequest {
 
   @IsString()
   @IsNotEmpty()
+  @MinLength(6)
   password: string;
 
   @IsString()
   @IsNotEmpty()
   tipo: string;
+
+  @IsBoolean()
+  @IsOptional()
+  isActive?: boolean;
 }

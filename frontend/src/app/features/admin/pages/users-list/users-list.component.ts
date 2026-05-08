@@ -11,6 +11,7 @@ export class UsersListComponent implements OnInit {
   filteredUsers: UserAdminView[] = []; // Array separado para la búsqueda dinámica
   isLoading: boolean = true;
   searchTerm: string = ''; // Variable conectada al buscador
+  errorMessage: string = '';
 
   constructor(private usersService: UsersService) {}
 
@@ -24,7 +25,11 @@ export class UsersListComponent implements OnInit {
         this.users = data;
         this.filteredUsers = data;
         this.isLoading = false;
-      }
+      },
+      error: () => {
+        this.errorMessage = 'No se pudo cargar la lista de usuarios.';
+        this.isLoading = false;
+      },
     });
   }
 
@@ -38,14 +43,16 @@ export class UsersListComponent implements OnInit {
 
   // 2: Interactividad para cambiar estado
   toggleStatus(user: UserAdminView): void {
-    // Le avisamos al servicio que guarde el cambio globalmente
-    this.usersService.toggleUserStatus(user.id);
-    
-    // Volvemos a aplicar el filtro para que la vista se actualice
-    this.filterUsers();
-    
-    // A futuro, aquí se llama al backend:
-    // this.usersService.toggleUserStatus(user.id, user.isActive).subscribe(...)
+    const nextStatus = !user.isActive;
+    this.usersService.toggleUserStatus(user.id, nextStatus).subscribe({
+      next: () => {
+        user.isActive = nextStatus;
+        this.filterUsers();
+      },
+      error: () => {
+        this.errorMessage = 'No se pudo actualizar el estado del usuario.';
+      },
+    });
   }
 
   // DINAMISMO 3: Cálculo de métricas

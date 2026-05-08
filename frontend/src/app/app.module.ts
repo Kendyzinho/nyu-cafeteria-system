@@ -23,7 +23,6 @@ import { PromotionsAdminComponent } from './features/admin/promotions-admin/prom
 import { AdminLayoutComponent } from './features/layout/admin-layout/admin-layout.component';
 import { NavbarAdminComponent } from './shared/components/navbar-admin/navbar-admin.component';
 import { UsersListComponent } from './features/admin/pages/users-list/users-list.component';
-import { RegisterComponent } from './features/auth/register/register.component';
 import { ProfilePageComponent } from './features/profile/pages/profile-page/profile-page.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
 import { MenuItemComponent } from './features/student/menu/menu-item/menu-item.component';
@@ -44,7 +43,6 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor';
         HistoryComponent,
         HelpComponent,
         UsersListComponent,
-        RegisterComponent,
         ProfilePageComponent,
         FooterComponent,
         MenuItemComponent,

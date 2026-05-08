@@ -10,10 +10,10 @@ import { ResidentPlanComponent } from './features/student/resident-plan/resident
 import { HistoryComponent } from './features/student/history/history.component';
 import { CheckoutComponent } from './features/student/checkout/checkout.component';
 import { AuthGuard } from './core/guards/auth.guard';
+import { GuestGuard } from './core/guards/guest.guard';
 import { ResidentGuard } from './core/guards/resident.guard';
 import { UsersListComponent } from './features/admin/pages/users-list/users-list.component';
 import { RoleGuard } from './core/guards/role.guard';
-import { RegisterComponent } from './features/auth/register/register.component';
 import { ProfilePageComponent } from './features/profile/pages/profile-page/profile-page.component';
 
 import { AdminDashboardComponent } from './features/admin/admin-dashboard/admin-dashboard.component';
@@ -23,8 +23,7 @@ import { PromotionsAdminComponent } from './features/admin/promotions-admin/prom
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
+  { path: 'login', component: LoginComponent, canActivate: [GuestGuard] },
   { 
     path: '', 
     component: ClientLayoutComponent, 
@@ -38,8 +37,6 @@ const routes: Routes = [
         canActivate: [ResidentGuard] // <-- REGLA ESTRICTA DE LA RÚBRICA
       },
       { path: 'history', component: HistoryComponent },
-      {  path: 'admin/users', component: UsersListComponent,
-        canActivate: [RoleGuard] },// ESTO BLOQUEA A LOS CLIENTES 
       { path: 'checkout', component: CheckoutComponent },
       { path: 'profile', component: ProfilePageComponent }
     ]
@@ -49,8 +46,10 @@ const routes: Routes = [
   {
     path: 'admin',
     component: AdminLayoutComponent,
+    canActivate: [AuthGuard, RoleGuard],
     children: [
       { path: '', component: AdminDashboardComponent },
+      { path: 'users', component: UsersListComponent },
       { path: 'stock', component: StockAdminComponent },
       { path: 'plans', component: PlansAdminComponent },
       { path: 'promotions', component: PromotionsAdminComponent }

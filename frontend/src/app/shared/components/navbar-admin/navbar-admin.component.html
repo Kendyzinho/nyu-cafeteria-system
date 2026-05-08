@@ -10,6 +10,10 @@
       </li>
 
       <li class="nav-item">
+        <a class="nav-link" routerLink="/admin/users">Usuarios</a>
+      </li>
+
+      <li class="nav-item">
         <a class="nav-link" routerLink="/admin/stock">Stock</a>
       </li>
 
@@ -22,9 +26,12 @@
       </li>
     </ul>
 
-    <div class="text-white text-end">
-      <strong>Jhon Alarcon</strong><br>
-      <small>Administrador</small>
+    <div class="d-flex align-items-center gap-3 text-white text-end">
+      <div>
+        <strong>{{ currentUser?.firstName }} {{ currentUser?.lastName }}</strong><br>
+        <small>{{ currentUser?.role }}</small>
+      </div>
+      <button class="btn btn-sm btn-outline-light" type="button" (click)="logout()">Salir</button>
     </div>
   </div>
 </nav>

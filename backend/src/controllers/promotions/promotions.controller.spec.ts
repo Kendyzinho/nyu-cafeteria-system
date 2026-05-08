@@ -1,5 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PromotionsController } from './promotions.controller';
+import { PromotionsService } from 'src/providers/promotions/promotions.service';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { Reflector } from '@nestjs/core';
 
 describe('PromotionsController', () => {
   let controller: PromotionsController;
@@ -7,6 +13,17 @@ describe('PromotionsController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [PromotionsController],
+      providers: [
+        {
+          provide: PromotionsService,
+          useValue: { getAll: jest.fn(), getOne: jest.fn(), create: jest.fn(), update: jest.fn(), delete: jest.fn() },
+        },
+        { provide: JwtAuthGuard, useValue: { canActivate: jest.fn(() => true) } },
+        { provide: RolesGuard, useValue: { canActivate: jest.fn(() => true) } },
+        { provide: JwtService, useValue: { verify: jest.fn() } },
+        { provide: ConfigService, useValue: { get: jest.fn() } },
+        { provide: Reflector, useValue: { getAllAndOverride: jest.fn() } },
+      ],
     }).compile();
 
     controller = module.get<PromotionsController>(PromotionsController);

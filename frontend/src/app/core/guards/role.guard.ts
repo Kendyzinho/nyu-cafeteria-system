@@ -10,14 +10,13 @@ export class RoleGuard  {
 
   canActivate(): boolean {
     const user = this.authService.getCurrentUser();
-    
-    // Verificamos si existe el usuario y si su rol es explícitamente Administrador
-    if (user && user.role === 'Administrador') {
+    const isAdmin = (user?.role ?? '').toLowerCase() === 'administrador';
+
+    if (user && isAdmin) {
       return true;
     }
-    
-    // Si es un Cliente normal, lo devolvemos al inicio para proteger la ruta
-    this.router.navigate(['/home']);
+
+    this.router.navigate([user ? '/home' : '/login']);
     return false;
   }
 }

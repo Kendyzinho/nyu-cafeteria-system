@@ -16,6 +16,10 @@
     </div>
   </div>
 
+  <div *ngIf="errorMessage" class="alert alert-danger py-2" role="alert">
+    {{ errorMessage }}
+  </div>
+
   <div *ngIf="isLoading" class="text-center py-5">
     <div class="spinner-border" style="color: var(--nyu-brown);" role="status"></div>
     <p class="text-muted mt-3 fw-bold">Sincronizando base de datos...</p>

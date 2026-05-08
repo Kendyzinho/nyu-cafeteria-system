@@ -14,6 +14,11 @@ describe('MenuItemComponent', () => {
 
     fixture = TestBed.createComponent(MenuItemComponent);
     component = fixture.componentInstance;
+    component.item = {
+      nombre: 'Producto de prueba',
+      precio: 1000,
+      isAvailable: true,
+    };
     fixture.detectChanges();
   });
 

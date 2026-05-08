@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "test:auth": "ng test --watch=false --browsers=ChromeHeadless --include=src/app/core/guards/*.spec.ts --include=src/app/core/services/auth.service.spec.ts"
   },
   "private": true,
   "dependencies": {

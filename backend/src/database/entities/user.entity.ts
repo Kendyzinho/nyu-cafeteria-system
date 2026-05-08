@@ -23,4 +23,7 @@ export class UserEntity {
 
   @Column()
   tipo!: string;
+
+  @Column({ default: true })
+  isActive!: boolean;
 }

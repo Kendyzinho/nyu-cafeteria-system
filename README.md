@@ -16,7 +16,7 @@ La plataforma actúa como un ecosistema dual que atiende tanto a los estudiantes
 - Digitalizar el menú y permitir compras ágiles.
 - Gestionar planes residenciales y beneficios de alimentación.
 - Proveer al staff de un panel de control para inventario y usuarios.
-- Implementar seguridad mediante enrutamiento basado en roles (JWT simulado).
+- Implementar seguridad mediante enrutamiento basado en roles con JWT.
 
 ---
 
@@ -26,14 +26,14 @@ La plataforma actúa como un ecosistema dual que atiende tanto a los estudiantes
 * **Estilos y UI:** Bootstrap 5 (Responsive Design)
 * **Gestión de Estado:** RxJS (`BehaviorSubject` y Observables para sincronización en tiempo real entre componentes).
 * **Seguridad:** Angular Route Guards (`AuthGuard`, `RoleGuard`) e Interceptors.
-* **Mocking:** Servicios inyectables con bases de datos en memoria para el desarrollo del Frontend previo a la integración con la API RESTful.
+* **Integración API:** Frontend conectado a API RESTful en NestJS.
 
 ---
 
 ## ⚙️ Características Principales (Módulos)
 
 ### 🧑‍🎓 Módulo Estudiante / Residente
-* **Autenticación:** Registro e inicio de sesión inteligente.
+* **Autenticación:** Inicio de sesión con JWT y control por roles.
 * **Mi Perfil:** Visualización de credenciales y estado del beneficio universitario.
 * **Gestión de Plan:** Panel de control ("Mi Plan") para visualizar comidas restantes, renovaciones automáticas y definición de preferencias alimentarias (Vegano, Celiaco, etc.).
 * **Catálogo Interactivo:** Menú reactivo que refleja la disponibilidad de productos en tiempo real.
@@ -58,3 +58,19 @@ src/
 │   └── app.module.ts   # Módulo raíz.
 ├── assets/             # Imágenes y recursos estáticos.
 └── styles.css          # Estilos globales y variables de color (Paleta Corporativa).
+
+## 📚 Documentación de Gestión y Despliegue
+
+- `CONTRIBUTING.md`: flujo de ramas y PR.
+- `docs/AGILE_PROCESS.md`: plantilla de evidencia ágil por sprint.
+- `DEPLOYMENT.md`: despliegue con Docker y guía cloud.
+
+## 🐳 Ejecución rápida con Docker
+
+```bash
+docker compose up --build -d
+```
+
+- Frontend: `http://localhost:4200`
+- Backend: `http://localhost:3000/api`
+- Swagger: `http://localhost:3000/docs`

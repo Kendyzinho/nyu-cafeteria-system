@@ -3,7 +3,7 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
-  role: 'Administrador' | 'Cliente';
+  role: string;
   isActive: boolean;
   isResident: boolean; // Vital para el equipo de Alojamiento
 }

@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MenuController } from './menu/menu.controller';
 import { OrdersController } from './orders/orders.controller';
 import { MealPlansController } from './meal-plans/meal-plans.controller';
@@ -20,9 +22,22 @@ import { StockService } from 'src/providers/stock/stock.service';
 import { PromotionsService } from 'src/providers/promotions/promotions.service';
 import { UsersService } from 'src/providers/users/users.service';
 import { AuthService } from 'src/providers/auth/auth.service';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @Module({
   imports: [
+    ConfigModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET') ?? 'dev-jwt-secret',
+        signOptions: {
+          expiresIn: configService.get<number>('JWT_EXPIRES_IN_SECONDS') ?? 28800,
+        },
+      }),
+    }),
     TypeOrmModule.forFeature([
       MenuEntity,
       OrderEntity,
@@ -49,6 +64,8 @@ import { AuthService } from 'src/providers/auth/auth.service';
   PromotionsService,
   UsersService,
   AuthService,
+  JwtAuthGuard,
+  RolesGuard,
   ],
 })
 export class ControllersModule {}

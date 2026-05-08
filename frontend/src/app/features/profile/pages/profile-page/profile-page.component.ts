@@ -14,7 +14,12 @@ export class ProfilePageComponent implements OnInit {
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
-    // Escuchamos al observable para que si el nombre cambia, el perfil también
+    this.authService.fetchProfile().subscribe({
+      error: () => {
+        this.user = this.authService.getCurrentUser();
+      },
+    });
+
     this.authService.currentUser$.subscribe(userData => {
       this.user = userData;
       if (this.user) {

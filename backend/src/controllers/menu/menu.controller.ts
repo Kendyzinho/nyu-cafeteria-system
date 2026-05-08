@@ -1,13 +1,19 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Res } from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { Controller, Get, Post, Put, Delete, Param, Body, Res, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import type { Response } from 'express';
 import type { IPostMenuRequest } from './dto/IPostMenuRequest';
 import type { IPostMenuResponse } from './dto/IPostMenuResponse';
 import type { IPutMenuRequest } from './dto/IPutMenuRequest';
 import { MenuService } from 'src/providers/menu/menu.service';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { USER_ROLES } from 'src/auth/constants/roles.constant';
 
 @ApiTags('Menu')
+@ApiBearerAuth('jwt-auth')
 @Controller('menu')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class MenuController {
 
   constructor(private readonly menuService: MenuService) {}
@@ -25,6 +31,7 @@ export class MenuController {
   }
 
   @ApiOperation({ summary: 'Crear un nuevo ítem del menú' })
+  @Roles(USER_ROLES.ADMIN)
   @Post()
   async postMenuItem(@Body() request: IPostMenuRequest): Promise<IPostMenuResponse> {
     const response: IPostMenuResponse = {
@@ -38,6 +45,7 @@ export class MenuController {
   }
 
   @ApiOperation({ summary: 'Actualizar un ítem del menú' })
+  @Roles(USER_ROLES.ADMIN)
   @Put(':id')
   async putMenuItem(
     @Param('id') id: number,
@@ -51,6 +59,7 @@ export class MenuController {
   }
 
   @ApiOperation({ summary: 'Eliminar un ítem del menú' })
+  @Roles(USER_ROLES.ADMIN)
   @Delete(':id')
   async deleteMenuItem(
     @Param('id') id: number,

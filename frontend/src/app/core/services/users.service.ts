@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { API_BASE_URL } from '../config/api.config';
 
 export interface UserAdminView {
   id: number;
@@ -18,7 +19,7 @@ export interface UserAdminView {
   providedIn: 'root'
 })
 export class UsersService {
-  private readonly API_URL = 'http://localhost:3000/api/users';
+  private readonly API_URL = `${API_BASE_URL}/users`;
 
   constructor(private http: HttpClient) {}
 
@@ -30,14 +31,14 @@ export class UsersService {
         firstName: u.nombre,
         lastName: u.apellido,
         role: u.tipo,
-        isActive: true,
-        isResident: u.tipo === 'residente',
+        isActive: u.isActive ?? true,
+        isResident: (u.tipo ?? '').toLowerCase() === 'residente',
         planType: undefined
       })))
     );
   }
 
-  toggleUserStatus(userId: number): void {
-    // pendiente conectar al backend
+  toggleUserStatus(userId: number, isActive: boolean): Observable<unknown> {
+    return this.http.put(`${this.API_URL}/${userId}`, { isActive });
   }
 }

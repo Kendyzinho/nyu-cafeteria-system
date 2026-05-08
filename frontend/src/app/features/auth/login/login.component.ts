@@ -33,9 +33,9 @@ export class LoginComponent {
       this.authService.login(email, password).subscribe({
         next: (response) => {
           this.isLoading = false;
-          
-          // RÚBRICA: Enrutamiento basado en roles
-          if (response.user.role === 'Administrador') {
+
+          const isAdmin = (response.user.role ?? '').toLowerCase() === 'administrador';
+          if (isAdmin) {
             this.router.navigate(['/admin/users']); // Manda al staff al panel de control
           } else {
             this.router.navigate(['/home']); // Manda al estudiante a la tienda

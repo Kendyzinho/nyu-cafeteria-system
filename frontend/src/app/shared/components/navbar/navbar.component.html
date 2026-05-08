@@ -27,7 +27,7 @@
 
         <ul class="dropdown-menu dropdown-menu-end shadow">
           <li><a class="dropdown-item" routerLink="/profile">Mi Perfil</a></li>
-          <li *ngIf="currentUser.role === 'Administrador'"><a class="dropdown-item" routerLink="/admin/users">Gestión de Usuarios</a></li>
+          <li *ngIf="(currentUser?.role || '').toLowerCase() === 'administrador'"><a class="dropdown-item" routerLink="/admin/users">Gestión de Usuarios</a></li>
           <li><hr class="dropdown-divider"></li>
           <li><button class="dropdown-item text-danger fw-bold" (click)="logout()">Cerrar Sesión</button></li>
         </ul>

@@ -1,27 +1,49 @@
-# Frontend
+# Frontend - NYU Cafeteria System
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.2.11.
+Aplicación Angular para estudiantes y administradores de cafetería universitaria.
 
-## Development server
+## Funcionalidades implementadas
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- Login con JWT
+- Gestión de sesión y cierre por expiración
+- Perfil del usuario autenticado
+- Guards de acceso (`AuthGuard`, `ResidentGuard`, `RoleGuard`, `GuestGuard`)
+- Rutas protegidas para módulo admin
+- Gestión de usuarios (vista admin)
 
-## Code scaffolding
+## Requisitos
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- Node.js 18+
+- npm 9+
+
+## Configuración
+
+La app consume la API en `http://localhost:3000/api` (definido en servicios).
+
+## Ejecución local
+
+```bash
+npm install
+npm run start
+```
+
+Abre `http://localhost:4200`.
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+```bash
+npm run build
+```
 
-## Running unit tests
+## Testing
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+```bash
+npm run test
+npm run test:auth
+```
 
-## Running end-to-end tests
+## Estructura base
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+- `src/app/core`: servicios, guards, interceptores, modelos
+- `src/app/features`: páginas y componentes por módulo
+- `src/app/shared`: componentes reutilizables

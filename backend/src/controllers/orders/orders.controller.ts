@@ -1,13 +1,16 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Res } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, Res, UseGuards } from '@nestjs/common';
 import type { Response } from 'express';
 import type { IPostOrderRequest } from './dto/IPostOrderRequest';
 import type { IPostOrderResponse } from './dto/IPostOrderResponse';
 import type { IPutOrderRequest } from './dto/IPutOrderRequest';
 import { OrdersService } from 'src/providers/orders/orders.service';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('Orders')
+@ApiBearerAuth('jwt-auth')
 @Controller('orders')
+@UseGuards(JwtAuthGuard)
 export class OrdersController {
 
   constructor(private readonly ordersService: OrdersService) {}

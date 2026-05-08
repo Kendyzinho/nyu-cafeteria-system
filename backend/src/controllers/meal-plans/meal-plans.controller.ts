@@ -1,13 +1,19 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Res } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, Res, UseGuards } from '@nestjs/common';
 import type { Response } from 'express';
 import type { IPostMealPlanRequest } from './dto/IPostMealPlanRequest';
 import type { IPostMealPlanResponse } from './dto/IPostMealPlanResponse';
 import type { IPutMealPlanRequest } from './dto/IPutMealPlanRequest';
 import { MealPlansService } from 'src/providers/meal-plans/meal-plans.service';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { USER_ROLES } from 'src/auth/constants/roles.constant';
 
 @ApiTags('Meal Plans')
+@ApiBearerAuth('jwt-auth')
 @Controller('meal-plans')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class MealPlansController {
 
   constructor(private readonly mealPlansService: MealPlansService) {}
@@ -25,6 +31,7 @@ export class MealPlansController {
   }
 
   @ApiOperation({ summary: 'Crear un nuevo plan' })
+  @Roles(USER_ROLES.ADMIN)
   @Post()
   async postMealPlan(
     @Body() request: IPostMealPlanRequest
@@ -44,6 +51,7 @@ export class MealPlansController {
   }
 
   @ApiOperation({ summary: 'Actualizar un plan' })
+  @Roles(USER_ROLES.ADMIN)
   @Put(':id')
   async putMealPlan(
     @Param('id') id: number,
@@ -60,6 +68,7 @@ export class MealPlansController {
   }
 
   @ApiOperation({ summary: 'Eliminar un plan' })
+  @Roles(USER_ROLES.ADMIN)
   @Delete(':id')
   async deleteMealPlan(
     @Param('id') id: number,

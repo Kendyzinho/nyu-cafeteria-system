@@ -1,0 +1,47 @@
+version: '3.9'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: nyu_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: nyu_cafeteria
+      MYSQL_USER: nyu
+      MYSQL_PASSWORD: nyu123
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nyu_backend
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USERNAME: nyu
+      DB_PASSWORD: nyu123
+      DB_NAME: nyu_cafeteria
+      JWT_SECRET: super-secure-jwt-secret
+      JWT_EXPIRES_IN_SECONDS: 28800
+      PORT: 3000
+    ports:
+      - '3000:3000'
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: nyu_frontend
+    depends_on:
+      - backend
+    ports:
+      - '4200:80'
+
+volumes:
+  mysql_data:
