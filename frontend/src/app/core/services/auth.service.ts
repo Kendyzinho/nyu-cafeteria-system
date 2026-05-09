@@ -30,17 +30,7 @@ export class AuthService {
     }
   }
 
-  /**
-   * REGISTRO: Guarda al nuevo usuario y SU CONTRASEÑA en la lista maestra.
-   */
-  register(userData: any): Observable<any> {
-  return this.http.post<any>(`${this.apiUrl}/auth/register`, {
-    firstName: userData.firstName,
-    lastName: userData.lastName,
-    email: userData.email,
-    password: userData.password
-  });
-}
+
 
   /**
    * LOGIN: Valida que exista el correo en la BD Maestra y que LA CONTRASEÑA COINCIDA.

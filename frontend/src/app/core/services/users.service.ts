@@ -20,7 +20,7 @@ export interface UserAdminView {
 export class UsersService {
   private readonly API_URL = 'http://localhost:3000/api/users';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getAllUsers(): Observable<UserAdminView[]> {
     return this.http.get<any[]>(this.API_URL).pipe(
