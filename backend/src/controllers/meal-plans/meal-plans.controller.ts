@@ -3,7 +3,7 @@ import type { Response } from 'express';
 import type { IPostMealPlanRequest } from './dto/IPostMealPlanRequest';
 import type { IPostMealPlanResponse } from './dto/IPostMealPlanResponse';
 import type { IPutMealPlanRequest } from './dto/IPutMealPlanRequest';
-import { MealPlansService } from 'src/providers/meal-plans/meal-plans.service';
+import { MealPlansService } from '../../providers/meal-plans/meal-plans.service';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @ApiTags('Meal Plans')

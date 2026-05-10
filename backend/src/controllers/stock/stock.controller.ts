@@ -3,7 +3,7 @@ import type { Response } from 'express';
 import type { IPostStockRequest } from './dto/IPostStockRequest';
 import type { IPostStockResponse } from './dto/IPostStockResponse';
 import type { IPutStockRequest } from './dto/IPutStockRequest';
-import { StockService } from 'src/providers/stock/stock.service';
+import { StockService } from '../../providers/stock/stock.service';
 
 @Controller('stock')
 export class StockController {

@@ -3,7 +3,7 @@ import type { Response } from 'express';
 import type { IPostOrderRequest } from './dto/IPostOrderRequest';
 import type { IPostOrderResponse } from './dto/IPostOrderResponse';
 import type { IPutOrderRequest } from './dto/IPutOrderRequest';
-import { OrdersService } from 'src/providers/orders/orders.service';
+import { OrdersService } from '../../providers/orders/orders.service';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @ApiTags('Orders')

@@ -3,7 +3,7 @@ import type { Response } from 'express';
 import type { IPostUserRequest } from './dto/IPostUserRequest';
 import type { IPostUserResponse } from './dto/IPostUserResponse';
 import type { IPutUserRequest } from './dto/IPutUserRequest';
-import { UsersService } from 'src/providers/users/users.service';
+import { UsersService } from '../../providers/users/users.service';
 
 @Controller('users')
 export class UsersController {

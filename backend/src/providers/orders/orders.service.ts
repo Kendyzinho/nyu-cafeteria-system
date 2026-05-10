@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { OrderEntity } from 'src/database/entities/order.entity';
-import type { IPostOrderRequest } from 'src/controllers/orders/dto/IPostOrderRequest';
-import type { IPutOrderRequest } from 'src/controllers/orders/dto/IPutOrderRequest';
+import { OrderEntity } from '../../database/entities/order.entity';
+import type { IPostOrderRequest } from '../../controllers/orders/dto/IPostOrderRequest';
+import type { IPutOrderRequest } from '../../controllers/orders/dto/IPutOrderRequest';
 
 @Injectable()
 export class OrdersService {

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { MealPlanEntity } from 'src/database/entities/meal-plan.entity';
-import type { IPostMealPlanRequest } from 'src/controllers/meal-plans/dto/IPostMealPlanRequest';
-import type { IPutMealPlanRequest } from 'src/controllers/meal-plans/dto/IPutMealPlanRequest';
+import { MealPlanEntity } from '../../database/entities/meal-plan.entity';
+import type { IPostMealPlanRequest } from '../../controllers/meal-plans/dto/IPostMealPlanRequest';
+import type { IPutMealPlanRequest } from '../../controllers/meal-plans/dto/IPutMealPlanRequest';
 
 @Injectable()
 export class MealPlansService {

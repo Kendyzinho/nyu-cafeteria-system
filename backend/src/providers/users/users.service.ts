@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserEntity } from 'src/database/entities/user.entity';
-import type { IPostUserRequest } from 'src/controllers/users/dto/IPostUserRequest';
-import type { IPutUserRequest } from 'src/controllers/users/dto/IPutUserRequest';
+import { UserEntity } from '../../database/entities/user.entity';
+import type { IPostUserRequest } from '../../controllers/users/dto/IPostUserRequest';
+import type { IPutUserRequest } from '../../controllers/users/dto/IPutUserRequest';
 
 @Injectable()
 export class UsersService {

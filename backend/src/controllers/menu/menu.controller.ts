@@ -4,7 +4,7 @@ import type { Response } from 'express';
 import type { IPostMenuRequest } from './dto/IPostMenuRequest';
 import type { IPostMenuResponse } from './dto/IPostMenuResponse';
 import type { IPutMenuRequest } from './dto/IPutMenuRequest';
-import { MenuService } from 'src/providers/menu/menu.service';
+import { MenuService } from '../../providers/menu/menu.service';
 
 @ApiTags('Menu')
 @Controller('menu')

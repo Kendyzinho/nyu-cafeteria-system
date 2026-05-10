@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { StockEntity } from 'src/database/entities/stock.entity';
-import type { IPostStockRequest } from 'src/controllers/stock/dto/IPostStockRequest';
-import type { IPutStockRequest } from 'src/controllers/stock/dto/IPutStockRequest';
+import { StockEntity } from '../../database/entities/stock.entity';
+import type { IPostStockRequest } from '../../controllers/stock/dto/IPostStockRequest';
+import type { IPutStockRequest } from '../../controllers/stock/dto/IPutStockRequest';
 
 @Injectable()
 export class StockService {

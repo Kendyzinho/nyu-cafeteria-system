@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { MenuEntity } from 'src/database/entities/menu.entity';
-import type { IPutMenuRequest } from 'src/controllers/menu/dto/IPutMenuRequest';
-import type { IPostMenuRequest } from 'src/controllers/menu/dto/IPostMenuRequest';
+import { MenuEntity } from '../../database/entities/menu.entity';
+import type { IPutMenuRequest } from '../../controllers/menu/dto/IPutMenuRequest';
+import type { IPostMenuRequest } from '../../controllers/menu/dto/IPostMenuRequest';
 
 @Injectable() // marca la clase como un provider inyectable
 export class MenuService {

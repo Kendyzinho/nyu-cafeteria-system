@@ -3,7 +3,7 @@ import type { Response } from 'express';
 import type { IPostPromotionRequest } from './dto/IPostPromotionRequest';
 import type { IPostPromotionResponse } from './dto/IPostPromotionResponse';
 import type { IPutPromotionRequest } from './dto/IPutPromotionRequest';
-import { PromotionsService } from 'src/providers/promotions/promotions.service';
+import { PromotionsService } from '../../providers/promotions/promotions.service';
 
 @Controller('promotions')
 export class PromotionsController {

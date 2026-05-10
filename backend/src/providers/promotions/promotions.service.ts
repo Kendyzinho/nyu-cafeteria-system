@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { PromotionEntity } from 'src/database/entities/promotion.entity';
-import type { IPostPromotionRequest } from 'src/controllers/promotions/dto/IPostPromotionRequest';
-import type { IPutPromotionRequest } from 'src/controllers/promotions/dto/IPutPromotionRequest';
+import { PromotionEntity } from '../../database/entities/promotion.entity';
+import type { IPostPromotionRequest } from '../../controllers/promotions/dto/IPostPromotionRequest';
+import type { IPutPromotionRequest } from '../../controllers/promotions/dto/IPutPromotionRequest';
 
 @Injectable()
 export class PromotionsService {
