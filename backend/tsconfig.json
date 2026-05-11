@@ -21,7 +21,13 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "rootDir": "src",
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "baseUrl": "./",
+    "ignoreDeprecations": "6.0",
+    "paths": {
+      "src/*": ["src/*"]
+    }
     
-  }
+  },
+  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
 }
