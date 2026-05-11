@@ -3,32 +3,36 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Paleta café cálido con imagen de cafetería */
+  /* NYU Modern Brown background with an overlay over the image */
   background-color: #6F4E37; 
-  background-image: linear-gradient(rgba(111, 78, 55, 0.75), rgba(78, 52, 46, 0.9)), url('https://images.unsplash.com/photo-1554118811-1e0d58224f24?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+  background-image: linear-gradient(rgba(111, 78, 55, 0.8), rgba(74, 58, 54, 0.9)), url('https://images.unsplash.com/photo-1541167760496-1628856ab772?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
   background-size: cover;
   background-position: center;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 .login-card {
-  background: #FFFBF7; /* Tono pastel crema */
-  padding: 40px;
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 45px 40px;
+  border-radius: 16px;
   width: 100%;
   max-width: 450px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.4);
 }
 
 .nyu-title {
-  color: #6F4E37; /* Café principal */
+  color: #31211D; 
   font-weight: 800;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  letter-spacing: -0.03em;
 }
 
 .nyu-title span {
-  color: #A98467; /* Café con leche / acento */
-  font-weight: 400;
+  color: #6F4E37; /* NYU Brown */
+  font-weight: 900;
 }
 
 .input-wrapper {
@@ -39,55 +43,63 @@
 
 .input-wrapper .icon {
   position: absolute;
-  left: 12px;
+  left: 15px;
   font-size: 1.2rem;
-  color: #8D6E63;
+  color: #A98467;
 }
 
 .input-wrapper input {
-  padding-left: 45px;
-  border-radius: 8px;
-  border: 1px solid #D7CCC8;
-  height: 48px;
-  background-color: #FFFFFF;
+  padding-left: 50px;
+  border-radius: 10px;
+  border: 1px solid #eaddd7;
+  height: 52px;
+  background-color: #FFFBF7;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
 }
 
 .input-wrapper input:focus {
-  border-color: #6F4E37;
-  box-shadow: 0 0 0 0.2rem rgba(111, 78, 55, 0.25);
+  border-color: #A98467;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(169, 132, 103, 0.15);
   outline: none;
 }
 
 .btn-cafeteria {
-  background-color: #6F4E37;
+  background: linear-gradient(135deg, #795238 0%, #4A3A36 100%);
   color: white;
-  font-weight: bold;
-  height: 50px;
+  font-weight: 700;
+  height: 52px;
   border: none;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  letter-spacing: 1px;
+  border-radius: 10px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 6px rgba(111, 78, 55, 0.2);
 }
 
 .btn-cafeteria:hover:not(:disabled) {
-  background-color: #4E342E; /* Café más oscuro al pasar el mouse */
-  color: white;
   transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(111, 78, 55, 0.35);
+  color: white;
 }
 
 .btn-cafeteria:disabled {
-  background-color: #D7CCC8;
-  color: #8D6E63;
+  background: #eaddd7;
+  color: #A98467;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .forgot-link, .support-link {
-  color: #8D6E63;
+  color: #6F4E37;
   text-decoration: none;
   font-weight: 600;
+  transition: color 0.2s;
 }
 
 .forgot-link:hover, .support-link:hover {
-  color: #4E342E;
+  color: #4A3A36;
   text-decoration: underline;
 }

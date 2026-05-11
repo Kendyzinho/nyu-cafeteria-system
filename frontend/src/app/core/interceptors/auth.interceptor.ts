@@ -34,9 +34,6 @@ export class AuthInterceptor implements HttpInterceptor {
           
           // Redirigimos al login
           this.router.navigate(['/login']);
-          
-          // Opcional: Aquí podrías usar una librería como SweetAlert2 para mostrar un popup
-          alert('Tu sesión ha expirado por seguridad. Por favor, ingresa nuevamente.');
         }
         
         // Devolvemos el error para que el componente que hizo la petición también pueda manejarlo si quiere

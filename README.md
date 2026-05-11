@@ -1,60 +1,74 @@
-# ☕ Sistema de Gestión Integrado - Cafetería Estudiantil
+# NYU Cafeteria Management System
 
-![Angular](https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
-![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)
-
-Este proyecto corresponde al desarrollo del frontend (Single Page Application) para la resolución del **Problema 4: Gestión de Cafetería**, desarrollado como proyecto semestral de Ingeniería de Software en la Universidad de Tarapacá (Sede Arica). 
-
-El sistema digitaliza y optimiza el flujo de atención, inventario y suscripción de planes de alimentación para la comunidad universitaria.
-
-## 📋 Descripción General
-
-La plataforma actúa como un ecosistema dual que atiende tanto a los estudiantes (clientes) como al personal de la cafetería (administradores). Su arquitectura permite una gestión de estado reactiva en tiempo real sin necesidad de recargar la página, ofreciendo una experiencia fluida.
-
-### 🎯 Objetivos del Proyecto (Sprints)
-- Digitalizar el menú y permitir compras ágiles.
-- Gestionar planes residenciales y beneficios de alimentación.
-- Proveer al staff de un panel de control para inventario y usuarios.
-- Implementar seguridad mediante enrutamiento basado en roles (JWT simulado).
+Sistema integral de gestión de servicios de alimentación diseñado para la comunidad universitaria. Esta plataforma optimiza el flujo de atención, el control de inventarios, la gestión de usuarios y la suscripción a planes residenciales mediante una arquitectura moderna, segura y escalable.
 
 ---
 
-## 🚀 Tecnologías y Arquitectura
+## Descripción General
 
-* **Framework Core:** Angular (TypeScript)
-* **Estilos y UI:** Bootstrap 5 (Responsive Design)
-* **Gestión de Estado:** RxJS (`BehaviorSubject` y Observables para sincronización en tiempo real entre componentes).
-* **Seguridad:** Angular Route Guards (`AuthGuard`, `RoleGuard`) e Interceptors.
-* **Mocking:** Servicios inyectables con bases de datos en memoria para el desarrollo del Frontend previo a la integración con la API RESTful.
+La plataforma opera como un ecosistema dual (B2C y B2B) que atiende tanto a los estudiantes/staff (clientes) como al personal administrativo de la cafetería. Su arquitectura desacoplada permite una experiencia de usuario fluida e interacciones en tiempo real mediante un cliente reactivo (Angular) y una API robusta (NestJS).
 
----
-
-## ⚙️ Características Principales (Módulos)
-
-### 🧑‍🎓 Módulo Estudiante / Residente
-* **Autenticación:** Registro e inicio de sesión inteligente.
-* **Mi Perfil:** Visualización de credenciales y estado del beneficio universitario.
-* **Gestión de Plan:** Panel de control ("Mi Plan") para visualizar comidas restantes, renovaciones automáticas y definición de preferencias alimentarias (Vegano, Celiaco, etc.).
-* **Catálogo Interactivo:** Menú reactivo que refleja la disponibilidad de productos en tiempo real.
-
-### 🛡️ Módulo Administrador / Staff
-* **Gestión de Usuarios:** Tabla dinámica con persistencia para suspender/activar cuentas de estudiantes o ver sus planes asociados.
-* **Control de Stock Vivo:** Panel de inventario que calcula automáticamente el estado del producto ("Agotado", "Poco Stock", "Disponible") basado en umbrales mínimos, bloqueando las ventas en el catálogo del cliente si el stock llega a 0.
+### Objetivos Centrales
+- **Digitalización del Catálogo**: Ofrecer un menú interactivo con control de stock en tiempo real.
+- **Gestión Integral de Alojamiento**: Administrar de manera eficiente los beneficios y planes alimenticios exclusivos para residentes del campus.
+- **Administración Centralizada**: Proveer al personal administrativo de un panel de control avanzado para la gestión de usuarios, inventario y promociones.
+- **Máxima Seguridad**: Garantizar el resguardo de la información mediante autenticación basada en tokens (JWT) y autorización estricta por roles.
 
 ---
 
-## 📁 Estructura del Proyecto
+## Stack Tecnológico y Arquitectura
 
-El código fuente sigue las mejores prácticas de modularidad de Angular:
+El proyecto está dividido en dos capas fundamentales, comunicadas mediante una API RESTful estándar:
+
+### Frontend (Cliente)
+* **Core Framework:** Angular (TypeScript).
+* **UI/UX Design:** Interfaz "Premium Aesthetic" con diseño adaptativo usando Bootstrap 5, complementado con variables CSS personalizadas y efectos de Glassmorphism.
+* **Gestión de Estado:** Programación reactiva con RxJS (BehaviorSubject y Observables).
+* **Seguridad (Guards & Interceptors):** Implementación de escudos de navegación (AuthGuard, RoleGuard, GuestGuard, ResidentGuard) e interceptores HTTP para la inyección y validación automática de tokens JWT.
+
+### Backend (Servidor)
+* **Core Framework:** NestJS (Node.js).
+* **Persistencia de Datos:** TypeORM sobre base de datos relacional (SQL).
+* **Validación:** Uso extensivo de Pipes y DTOs (Data Transfer Objects) para la sanitización de solicitudes HTTP.
+* **Seguridad:** Módulos de autenticación Passport/JWT y encriptación robusta de credenciales.
+
+---
+
+## Módulos y Características
+
+### Módulo Estudiante / Staff
+* **Autenticación Segura:** Ingreso al sistema mediante credenciales institucionales.
+* **Perfil Interactivo:** Visualización de credenciales y estado del beneficio universitario.
+* **Plan de Residente:** Panel de control ("Mi Plan") para usuarios de alojamiento. Permite visualizar comidas restantes, renovaciones y establecer preferencias alimentarias (ej. Vegano, Celiaco).
+* **Catálogo en Vivo:** Menú reactivo que refleja la disponibilidad de productos en tiempo real, con carrito de compras integrado.
+
+### Módulo Administrador
+* **Gestión de Usuarios:** Panel avanzado para editar, suspender o dar de baja cuentas de la comunidad universitaria. Nota: La creación de cuentas está restringida a nivel de base de datos por políticas de seguridad.
+* **Control de Stock Dinámico:** Inventario inteligente que evalúa automáticamente el estado de los productos (Agotado, Bajo Stock, Disponible) y bloquea ventas de artículos agotados.
+* **Gestión de Planes y Promociones:** Interfaz para crear o dar de baja promociones estacionales y planes alimenticios.
+
+---
+
+## Estructura del Código Fuente (Frontend)
+
+El repositorio sigue un patrón de diseño modular estricto para asegurar la mantenibilidad y escalabilidad del código:
 
 ```text
 src/
 ├── app/
-│   ├── core/           # Servicios (Auth, Menu, Users), Modelos, Guards e Interceptors.
-│   ├── features/       # Módulos principales (Auth, Admin, Student).
-│   ├── shared/         # Componentes reutilizables (Navbar, Footer, Loaders).
-│   ├── layouts/        # Estructuras de página (ClientLayout vs AuthLayout).
-│   └── app.module.ts   # Módulo raíz.
-├── assets/             # Imágenes y recursos estáticos.
-└── styles.css          # Estilos globales y variables de color (Paleta Corporativa).
+│   ├── core/           # Motor del sistema: Guards, Interceptors, Modelos y Servicios de API.
+│   ├── features/       # Módulos aislados (Auth, Admin Dashboard, Student App).
+│   ├── shared/         # Componentes transversales (Navbars adaptativos, Modales, Loaders).
+│   └── app.module.ts   # Orquestador principal y enrutamiento base.
+├── assets/             # Recursos estáticos e iconografía vectorial (SVG).
+└── styles.css          # Sistema de diseño centralizado (Tipografía Inter, Paleta de Colores NYU).
+```
+
+---
+
+## Estándares de Seguridad y Calidad
+Este proyecto fue construido siguiendo estrictamente métricas de evaluación de software de nivel industrial:
+1. **Control de Accesos:** Rutas absolutamente bloqueadas según estado de sesión y rol del usuario (RBAC).
+2. **Validación Bidireccional:** Formularios reactivos en frontend apoyados por validadores de clase (Pipes) en el backend.
+3. **Manejo de Errores Silencioso:** Captura global de excepciones HTTP para evitar colapsos en la UI, garantizando la continuidad operativa.
+4. **Clean Code:** Adopción de convenciones de nomenclatura (CamelCase, PascalCase), inyección de dependencias coherente y abstracción de la lógica de negocio en servicios centralizados.
