@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { PlanService } from '../../../core/services/plan.service';
 import { IntegrationService } from '../../../core/services/integration.service';
 @Component({
@@ -6,25 +6,42 @@ import { IntegrationService } from '../../../core/services/integration.service';
   templateUrl: './plans-admin.component.html',
   styleUrls: ['./plans-admin.component.css']
 })
-export class PlansAdminComponent {
+export class PlansAdminComponent implements OnInit {
   planes: any[] = [];
 
   constructor(
-  private planService: PlanService,
-  private integrationService: IntegrationService
-) {
-  this.planes = this.planService.getPlanes();
-}
+    private planService: PlanService,
+    private integrationService: IntegrationService
+  ) {}
 
-  activarPlan(plan: any) {
-  const residenciaValida = this.integrationService.validarResidenciaActiva(plan);
-
-  if (!residenciaValida) {
-    alert('No se puede activar el plan: residencia inactiva');
-    return;
+  ngOnInit() {
+    this.loadPlanes();
   }
 
-  this.planService.activarPlan(plan);
-  alert(`Plan activado para ${plan.estudiante}`);
+  loadPlanes() {
+    this.planService.getPlanes().subscribe({
+      next: (data: any[]) => this.planes = data,
+      error: (err: any) => console.error('Error fetching plans', err)
+    });
+  }
+
+  activarPlan(plan: any) {
+    this.integrationService.validarResidenciaActiva(plan).subscribe(residenciaValida => {
+      if (!residenciaValida) {
+        alert('No se puede activar el plan: residencia inactiva');
+        return;
+      }
+
+      this.planService.activarPlan(plan.id, { ...plan, planActivo: true }).subscribe({
+        next: () => {
+          alert(`Plan activado para ${plan.estudiante || 'el usuario'}`);
+          this.loadPlanes();
+        },
+        error: (err: any) => {
+          console.error('Error al activar plan', err);
+          alert('Error al activar el plan.');
+        }
+      });
+    });
   }
 }

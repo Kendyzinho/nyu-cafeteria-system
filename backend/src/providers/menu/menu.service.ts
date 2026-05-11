@@ -25,6 +25,7 @@ export class MenuService {
       studentPrice: +(Number(item.precio) * 0.75).toFixed(0), // calcula 25% de descuento
       image: item.image ?? '',   // si no tiene imagen retorna string vacío
       isAvailable: item.disponible,
+      stock: item.stockActual,
     };
   }
 

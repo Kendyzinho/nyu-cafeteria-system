@@ -1,16 +1,25 @@
-import { Component } from '@angular/core';
-import { StockService } from '../../../core/services/stock.service';
+import { Component, OnInit } from '@angular/core';
+import { MenuService } from '../../../core/services/menu.service';
 
 @Component({
   selector: 'app-stock-admin',
   templateUrl: './stock-admin.component.html',
   styleUrls: ['./stock-admin.component.css']
 })
-export class StockAdminComponent {
+export class StockAdminComponent implements OnInit {
   productos: any[] = [];
 
-  constructor(private stockService: StockService) {
-    this.productos = this.stockService.getProductos();
+  constructor(private menuService: MenuService) {}
+
+  ngOnInit() {
+    this.cargarStock();
+  }
+
+  cargarStock() {
+    this.menuService.getAll().subscribe({
+      next: (items) => this.productos = items,
+      error: (err) => console.error('Error fetching stock', err)
+    });
   }
 
   actualizarStock(producto: any) {
@@ -20,12 +29,28 @@ export class StockAdminComponent {
       return;
     }
 
-    this.stockService.actualizarStock(producto);
+    // El backend espera el campo "stockActual" y el resto de los campos requeridos
+    const payload = {
+      nombre: producto.name,
+      descripcion: producto.description,
+      precio: producto.price,
+      categoria: producto.category,
+      stockActual: producto.stock,
+      disponible: producto.stock > 0
+    };
 
-    if (producto.stock === 0) {
-      alert(`${producto.nombre} quedó bloqueado por falta de stock`);
-    } else {
-      alert(`Stock de ${producto.nombre} actualizado correctamente`);
-    }
+    this.menuService.update(producto.id, payload).subscribe({
+      next: () => {
+        if (producto.stock === 0) {
+          alert(`"${producto.name}" quedó bloqueado automáticamente por falta de stock`);
+        } else {
+          alert(`Stock de "${producto.name}" actualizado a ${producto.stock}`);
+        }
+      },
+      error: (err) => {
+        console.error('Error actualizando stock', err);
+        alert('Error al actualizar el stock.');
+      }
+    });
   }
 }

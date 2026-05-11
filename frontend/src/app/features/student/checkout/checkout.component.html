@@ -1,1 +1,91 @@
-<p>checkout works!</p>
+<div class="container py-4">
+  <h2 class="fw-bold mb-4" style="color: #4E342E;">Finalizar Pedido</h2>
+
+  <div class="row g-4">
+    <!-- Left Column: Cart Items -->
+    <div class="col-md-8">
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+          <h5 class="fw-bold mb-4">Tu Selección</h5>
+          
+          <div *ngIf="cartItems.length === 0" class="text-center py-4">
+            <p class="text-muted mb-3">Tu carrito está vacío.</p>
+            <a routerLink="/menu" class="btn btn-outline-secondary">Volver al Menú</a>
+          </div>
+
+          <div *ngIf="cartItems.length > 0">
+            <div *ngFor="let item of cartItems" class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
+              <div class="d-flex align-items-center gap-3">
+                <img [src]="item.product.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80'" alt="img" class="rounded" style="width: 60px; height: 60px; object-fit: cover;">
+                <div>
+                  <h6 class="mb-0 fw-bold">{{ item.product.name }}</h6>
+                  <small class="text-muted">${{ item.product.studentPrice || item.product.price }} x {{ item.quantity }}</small>
+                </div>
+              </div>
+              
+              <div class="d-flex align-items-center gap-3">
+                <div class="btn-group btn-group-sm">
+                  <button class="btn btn-outline-secondary" (click)="updateQuantity(item, -1)">-</button>
+                  <button class="btn btn-outline-secondary" disabled>{{ item.quantity }}</button>
+                  <button class="btn btn-outline-secondary" (click)="updateQuantity(item, 1)">+</button>
+                </div>
+                <button class="btn btn-sm btn-outline-danger" (click)="removeItem(item)">
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Checkout Details -->
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+          <h5 class="fw-bold mb-3">Opciones de Retiro</h5>
+          <div class="mb-3">
+            <label class="form-label text-muted small">Hora estimada de retiro en cafetería</label>
+            <input type="time" class="form-control" [(ngModel)]="pickupTime">
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+          <h5 class="fw-bold mb-3">Método de Pago</h5>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="radio" name="paymentMethod" id="payCard" value="Tarjeta" [(ngModel)]="paymentMethod">
+            <label class="form-check-label" for="payCard">Tarjeta de Crédito / Débito</label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="radio" name="paymentMethod" id="payPlan" value="Plan Residente" [(ngModel)]="paymentMethod">
+            <label class="form-check-label" for="payPlan">Usar Comida de Plan Residente</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm bg-cafe-light" style="background-color: #f7f1eb;">
+        <div class="card-body">
+          <h5 class="fw-bold mb-3">Resumen</h5>
+          <div class="d-flex justify-content-between mb-2">
+            <span>Subtotal</span>
+            <span>${{ totalAmount }}</span>
+          </div>
+          <div class="d-flex justify-content-between mb-3 fw-bold fs-5" style="color: #4E342E;">
+            <span>Total</span>
+            <span>${{ totalAmount }}</span>
+          </div>
+          
+          <button 
+            class="btn w-100 fw-bold btn-cafeteria" 
+            [disabled]="cartItems.length === 0 || isProcessing"
+            (click)="confirmOrder()">
+            <span *ngIf="!isProcessing">Pagar y Confirmar Pedido</span>
+            <span *ngIf="isProcessing">Procesando...</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
