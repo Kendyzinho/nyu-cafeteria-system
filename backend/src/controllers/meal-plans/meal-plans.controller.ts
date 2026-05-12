@@ -29,18 +29,24 @@ export class MealPlansController {
   async postMealPlan(
     @Body() request: IPostMealPlanRequest
   ): Promise<IPostMealPlanResponse> {
-    const response: IPostMealPlanResponse = {
-      data: null,
-      statusCode: 200,
-      statusDescription: 'Plan de alimentación creado',
-      errors: null,
-    };
-
-    if (request) {
-      await this.mealPlansService.create(request);
+    console.log('--- Datos recibidos en el Backend ---');
+    console.log(request);
+    try {
+      const createdPlan = await this.mealPlansService.create(request);
+      return {
+        data: createdPlan as any,
+        statusCode: 201,
+        statusDescription: 'Plan de alimentación creado exitosamente',
+        errors: null,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        statusCode: 500,
+        statusDescription: 'Error al crear el plan en la base de datos',
+        errors: [error.message],
+      };
     }
-
-    return response;
   }
 
   @ApiOperation({ summary: 'Actualizar un plan' })

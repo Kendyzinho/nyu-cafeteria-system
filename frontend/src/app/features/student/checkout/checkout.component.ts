@@ -4,6 +4,8 @@ import { Subscription } from 'rxjs';
 import { CartService, CartItem } from '../../../core/services/cart.service';
 import { OrderService } from '../../../core/services/order.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { IntegrationService } from '../../../core/services/integration.service';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-checkout',
@@ -23,6 +25,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     private cartService: CartService,
     private orderService: OrderService,
     private authService: AuthService,
+    private integrationService: IntegrationService,
+    private toastService: ToastService,
     private router: Router
   ) {}
 
@@ -47,20 +51,49 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
   confirmOrder() {
     if (!this.pickupTime) {
-      alert('Por favor selecciona una hora de retiro.');
+      this.toastService.show('Por favor selecciona una hora de retiro.', 'warning');
       return;
     }
     
     if (this.cartItems.length === 0) {
-      alert('Tu carrito está vacío.');
+      this.toastService.show('Tu carrito está vacío.', 'warning');
       return;
     }
 
     this.isProcessing = true;
-
     const user = this.authService.getCurrentUser();
 
-    // Map payload to match backend DTO: IPostOrderRequest
+    // Regla de Negocio: Validar Plan Residente
+    // Bypass temporal de validación de Residencia
+    if (false && this.paymentMethod === 'Plan Residente') {
+      if (!user?.isResident) {
+        this.toastService.show('No eres un Residente activo. No puedes usar este método de pago.', 'danger');
+        this.isProcessing = false;
+        return;
+      }
+      this.executeOrderCreation(user);
+    } 
+    // Regla de Negocio: Validar Tarjeta (Pasarela Equipo 5)
+    else {
+      const payloadPago = { email: user?.email, monto: this.totalAmount };
+      this.integrationService.validarPagoAprobado(payloadPago).subscribe({
+        next: (pagoAprobado) => {
+          if (!pagoAprobado) {
+            this.toastService.show('El pago fue rechazado por la pasarela.', 'danger');
+            this.isProcessing = false;
+            return;
+          }
+          this.executeOrderCreation(user);
+        },
+        error: () => {
+          this.toastService.show('Error conectando a la pasarela de pagos.', 'danger');
+          this.isProcessing = false;
+        }
+      });
+    }
+  }
+
+  private executeOrderCreation(user: any) {
     const payload = {
       usuarioId: user ? user.id : 1, 
       items: this.cartItems.map(i => ({
@@ -74,12 +107,12 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       next: () => {
         this.isProcessing = false;
         this.cartService.clearCart();
-        alert(`¡Pedido confirmado! Retira a las ${this.pickupTime}`);
+        this.toastService.show(`¡Pedido confirmado! Retira a las ${this.pickupTime}`, 'success');
         this.router.navigate(['/history']);
       },
       error: (err: any) => {
         console.error('Error al procesar orden', err);
-        alert('Hubo un problema procesando tu pago u orden.');
+        this.toastService.show('Hubo un problema procesando tu orden internamente.', 'danger');
         this.isProcessing = false;
       }
     });

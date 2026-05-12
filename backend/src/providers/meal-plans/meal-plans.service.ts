@@ -24,7 +24,7 @@ export class MealPlansService {
   }
 
   public async create(data: IPostMealPlanRequest): Promise<MealPlanEntity> {
-    const item = this.mealPlanRepository.create(data);
+    const item = new MealPlanEntity(data);
     return await this.mealPlanRepository.save(item);
   }
 

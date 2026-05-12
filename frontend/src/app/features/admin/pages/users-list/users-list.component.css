@@ -294,11 +294,16 @@
 .modal-backdrop-custom {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background-color: rgba(49, 33, 29, 0.6); /* Modern deep brown with transparency */
+  background-color: rgba(49, 33, 29, 0.6);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   z-index: 1040;
   animation: fadeIn 0.3s ease forwards;
+  display: none; /* Por defecto oculto */
+}
+
+.modal-backdrop-custom.show {
+  display: block;
 }
 
 @keyframes fadeIn {

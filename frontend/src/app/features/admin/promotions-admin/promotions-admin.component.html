@@ -1,80 +1,80 @@
-<div class="container mt-4">
-  <h2>Gestión de Promociones</h2>
-  <p class="text-muted">
-    Aplicación de descuentos según validaciones externas del sistema
-  </p>
+<div class="container-fluid py-5">
+  <div class="row align-items-center mb-4 g-4">
+    <div class="col-md-8">
+      <h2 class="fw-bolder mb-1" style="color: var(--nyu-dark);">Gestión de Promociones</h2>
+      <p class="text-muted mb-0">Activación de beneficios basada en validación del Sistema de Matrícula y Pagos (Eq. 1 y 5).</p>
+    </div>
+  </div>
 
-  <table class="table table-bordered table-hover mt-3">
-    <thead>
-      <tr>
-        <th>Promoción</th>
-        <th>Descuento</th>
-        <th>Estudiante activo</th>
-        <th>Residencia activa</th>
-        <th>Pago aprobado</th>
-        <th>Validaciones externas</th>
-        <th>Estado</th>
-        <th>Acción</th>
-      </tr>
-    </thead>
+  <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0 align-middle">
+        <thead style="background-color: #f8f9fa;">
+          <tr>
+            <th class="py-4 px-4 fw-bold text-uppercase text-muted" style="font-size: 0.85rem;">Campaña / Descuento</th>
+            <th class="py-4 px-4 fw-bold text-uppercase text-muted text-center" style="font-size: 0.85rem;">Requisitos (Sistemas)</th>
+            <th class="py-4 px-4 fw-bold text-uppercase text-muted text-center" style="font-size: 0.85rem;">Aprobación Eq. Externo</th>
+            <th class="py-4 px-4 fw-bold text-uppercase text-muted text-center" style="font-size: 0.85rem;">Estado de Campaña</th>
+            <th class="py-4 px-4 fw-bold text-uppercase text-muted text-end" style="font-size: 0.85rem;">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let promo of promociones">
+            <td class="py-3 px-4">
+              <div class="fw-bolder fs-6 text-dark mb-1">{{ promo.nombre }}</div>
+              <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle rounded-pill">
+                {{ promo.descuento }}% OFF
+              </span>
+            </td>
 
-    <tbody>
-      <tr *ngFor="let promo of promociones">
-        <td>{{ promo.nombre }}</td>
+            <td class="py-3 px-4 text-center">
+              <div class="d-flex flex-wrap gap-1 justify-content-center">
+                <span class="badge bg-light text-dark border">
+                  <i class="bi bi-mortarboard-fill text-primary me-1"></i>Matrícula
+                </span>
+                <span class="badge bg-light text-dark border">
+                  <i class="bi bi-credit-card-fill text-success me-1"></i>Pagos
+                </span>
+                <span class="badge bg-light text-dark border" *ngIf="promo.residenciaRequerida">
+                  <i class="bi bi-house-fill text-warning me-1"></i>Residencia
+                </span>
+              </div>
+            </td>
 
-        <td>{{ promo.descuento }}%</td>
+            <td class="py-3 px-4 text-center">
+              <div class="d-flex flex-column align-items-center gap-1" style="font-size: 0.8rem;">
+                <span [ngClass]="promo.estudianteActivo ? 'text-success fw-bold' : 'text-danger fw-bold'">
+                  <i class="bi" [ngClass]="promo.estudianteActivo ? 'bi-check-circle-fill' : 'bi-x-circle-fill'"></i> Estudiante
+                </span>
+                <span [ngClass]="promo.pagoAprobado ? 'text-success fw-bold' : 'text-danger fw-bold'">
+                  <i class="bi" [ngClass]="promo.pagoAprobado ? 'bi-check-circle-fill' : 'bi-x-circle-fill'"></i> Pago
+                </span>
+              </div>
+            </td>
 
-        <td>
-          <span
-            class="badge"
-            [ngClass]="promo.estudianteActivo ? 'badge-success-custom' : 'badge-danger-custom'"
-          >
-            {{ promo.estudianteActivo ? 'Sí' : 'No' }}
-          </span>
-        </td>
+            <td class="py-3 px-4 text-center">
+              <span class="badge rounded-pill px-3 py-2 fw-bold" 
+                    [ngClass]="promo.activa ? 'bg-success-subtle text-success' : 'bg-secondary bg-opacity-10 text-secondary'">
+                <span class="d-inline-block rounded-circle me-1" style="width: 6px; height: 6px;" [ngClass]="promo.activa ? 'bg-success' : 'bg-secondary'"></span>
+                {{ promo.activa ? 'Campaña Activa' : 'Pausada' }}
+              </span>
+            </td>
 
-        <td>
-          <span
-            class="badge"
-            [ngClass]="promo.residenciaActiva ? 'badge-success-custom' : 'badge-danger-custom'"
-          >
-            {{ promo.residenciaActiva ? 'Sí' : 'No' }}
-          </span>
-        </td>
-
-        <td>
-          <span
-            class="badge"
-            [ngClass]="promo.pagoAprobado ? 'badge-success-custom' : 'badge-danger-custom'"
-          >
-            {{ promo.pagoAprobado ? 'Sí' : 'No' }}
-          </span>
-        </td>
-
-        <td>
-          <span class="badge badge-info-custom me-1">Matrícula</span>
-          <span class="badge badge-warning-custom me-1">Residencia</span>
-          <span class="badge badge-success-custom">Pagos</span>
-        </td>
-
-        <td>
-          <span
-            class="badge"
-            [ngClass]="promo.activa ? 'badge-success-custom' : 'badge-neutral-custom'"
-          >
-            {{ promo.activa ? 'Activa' : 'Inactiva' }}
-          </span>
-        </td>
-
-        <td>
-          <button
-            class="btn btn-coffee btn-sm"
-            (click)="aplicarPromocion(promo)"
-          >
-            Aplicar
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+            <td class="py-3 px-4 text-end">
+              <button class="btn btn-sm shadow-sm fw-bold rounded-3" 
+                      [ngClass]="promo.activa ? 'btn-outline-secondary' : 'btn-dark'"
+                      (click)="aplicarPromocion(promo)">
+                {{ promo.activa ? 'Desactivar' : 'Aplicar Promoción' }}
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="promociones.length === 0">
+            <td colspan="5" class="text-center py-5 text-muted">
+              No hay promociones registradas en el sistema.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>

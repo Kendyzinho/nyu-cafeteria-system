@@ -16,4 +16,7 @@ export class IPostMealPlanRequest {
   @IsString()
   @IsNotEmpty()
   tipo: string;
+
+  @IsNotEmpty()
+  activo: boolean;
 }

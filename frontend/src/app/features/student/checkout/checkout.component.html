@@ -4,32 +4,37 @@
   <div class="row g-4">
     <!-- Left Column: Cart Items -->
     <div class="col-md-8">
-      <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
-          <h5 class="fw-bold mb-4">Tu Selección</h5>
+      <div class="card border-0 shadow-sm mb-4 rounded-4 overflow-hidden">
+        <div class="card-body p-4">
+          <h5 class="fw-bold mb-4 d-flex align-items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-basket2-fill text-primary" viewBox="0 0 16 16">
+              <path d="M5.929 1.757a.5.5 0 1 0-.858-.514L2.217 6H.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h.623l1.844 6.456A.75.75 0 0 0 3.69 15h8.622a.75.75 0 0 0 .722-.544L14.877 8h.623a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1.717L10.93 1.243a.5.5 0 1 0-.858.514L12.617 6H3.383zM4 10a1 1 0 0 1 2 0v2a1 1 0 1 1-2 0zm3 0a1 1 0 0 1 2 0v2a1 1 0 1 1-2 0zm4-1a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1"/>
+            </svg>
+            Tu Selección
+          </h5>
           
-          <div *ngIf="cartItems.length === 0" class="text-center py-4">
-            <p class="text-muted mb-3">Tu carrito está vacío.</p>
-            <a routerLink="/menu" class="btn btn-outline-secondary">Volver al Menú</a>
+          <div *ngIf="cartItems.length === 0" class="text-center py-5">
+            <p class="text-muted mb-3 fs-5">Tu carrito está vacío.</p>
+            <a routerLink="/menu" class="btn btn-outline-primary fw-bold px-4 rounded-pill">Volver al Menú</a>
           </div>
 
           <div *ngIf="cartItems.length > 0">
             <div *ngFor="let item of cartItems" class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
               <div class="d-flex align-items-center gap-3">
-                <img [src]="item.product.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80'" alt="img" class="rounded" style="width: 60px; height: 60px; object-fit: cover;">
+                <img [src]="item.product.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80'" alt="img" class="rounded-3 shadow-sm" style="width: 65px; height: 65px; object-fit: cover;">
                 <div>
-                  <h6 class="mb-0 fw-bold">{{ item.product.name }}</h6>
-                  <small class="text-muted">${{ item.product.studentPrice || item.product.price }} x {{ item.quantity }}</small>
+                  <h6 class="mb-1 fw-bold text-dark">{{ item.product.name }}</h6>
+                  <small class="text-muted fw-bold">${{ (item.product.studentPrice || item.product.price) | number }} c/u</small>
                 </div>
               </div>
               
-              <div class="d-flex align-items-center gap-3">
-                <div class="btn-group btn-group-sm">
-                  <button class="btn btn-outline-secondary" (click)="updateQuantity(item, -1)">-</button>
-                  <button class="btn btn-outline-secondary" disabled>{{ item.quantity }}</button>
-                  <button class="btn btn-outline-secondary" (click)="updateQuantity(item, 1)">+</button>
+              <div class="d-flex flex-column align-items-end gap-2">
+                <div class="d-flex align-items-center border rounded-3 p-1 shadow-sm">
+                  <button class="btn btn-sm btn-light border-0 py-0 px-2 fw-bold" (click)="updateQuantity(item, -1)">-</button>
+                  <span class="px-3 fw-bold">{{ item.quantity }}</span>
+                  <button class="btn btn-sm btn-light border-0 py-0 px-2 fw-bold" (click)="updateQuantity(item, 1)">+</button>
                 </div>
-                <button class="btn btn-sm btn-outline-danger" (click)="removeItem(item)">
+                <button class="btn btn-link text-danger text-decoration-none p-0 small fw-bold" (click)="removeItem(item)">
                   Eliminar
                 </button>
               </div>
@@ -41,47 +46,84 @@
 
     <!-- Right Column: Checkout Details -->
     <div class="col-md-4">
-      <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
-          <h5 class="fw-bold mb-3">Opciones de Retiro</h5>
-          <div class="mb-3">
-            <label class="form-label text-muted small">Hora estimada de retiro en cafetería</label>
-            <input type="time" class="form-control" [(ngModel)]="pickupTime">
+      <div class="card border-0 shadow-sm mb-4 rounded-4 overflow-hidden">
+        <div class="card-body p-4">
+          <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-clock-history text-primary" viewBox="0 0 16 16">
+              <path d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022zm2.004.45a7 7 0 0 0-.985-.299l.219-.976q.576.129 1.126.342zm1.37.71a7 7 0 0 0-.439-.27l.493-.87a8 8 0 0 1 .979.654l-.615.789a7 7 0 0 0-.418-.302zm1.834 1.79a7 7 0 0 0-.653-.796l.724-.69q.406.429.747.91zm.744 1.352a7 7 0 0 0-.214-.468l.893-.45a8 8 0 0 1 .45 1.088l-.95.313a7 7 0 0 0-.179-.483m.53 2.507a7 7 0 0 0-.1-1.025l.985-.17q.1.58.116 1.17zm-.131 1.538q.05-.254.081-.51l.993.123a8 8 0 0 1-.23 1.155l-.964-.267q.069-.247.12-.501m-.952 2.379q.276-.436.486-.908l.914.405q-.24.54-.555 1.038zm-.964 1.205q.183-.183.35-.378l.758.653a8 8 0 0 1-.401.432z"/>
+              <path d="M8 1a7 7 0 1 0 4.95 11.95l.707.707A8.001 8.001 0 1 1 8 0zM8 3a.5.5 0 0 1 .5.5v3.793l2.146 2.147a.5.5 0 0 1-.708.708l-2.5-2.5A.5.5 0 0 1 8 7.5z"/>
+            </svg>
+            Retiro en Local
+          </h5>
+          <div class="mb-2">
+            <label class="form-label text-muted small fw-bold">Hora estimada de retiro en cafetería</label>
+            <input type="time" class="form-control form-control-lg shadow-sm" [(ngModel)]="pickupTime" style="border-radius: 8px;">
           </div>
         </div>
       </div>
 
-      <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
+      <div class="card border-0 shadow-sm mb-4 rounded-4 overflow-hidden">
+        <div class="card-body p-4">
           <h5 class="fw-bold mb-3">Método de Pago</h5>
-          <div class="form-check mb-2">
-            <input class="form-check-input" type="radio" name="paymentMethod" id="payCard" value="Tarjeta" [(ngModel)]="paymentMethod">
-            <label class="form-check-label" for="payCard">Tarjeta de Crédito / Débito</label>
-          </div>
-          <div class="form-check mb-2">
-            <input class="form-check-input" type="radio" name="paymentMethod" id="payPlan" value="Plan Residente" [(ngModel)]="paymentMethod">
-            <label class="form-check-label" for="payPlan">Usar Comida de Plan Residente</label>
+          <div class="d-flex flex-column gap-3">
+            
+            <label class="border rounded-3 p-3 d-flex align-items-center gap-3 transition-all"
+                   [ngClass]="paymentMethod === 'Tarjeta' ? 'border-primary bg-primary bg-opacity-10 shadow-sm' : 'border-light-subtle bg-white'"
+                   style="cursor: pointer;">
+              <input type="radio" name="paymentMethod" value="Tarjeta" [(ngModel)]="paymentMethod" class="form-check-input mt-0" style="transform: scale(1.2);">
+              <div class="d-flex flex-column">
+                <span class="fw-bold text-dark d-flex align-items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-credit-card-2-front text-primary" viewBox="0 0 16 16">
+                    <path d="M14 3a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h12zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2z"/>
+                    <path d="M2 5.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5.5v-1zm0 3a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5z"/>
+                  </svg>
+                  Tarjeta Crédito/Débito
+                </span>
+                <small class="text-muted" style="font-size: 0.75rem;">Procesado por Pasarela NYU</small>
+              </div>
+            </label>
+
+            <label class="border rounded-3 p-3 d-flex align-items-center gap-3 transition-all"
+                   [ngClass]="paymentMethod === 'Plan Residente' ? 'border-primary bg-primary bg-opacity-10 shadow-sm' : 'border-light-subtle bg-white'"
+                   style="cursor: pointer;">
+              <input type="radio" name="paymentMethod" value="Plan Residente" [(ngModel)]="paymentMethod" class="form-check-input mt-0" style="transform: scale(1.2);">
+              <div class="d-flex flex-column">
+                <span class="fw-bold text-dark d-flex align-items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-house-door text-warning" viewBox="0 0 16 16">
+                    <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a1.5 1.5 0 0 0-1.5-1.5h-3A1.5 1.5 0 0 0 4 10v4H2.5z"/>
+                  </svg>
+                  Usar Plan Residente
+                </span>
+                <small class="text-muted" style="font-size: 0.75rem;">Consume raciones de tu plan</small>
+              </div>
+            </label>
+
           </div>
         </div>
       </div>
 
-      <div class="card border-0 shadow-sm bg-cafe-light" style="background-color: #f7f1eb;">
-        <div class="card-body">
-          <h5 class="fw-bold mb-3">Resumen</h5>
-          <div class="d-flex justify-content-between mb-2">
-            <span>Subtotal</span>
-            <span>${{ totalAmount }}</span>
+      <div class="card border-0 shadow-lg rounded-4 overflow-hidden" style="background: linear-gradient(145deg, #f7f1eb, #ffffff);">
+        <div class="card-body p-4">
+          <h5 class="fw-bolder mb-3" style="color: #4E342E;">Resumen del Pedido</h5>
+          <div class="d-flex justify-content-between mb-2 pb-2 border-bottom border-secondary-subtle">
+            <span class="text-muted fw-bold">Subtotal</span>
+            <span class="fw-bold">${{ totalAmount | number }}</span>
           </div>
-          <div class="d-flex justify-content-between mb-3 fw-bold fs-5" style="color: #4E342E;">
-            <span>Total</span>
-            <span>${{ totalAmount }}</span>
+          <div class="d-flex justify-content-between align-items-center my-3">
+            <span class="fs-5 fw-bolder" style="color: #4E342E;">Total a Pagar</span>
+            <span class="fs-3 fw-bolder text-dark">${{ totalAmount | number }}</span>
           </div>
           
-          <button 
-            class="btn w-100 fw-bold btn-cafeteria" 
-            [disabled]="cartItems.length === 0 || isProcessing"
-            (click)="confirmOrder()">
-            <span *ngIf="!isProcessing">Pagar y Confirmar Pedido</span>
+          <button class="btn w-100 fw-bold shadow mt-2 py-3 rounded-pill text-white d-flex align-items-center justify-content-center gap-2" 
+                  [disabled]="cartItems.length === 0 || isProcessing"
+                  (click)="confirmOrder()"
+                  style="background-color: var(--nyu-primary); transition: all 0.2s; font-size: 1.1rem;">
+            <svg *ngIf="!isProcessing" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-shield-lock-fill" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M8 0c-.69 0-1.843.265-2.928.56-1.11.3-2.229.655-2.887.87a1.54 1.54 0 0 0-1.044 1.262c-.596 4.477.787 7.795 2.465 9.99a11.8 11.8 0 0 0 2.517 2.453c.386.273.744.482 1.048.625.28.132.581.24.829.24s.548-.108.829-.24a7.2 7.2 0 0 0 1.048-.625 11.8 11.8 0 0 0 2.517-2.453c1.678-2.195 3.061-5.513 2.465-9.99a1.54 1.54 0 0 0-1.044-1.263 63 63 0 0 0-2.887-.87C9.843.266 8.69 0 8 0m0 5a1.5 1.5 0 0 1 .5 2.915l.385 1.99a.5.5 0 0 1-.491.595h-.788a.5.5 0 0 1-.49-.595l.384-1.99A1.5 1.5 0 0 1 8 5"/>
+            </svg>
+            <span *ngIf="!isProcessing">Pagar Seguro</span>
+            
+            <div *ngIf="isProcessing" class="spinner-border spinner-border-sm text-white me-2" role="status"></div>
             <span *ngIf="isProcessing">Procesando...</span>
           </button>
         </div>
