@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MenuService } from '../../../core/services/menu.service';
 import { CartService } from '../../../core/services/cart.service';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-menu',
@@ -16,7 +17,8 @@ export class MenuComponent implements OnInit {
 
   constructor(
     private menuService: MenuService,
-    private cartService: CartService
+    private cartService: CartService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -28,6 +30,7 @@ export class MenuComponent implements OnInit {
 
   handleAddToCart(itemRecibido: any) {
     this.cartService.addItem(itemRecibido);
+    this.toastService.show(`${itemRecibido.name || itemRecibido.nombre} agregado al carrito`, 'success');
   }
 
   onFilterChange(event: any) {
