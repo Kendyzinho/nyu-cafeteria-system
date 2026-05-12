@@ -44,7 +44,7 @@ export class MealPlansController {
         data: null,
         statusCode: 500,
         statusDescription: 'Error al crear el plan en la base de datos',
-        errors: [error.message],
+        errors: error.message,
       };
     }
   }
