@@ -7,12 +7,14 @@ import { StockController } from './stock/stock.controller';
 import { PromotionsController } from './promotions/promotions.controller';
 import { UsersController } from './users/users.controller';
 import { AuthController } from './auth/auth.controller';
+import { SubscriptionsController } from './subscriptions/subscriptions.controller';
 import { MenuEntity } from '../database/entities/menu.entity';
 import { OrderEntity } from '../database/entities/order.entity';
 import { MealPlanEntity } from '../database/entities/meal-plan.entity';
 import { StockEntity } from '../database/entities/stock.entity';
 import { PromotionEntity } from '../database/entities/promotion.entity';
 import { UserEntity } from '../database/entities/user.entity';
+import { UserSubscriptionEntity } from '../database/entities/user-subscription.entity';
 import { MenuService } from '../providers/menu/menu.service';
 import { OrdersService } from '../providers/orders/orders.service';
 import { MealPlansService } from '../providers/meal-plans/meal-plans.service';
@@ -20,6 +22,7 @@ import { StockService } from '../providers/stock/stock.service';
 import { PromotionsService } from '../providers/promotions/promotions.service';
 import { UsersService } from '../providers/users/users.service';
 import { AuthService } from '../providers/auth/auth.service';
+import { SubscriptionsService } from '../providers/subscriptions/subscriptions.service';
 
 @Module({
   imports: [
@@ -30,6 +33,7 @@ import { AuthService } from '../providers/auth/auth.service';
       StockEntity,
       PromotionEntity,
       UserEntity,
+      UserSubscriptionEntity,
     ]),
   ],
   controllers: [
@@ -40,15 +44,17 @@ import { AuthService } from '../providers/auth/auth.service';
     PromotionsController,
     UsersController,
     AuthController,
+    SubscriptionsController,
   ],
   providers: [
-  MenuService,
-  OrdersService,
-  MealPlansService,
-  StockService,
-  PromotionsService,
-  UsersService,
-  AuthService,
+    MenuService,
+    OrdersService,
+    MealPlansService,
+    StockService,
+    PromotionsService,
+    UsersService,
+    AuthService,
+    SubscriptionsService,
   ],
 })
 export class ControllersModule {}
