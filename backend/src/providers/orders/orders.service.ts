@@ -1,19 +1,30 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { OrderEntity } from 'src/database/entities/order.entity';
+import { StockEntity } from 'src/database/entities/stock.entity';
 import type { IPostOrderRequest } from 'src/controllers/orders/dto/IPostOrderRequest';
 import type { IPutOrderRequest } from 'src/controllers/orders/dto/IPutOrderRequest';
+import { validarHorarioRetiro } from 'src/common/constants/cafeteria-horario';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectRepository(OrderEntity)
     private readonly orderRepository: Repository<OrderEntity>,
-  ) {}
+    @InjectRepository(StockEntity)
+    private readonly stockRepository: Repository<StockEntity>,
+  ) { }
 
   public async getAll(): Promise<OrderEntity[]> {
     return await this.orderRepository.find();
+  }
+
+  public async getByUser(usuarioId: number): Promise<OrderEntity[]> {
+    return await this.orderRepository.find({
+      where: { usuarioId },
+      order: { fechaCreacion: 'DESC' }
+    });
   }
 
   public async getOne(id: number): Promise<OrderEntity | null> {
@@ -24,13 +35,43 @@ export class OrdersService {
   }
 
   public async create(data: IPostOrderRequest): Promise<OrderEntity> {
-    const item = this.orderRepository.create({
-      ...data,
-      total: 0,
+    const horarioRetiro = new Date(data.horarioRetiro);
+    const validacion = validarHorarioRetiro(horarioRetiro);
+    if (!validacion.ok) {
+      throw new BadRequestException(validacion.motivo);
+    }
+
+    // Calculamos el total dinámicamente y restamos el stock
+    let calculatedTotal = 0;
+
+    if (data.items && data.items.length > 0) {
+      for (const item of data.items) {
+        const precio = Number(item.precio) || 0;
+        const cantidadComprada = Number(item.cantidad) || 1;
+        calculatedTotal += (precio * cantidadComprada);
+
+        // Descontar del inventario
+        const stockItem = await this.stockRepository.findOne({ where: { menuItemId: item.id } });
+        if (stockItem) {
+          if (stockItem.cantidad < cantidadComprada) {
+            throw new BadRequestException(`No hay suficiente stock para: ${item.nombre}`);
+          }
+          stockItem.cantidad -= cantidadComprada;
+          stockItem.ultimaActualizacion = new Date();
+          await this.stockRepository.save(stockItem);
+        }
+      }
+    }
+
+    const newOrder = this.orderRepository.create({
+      usuarioId: data.usuarioId,
+      items: data.items,
+      total: calculatedTotal,
       estado: 'pendiente',
       fechaCreacion: new Date(),
+      horarioRetiro,
     });
-    return await this.orderRepository.save(item);
+    return await this.orderRepository.save(newOrder);
   }
 
   public async update(id: number, data: IPutOrderRequest) {

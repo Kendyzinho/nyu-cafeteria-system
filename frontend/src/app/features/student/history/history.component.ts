@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../../../core/services/auth.service';
 
 interface Transaction {
   id: string;
@@ -7,6 +9,7 @@ interface Transaction {
   amount: number;
   method: 'Tarjeta' | 'Plan Residente' | 'Efectivo';
   status: 'Completado' | 'Pendiente' | 'Cancelado';
+  horarioRetiro: string | null;
 }
 
 @Component({
@@ -15,22 +18,46 @@ interface Transaction {
   styleUrls: ['./history.component.css']
 })
 export class HistoryComponent implements OnInit {
-  // Datos simulados para el historial
-  transactions: Transaction[] = [
-    { id: 'TRX-001', date: '2026-04-25', item: 'Menú Ejecutivo - Bowl Quinoa', amount: 0, method: 'Plan Residente', status: 'Completado' },
-    { id: 'TRX-002', date: '2026-04-24', item: 'Café Latte Grande + Muffing', amount: 4500, method: 'Tarjeta', status: 'Completado' },
-    { id: 'TRX-003', date: '2026-04-23', item: 'Sándwich Ave Mayo', amount: 3200, method: 'Tarjeta', status: 'Completado' },
-    { id: 'TRX-004', date: '2026-04-22', item: 'Menú Ejecutivo - Lasaña', amount: 0, method: 'Plan Residente', status: 'Completado' },
-    { id: 'TRX-005', date: '2026-04-21', item: 'Bebida 500ml', amount: 1500, method: 'Efectivo', status: 'Completado' }
-  ];
+  transactions: Transaction[] = [];
+  totalSpentMonth: number = 0;
 
-  totalSpentMonth: number = 9200;
+  constructor(private http: HttpClient, private authService: AuthService) { }
 
-  constructor() { }
+  ngOnInit(): void {
+    const user = this.authService.getCurrentUser();
+    if (user) {
+      this.http.get<any[]>(`http://localhost:3000/api/orders/user/${user.id}`).subscribe({
+        next: (orders) => {
+          this.transactions = orders.map(o => ({
+            id: `TRX-${o.id.toString().padStart(3, '0')}`,
+            date: o.fechaCreacion,
+            item: this.getItemsSummary(o.items),
+            amount: Number(o.total),
+            method: 'Tarjeta',
+            status: this.capitalize(o.estado) as any,
+            horarioRetiro: o.horarioRetiro ?? null,
+          }));
+          this.calculateTotal();
+        },
+        error: (err) => console.error('Error cargando historial', err)
+      });
+    }
+  }
 
-  ngOnInit(): void { }
+  getItemsSummary(items: any[]): string {
+    if (!items || items.length === 0) return 'Sin items';
+    return items.map(i => `${i.cantidad}x ${i.nombre}`).join(', ');
+  }
 
-  // Función para asignar color según el método de pago
+  capitalize(str: string): string {
+    if (!str) return 'Pendiente';
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  calculateTotal() {
+    this.totalSpentMonth = this.transactions.reduce((acc, trx) => acc + trx.amount, 0);
+  }
+
   getMethodClass(method: string): string {
     if (method === 'Plan Residente') return 'badge bg-info-pastel text-dark';
     if (method === 'Tarjeta') return 'badge bg-primary-pastel text-dark';

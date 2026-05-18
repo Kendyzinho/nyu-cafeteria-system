@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { User } from '../../../core/models/user';
+import { CartService } from '../../../core/services/cart.service';
 
 @Component({
   selector: 'app-navbar',
@@ -11,8 +12,13 @@ import { User } from '../../../core/models/user';
 export class NavbarComponent implements OnInit {
   currentUser: User | null = null;
   initials: string = '';
+  cartItemCount: number = 0;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService, 
+    private router: Router,
+    private cartService: CartService
+  ) {}
 
   ngOnInit(): void {
     // Nos suscribimos al usuario actual para que el Navbar reaccione dinámicamente
@@ -24,6 +30,10 @@ export class NavbarComponent implements OnInit {
       } else {
         this.initials = '';
       }
+    });
+
+    this.cartService.getCartCount().subscribe(count => {
+      this.cartItemCount = count;
     });
   }
 

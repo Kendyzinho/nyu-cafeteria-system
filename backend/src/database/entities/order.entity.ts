@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity({ name: 'order' })
+@Entity({ name: 'orders' })
 export class OrderEntity {
   constructor(data?: Partial<OrderEntity>) {
     if (data) Object.assign(this, data);
@@ -23,4 +23,7 @@ export class OrderEntity {
 
   @Column()
   fechaCreacion!: Date;
+
+  @Column({ type: 'datetime', nullable: true })
+  horarioRetiro?: Date | null;
 }

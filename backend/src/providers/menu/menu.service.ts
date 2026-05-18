@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MenuEntity } from 'src/database/entities/menu.entity';
+import { StockEntity } from 'src/database/entities/stock.entity';
 import type { IPutMenuRequest } from 'src/controllers/menu/dto/IPutMenuRequest';
 import type { IPostMenuRequest } from 'src/controllers/menu/dto/IPostMenuRequest';
 
@@ -9,29 +10,34 @@ import type { IPostMenuRequest } from 'src/controllers/menu/dto/IPostMenuRequest
 export class MenuService {
 
   constructor(
-    // inyecta el repositorio para operar sobre la tabla 'menu'
     @InjectRepository(MenuEntity)
     private readonly menuRepository: Repository<MenuEntity>,
+    @InjectRepository(StockEntity)
+    private readonly stockRepository: Repository<StockEntity>,
   ) {}
 
   // mapea la entidad al formato que espera el frontend
-  private toResponse(item: MenuEntity) {
+  private async toResponse(item: MenuEntity) {
+    const stock = await this.stockRepository.findOne({ where: { menuItemId: item.id } });
+    const isActuallyAvailable = item.disponible && (stock ? stock.cantidad > 0 : false);
+
     return {
       id: item.id,
       name: item.nombre,
       category: item.categoria,
       description: item.descripcion,
       price: Number(item.precio),
-      studentPrice: +(Number(item.precio) * 0.75).toFixed(0), // calcula 25% de descuento
-      image: item.image ?? '',   // si no tiene imagen retorna string vacío
-      isAvailable: item.disponible,
+      studentPrice: +(Number(item.precio) * 0.75).toFixed(0),
+      image: item.image ?? '',
+      isAvailable: isActuallyAvailable,
+      stock: stock ? stock.cantidad : 0
     };
   }
 
   // obtiene todos los ítems del menú y los mapea al formato del frontend
   public async getAll() {
     const items = await this.menuRepository.find();
-    return items.map(item => this.toResponse(item));
+    return await Promise.all(items.map(item => this.toResponse(item)));
   }
 
   // obtiene un ítem por id
@@ -41,7 +47,7 @@ export class MenuService {
       .where('menu.id = :id', { id })
       .getOne();
     if (!item) return null;
-    return this.toResponse(item);
+    return await this.toResponse(item);
   }
 
   // crea un nuevo ítem en la base de datos

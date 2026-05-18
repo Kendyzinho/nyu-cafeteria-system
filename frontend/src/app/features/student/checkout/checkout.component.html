@@ -1,1 +1,99 @@
-<p>checkout works!</p>
+<div class="container py-5">
+  <div class="row mb-4">
+    <div class="col">
+      <h2 class="fw-bold" style="color: var(--nyu-primary-dark);">Tu Pedido</h2>
+      <p class="text-muted">Revisa los artículos en tu carrito antes de confirmar.</p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body p-0">
+          <div *ngIf="cartItems.length === 0" class="p-5 text-center text-muted">
+            <h4>El carrito está vacío</h4>
+            <a routerLink="/menu" class="btn text-white mt-3" style="background-color: var(--nyu-primary);">Ver Menú</a>
+          </div>
+
+          <div *ngFor="let item of cartItems" class="d-flex align-items-center p-3 border-bottom">
+            <div class="flex-grow-1">
+              <h5 class="mb-0 fw-bold">{{ item.nombre }}</h5>
+              <div class="d-flex align-items-center mt-1">
+                <small class="text-muted me-2">Cantidad:</small>
+                <button class="btn btn-link text-decoration-none text-dark p-0 fw-bolder fs-4" style="line-height: 1;" (click)="disminuirCantidad(item.id)">
+                  <i class="bi bi-dash"></i>
+                </button>
+                <span class="mx-3 fw-bold fs-5">{{ item.cantidad }}</span>
+                <button class="btn btn-link text-decoration-none text-dark p-0 fw-bolder fs-4" style="line-height: 1;" (click)="aumentarCantidad(item.id)">
+                  <i class="bi bi-plus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="fw-bold fs-5 me-4" style="color: var(--nyu-primary-dark);">
+              ${{ item.precio * item.cantidad }}
+            </div>
+            <button class="btn btn-outline-danger btn-sm rounded-circle d-flex align-items-center justify-content-center" 
+                    style="width: 32px; height: 32px;" 
+                    (click)="removerItem(item.id)" 
+                    title="Quitar">
+              <i class="bi bi-trash3-fill"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+          <h4 class="fw-bold mb-4 border-bottom pb-2">Resumen</h4>
+
+          <div class="d-flex justify-content-between mb-3">
+            <span class="text-muted">Subtotal</span>
+            <span class="fw-bold">${{ total }}</span>
+          </div>
+          <div class="d-flex justify-content-between mb-3">
+            <span class="text-muted">Impuestos</span>
+            <span class="fw-bold">$0</span>
+          </div>
+
+          <hr>
+
+          <div class="d-flex justify-content-between mb-4">
+            <span class="fw-bold fs-5">Total</span>
+            <span class="fw-bold fs-5" style="color: var(--nyu-primary);">${{ total }}</span>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-bold mb-2" style="color: var(--nyu-primary-dark);">
+              Horario de retiro
+            </label>
+            <select
+              class="form-select"
+              [(ngModel)]="horarioSeleccionadoIso"
+              [disabled]="slotsDisponibles.length === 0">
+              <option [ngValue]="null" disabled>-- Selecciona un horario --</option>
+              <option *ngFor="let slot of slotsDisponibles" [ngValue]="slot.toISOString()">
+                {{ formatearSlot(slot) }}
+              </option>
+            </select>
+            <small *ngIf="slotsDisponibles.length === 0" class="text-danger d-block mt-2">
+              No hay horarios disponibles hoy. Vuelve mañana.
+            </small>
+            <small *ngIf="slotsDisponibles.length > 0" class="text-muted d-block mt-2">
+              Retiro disponible hoy entre 08:00 y 18:00 (intervalos de 15 min).
+            </small>
+          </div>
+
+          <button
+            class="btn w-100 fw-bold text-white py-2"
+            style="background-color: var(--nyu-primary); border-radius: 8px;"
+            [disabled]="cartItems.length === 0 || slotsDisponibles.length === 0 || !horarioSeleccionadoIso"
+            (click)="confirmarPedido()">
+            Confirmar Pedido
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

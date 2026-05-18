@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, Res } from '@nestjs/common';
 import type { Response } from 'express';
-import type { IPostOrderRequest } from './dto/IPostOrderRequest';
-import type { IPostOrderResponse } from './dto/IPostOrderResponse';
-import type { IPutOrderRequest } from './dto/IPutOrderRequest';
+import { IPostOrderRequest } from './dto/IPostOrderRequest';
+import { IPostOrderResponse } from './dto/IPostOrderResponse';
+import { IPutOrderRequest } from './dto/IPutOrderRequest';
 import { OrdersService } from 'src/providers/orders/orders.service';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
@@ -24,6 +24,12 @@ export class OrdersController {
     return await this.ordersService.getOne(id);
   }
 
+  @ApiOperation({ summary: 'Obtener órdenes de un usuario' })
+  @Get('user/:usuarioId')
+  public async getOrdersByUser(@Param('usuarioId') usuarioId: number) {
+    return await this.ordersService.getByUser(Number(usuarioId));
+  }
+
   @ApiOperation({ summary: 'Crear una nueva orden' })
   @Post()
   async postOrder(
@@ -37,6 +43,7 @@ export class OrdersController {
     };
 
     if (request) {
+      console.log('REQUEST ITEMS TYPE:', Array.isArray(request.items), request.items);
       await this.ordersService.create(request);
     }
 

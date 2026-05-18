@@ -2,9 +2,13 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AllExceptionsFilter } from './all-exceptions.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // expone detalles de errores internos para debugear (remover en producción)
+  app.useGlobalFilters(new AllExceptionsFilter());
 
   // permite peticiones desde otros orígenes (ej. Angular en localhost:4200)
   app.enableCors();

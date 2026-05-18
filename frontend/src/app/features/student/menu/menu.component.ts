@@ -1,5 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MenuService } from '../../../core/services/menu.service';
+import { CartService } from '../../../core/services/cart.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-menu',
@@ -12,7 +14,10 @@ export class MenuComponent implements OnInit {
 
   menuItems: any[] = [];
 
-  constructor(private menuService: MenuService) {}
+  constructor(
+    private menuService: MenuService,
+    private cartService: CartService
+  ) {}
 
   ngOnInit() {
     this.menuService.getAll().subscribe(items => {
@@ -21,8 +26,19 @@ export class MenuComponent implements OnInit {
   }
 
   handleAddToCart(itemRecibido: any) {
-    console.log('El componente hijo envió:', itemRecibido.name);
-    alert(`Has agregado "${itemRecibido.name}" a tu pedido por $${itemRecibido.studentPrice}`);
+    this.cartService.addToCart(itemRecibido);
+    
+    Swal.fire({
+      toast: true,
+      position: 'bottom-end',
+      icon: 'success',
+      title: `Agregado: ${itemRecibido.nombre || itemRecibido.name}`,
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+      background: '#333',
+      color: '#fff'
+    });
   }
 
   resetFiltro() {
