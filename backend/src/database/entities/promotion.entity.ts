@@ -26,4 +26,19 @@ export class PromotionEntity {
 
   @Column({ default: true })
   activa!: boolean;
+
+  @Column({ default: false })
+  reqMatricula!: boolean;
+
+  @Column({ default: false })
+  reqResidencia!: boolean;
+
+  @Column({ default: 'todo' })
+  tipoAplicacion!: string;
+
+  @Column({ nullable: true })
+  categoria?: string;
+
+  @Column('json', { nullable: true })
+  productosIds?: number[] | null;
 }

@@ -1,71 +1,63 @@
-<div class="container-fluid py-5">
-  <div class="row align-items-center mb-4 g-4">
-    <div class="col-md-8">
-      <h2 class="fw-bolder mb-1" style="color: var(--nyu-dark);">Gestión de Stock</h2>
-      <p class="text-muted mb-0">Control de inventario dinámico con bloqueo automático de productos agotados.</p>
-    </div>
-  </div>
+<div class="container mt-4">
+  <h2>Gestión de Stock</h2>
+  <p class="text-muted">Administrador de productos disponibles en cafetería</p>
 
-  <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
-    <div class="table-responsive">
-      <table class="table table-hover mb-0 align-middle">
-        <thead style="background-color: #f8f9fa;">
-          <tr>
-            <th class="py-4 px-4 fw-bold text-uppercase text-muted" style="font-size: 0.85rem;">Producto</th>
-            <th class="py-4 px-4 fw-bold text-uppercase text-muted" style="font-size: 0.85rem;">Categoría</th>
-            <th class="py-4 px-4 fw-bold text-uppercase text-muted text-center" style="font-size: 0.85rem;">Stock Actual</th>
-            <th class="py-4 px-4 fw-bold text-uppercase text-muted text-center" style="font-size: 0.85rem;">Estado</th>
-            <th class="py-4 px-4 fw-bold text-uppercase text-muted text-end" style="font-size: 0.85rem;">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let producto of productos">
-            <td class="py-3 px-4">
-              <span class="fw-bolder text-dark">{{ producto.name }}</span>
-            </td>
-            
-            <td class="py-3 px-4">
-              <span class="badge bg-light text-dark border">{{ producto.category }}</span>
-            </td>
-            
-            <td class="py-3 px-4 text-center">
-              <div class="d-inline-flex align-items-center justify-content-center bg-light rounded px-3 py-1 fw-bold fs-5 shadow-sm" style="min-width: 60px;">
-                {{ producto.stock }}
-              </div>
-            </td>
+  <p *ngIf="cargando" class="text-muted">Cargando...</p>
 
-            <td class="py-3 px-4 text-center">
-              <span class="badge rounded-pill px-3 py-2 fw-bold" 
-                    [ngClass]="producto.stock > 0 ? 'bg-success-subtle text-success border border-success-subtle' : 'bg-danger-subtle text-danger border border-danger-subtle'">
-                <span class="d-inline-block rounded-circle me-1" 
-                      style="width: 6px; height: 6px; vertical-align: middle;" 
-                      [ngClass]="producto.stock > 0 ? 'bg-success' : 'bg-danger'"></span>
-                {{ producto.stock > 0 ? 'Disponible' : 'Agotado (Bloqueado)' }}
-              </span>
-            </td>
+  <table *ngIf="!cargando" class="table table-bordered table-hover mt-3">
+    <thead>
+      <tr>
+        <th>Producto</th>
+        <th>Categoría</th>
+        <th>Cantidad</th>
+        <th>Umbral mínimo</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
 
-            <td class="py-3 px-4 text-end">
-              <div class="d-flex align-items-center justify-content-end gap-2">
-                <input type="number" class="form-control form-control-sm text-center shadow-sm" 
-                       [(ngModel)]="producto.stock" min="0" style="width: 80px; border-radius: 8px;">
-                <button class="btn btn-sm text-white fw-bold shadow-sm d-flex align-items-center gap-1" 
-                        style="background-color: var(--nyu-primary); border-radius: 8px;"
-                        (click)="actualizarStock(producto)">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z"/>
-                  </svg>
-                  Guardar
-                </button>
-              </div>
-            </td>
-          </tr>
-          <tr *ngIf="productos.length === 0">
-            <td colspan="5" class="text-center py-5 text-muted">
-              <h5 class="fw-bold mb-0">Cargando inventario...</h5>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+    <tbody>
+      <tr *ngFor="let producto of productos">
+        <td>{{ producto.nombre }}</td>
+        <td>{{ producto.categoria }}</td>
+
+        <td>
+          <input
+            type="number"
+            class="form-control"
+            [(ngModel)]="producto.cantidad"
+            min="0"
+          />
+        </td>
+
+        <td>
+          <input
+            type="number"
+            class="form-control"
+            [(ngModel)]="producto.umbralMinimo"
+            min="0"
+          />
+        </td>
+
+        <td>
+          <span class="badge" [ngClass]="estadoBadge(producto).clase">
+            {{ estadoBadge(producto).texto }}
+          </span>
+        </td>
+
+        <td>
+          <button
+            class="btn btn-coffee"
+            (click)="actualizarStock(producto)"
+          >
+            Guardar
+          </button>
+        </td>
+      </tr>
+
+      <tr *ngIf="productos.length === 0">
+        <td colspan="6" class="text-center text-muted">No hay productos en stock</td>
+      </tr>
+    </tbody>
+  </table>
 </div>

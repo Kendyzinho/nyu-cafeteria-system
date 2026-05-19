@@ -8,6 +8,7 @@ import { OrderEntity } from './entities/order.entity';
 import { MealPlanEntity } from './entities/meal-plan.entity';
 import { StockEntity } from './entities/stock.entity';
 import { PromotionEntity } from './entities/promotion.entity';
+import { StudentStatusEntity } from './entities/student-status.entity';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { PromotionEntity } from './entities/promotion.entity';
           MealPlanEntity,
           StockEntity,
           PromotionEntity,
+          StudentStatusEntity,
         ],
         synchronize: true,
         autoLoadEntities: true,

@@ -23,4 +23,10 @@ export class MealPlanEntity {
 
   @Column({ default: true })
   activo!: boolean;
+
+  @Column({ default: false })
+  reqMatricula!: boolean;
+
+  @Column({ default: false })
+  reqResidencia!: boolean;
 }
