@@ -7,12 +7,11 @@ import { StockController } from './stock/stock.controller';
 import { PromotionsController } from './promotions/promotions.controller';
 import { UsersController } from './users/users.controller';
 import { AuthController } from './auth/auth.controller';
-import { MenuEntity } from 'src/database/entities/menu.entity';
-import { OrderEntity } from 'src/database/entities/order.entity';
-import { MealPlanEntity } from 'src/database/entities/meal-plan.entity';
-import { StockEntity } from 'src/database/entities/stock.entity';
-import { PromotionEntity } from 'src/database/entities/promotion.entity';
-import { UserEntity } from 'src/database/entities/user.entity';
+import { ComidaEntity } from 'src/database/entities/comida.entity';
+import { PedidoEntity } from 'src/database/entities/pedido.entity';
+import { PlanesCatalogoEntity } from 'src/database/entities/planes-catalogo.entity';
+import { PromocionEntity } from 'src/database/entities/promocion.entity';
+import { MockUsuarioEntity } from 'src/database/entities/mock-usuario.entity';
 import { MenuService } from 'src/providers/menu/menu.service';
 import { OrdersService } from 'src/providers/orders/orders.service';
 import { MealPlansService } from 'src/providers/meal-plans/meal-plans.service';
@@ -24,12 +23,11 @@ import { AuthService } from 'src/providers/auth/auth.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      MenuEntity,
-      OrderEntity,
-      MealPlanEntity,
-      StockEntity,
-      PromotionEntity,
-      UserEntity,
+      ComidaEntity,
+      PedidoEntity,
+      PlanesCatalogoEntity,
+      PromocionEntity,
+      MockUsuarioEntity,
     ]),
   ],
   controllers: [

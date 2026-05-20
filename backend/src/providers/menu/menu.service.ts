@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { MenuEntity } from 'src/database/entities/menu.entity';
-import { StockEntity } from 'src/database/entities/stock.entity';
+import { ComidaEntity } from 'src/database/entities/comida.entity';
 import type { IPutMenuRequest } from 'src/controllers/menu/dto/IPutMenuRequest';
 import type { IPostMenuRequest } from 'src/controllers/menu/dto/IPostMenuRequest';
 
@@ -10,16 +9,13 @@ import type { IPostMenuRequest } from 'src/controllers/menu/dto/IPostMenuRequest
 export class MenuService {
 
   constructor(
-    @InjectRepository(MenuEntity)
-    private readonly menuRepository: Repository<MenuEntity>,
-    @InjectRepository(StockEntity)
-    private readonly stockRepository: Repository<StockEntity>,
+    @InjectRepository(ComidaEntity)
+    private readonly menuRepository: Repository<ComidaEntity>,
   ) {}
 
   // mapea la entidad al formato que espera el frontend
-  private async toResponse(item: MenuEntity) {
-    const stock = await this.stockRepository.findOne({ where: { menuItemId: item.id } });
-    const isActuallyAvailable = item.disponible && (stock ? stock.cantidad > 0 : false);
+  private async toResponse(item: ComidaEntity) {
+    const isActuallyAvailable = item.disponible && item.stockActual > 0;
 
     return {
       id: item.id,
@@ -30,7 +26,7 @@ export class MenuService {
       studentPrice: +(Number(item.precio) * 0.75).toFixed(0),
       image: item.image ?? '',
       isAvailable: isActuallyAvailable,
-      stock: stock ? stock.cantidad : 0
+      stock: item.stockActual
     };
   }
 
@@ -51,7 +47,7 @@ export class MenuService {
   }
 
   // crea un nuevo ítem en la base de datos
-  public async create(data: IPostMenuRequest): Promise<MenuEntity> {
+  public async create(data: IPostMenuRequest): Promise<ComidaEntity> {
     const item = this.menuRepository.create(data);
     return await this.menuRepository.save(item);
   }

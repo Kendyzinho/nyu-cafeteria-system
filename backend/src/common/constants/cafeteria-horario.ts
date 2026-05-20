@@ -1,5 +1,5 @@
 export const HORA_APERTURA = 8;
-export const HORA_CIERRE = 18;
+export const HORA_CIERRE = 20;
 export const INTERVALO_MINUTOS = 15;
 export const MINUTOS_BUFFER_FUTURO = 5;
 

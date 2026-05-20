@@ -16,8 +16,8 @@ export class AuthService {
         firstName: user.nombre,
         lastName: user.apellido,
         role: user.tipo,
-        isActive: true,
-        isResident: user.tipo === 'residente'
+        isActive: !!user.activo,
+        isResident: !!user.es_residente
       }
     };
   }

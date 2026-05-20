@@ -1,30 +1,40 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { MealPlanEntity } from 'src/database/entities/meal-plan.entity';
+import { PlanesCatalogoEntity } from 'src/database/entities/planes-catalogo.entity';
 import type { IPostMealPlanRequest } from 'src/controllers/meal-plans/dto/IPostMealPlanRequest';
 import type { IPutMealPlanRequest } from 'src/controllers/meal-plans/dto/IPutMealPlanRequest';
 
 @Injectable()
 export class MealPlansService {
   constructor(
-    @InjectRepository(MealPlanEntity)
-    private readonly mealPlanRepository: Repository<MealPlanEntity>,
+    @InjectRepository(PlanesCatalogoEntity)
+    private readonly mealPlanRepository: Repository<PlanesCatalogoEntity>,
   ) {}
 
-  public async getAll(): Promise<MealPlanEntity[]> {
-    return await this.mealPlanRepository.find();
+  private mapToDto(plan: PlanesCatalogoEntity) {
+    return {
+      ...plan,
+      tipo: plan.nombre,
+      precio: plan.precio_mensual
+    };
   }
 
-  public async getOne(id: number): Promise<MealPlanEntity | null> {
-    return await this.mealPlanRepository
+  public async getAll(): Promise<any[]> {
+    const plans = await this.mealPlanRepository.find();
+    return plans.map(p => this.mapToDto(p));
+  }
+
+  public async getOne(id: number): Promise<any | null> {
+    const plan = await this.mealPlanRepository
       .createQueryBuilder('mealPlan')
       .where('mealPlan.id = :id', { id })
       .getOne();
+    return plan ? this.mapToDto(plan) : null;
   }
 
-  public async create(data: IPostMealPlanRequest): Promise<MealPlanEntity> {
-    const item = new MealPlanEntity(data);
+  public async create(data: IPostMealPlanRequest): Promise<PlanesCatalogoEntity> {
+    const item = new PlanesCatalogoEntity(data);
     return await this.mealPlanRepository.save(item);
   }
 
