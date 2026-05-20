@@ -44,10 +44,10 @@ CREATE TABLE `user` (
 -- Volcado de datos para la tabla `user`
 --
 INSERT INTO `user` (`id`, `nombre`, `apellido`, `email`, `password`, `tipo`) VALUES
-(7, 'Cristian', 'Admin', 'admin@nyu.edu', 'admin', 'admin'),
-(8, 'Juan', 'Pérez', 'juan@nyu.edu', 'password', 'student'),
-(9, 'María', 'García', 'maria@nyu.edu', 'password', 'student'),
-(10, 'Carlos', 'López', 'carlos@nyu.edu', 'password', 'student');
+(7, 'Cristian', 'Admin', 'admin@nyu.edu', 'admin', 'Administrador'),
+(8, 'Juan', 'Pérez', 'juan@nyu.edu', 'password', 'Cliente'),
+(9, 'María', 'García', 'maria@nyu.edu', 'password', 'Cliente'),
+(10, 'Carlos', 'López', 'carlos@nyu.edu', 'password', 'Cliente');
 
 -- --------------------------------------------------------
 
