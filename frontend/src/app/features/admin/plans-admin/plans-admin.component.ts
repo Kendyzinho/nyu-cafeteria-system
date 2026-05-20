@@ -13,7 +13,16 @@ export class PlansAdminComponent {
   private planService: PlanService,
   private integrationService: IntegrationService
 ) {
-  this.planes = this.planService.getPlanes();
+ this.planService.getPlanes().subscribe({
+  next: (response: any) => {
+    // Si tu backend NestJS envuelve los resultados en un objeto con la propiedad 'data', usaría response.data.
+    // Si manda el arreglo plano desde la DB, guardará la respuesta directa.
+    this.planes = response.data ? response.data : response;
+  },
+  error: (err: any) => {
+    console.error('Error al cargar los planes en la tabla de administración:', err);
+  }
+});
 }
 
   activarPlan(plan: any) {

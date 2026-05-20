@@ -44,16 +44,18 @@ export class ResidentPlanComponent implements OnInit {
   loadPlans(): void {
     this.loading = true;
 
-    this.planService.getPlanes().subscribe({
-      next: (data) => {
-        this.availablePlans = data.map(plan => ({
-          id: plan.id,
-          name: plan.nombre || `Plan ${plan.tipo || 'Mensual'}`,
-          type: plan.tipo || 'Mensual',
-          price: Number(plan.precio) || 0,
-          description: plan.descripcion || 'Plan alimentario mensual para estudiantes residentes.',
-          image: this.getPlanImage(plan.tipo)
-        }));
+this.planService.getPlanes().subscribe({
+  next: (data: any) => {
+    
+    // Aquí aplicamos la solución agregando (plan: any)
+    this.availablePlans = data.map((plan: any) => ({
+      id: plan.id,
+      name: plan.nombre || `Plan ${plan.tipo || 'Mensual'}`,
+      type: plan.tipo || 'Mensual',
+      price: Number(plan.precio) || 0,
+      description: plan.descripcion || 'Plan alimentario mensual para estudiantes residentes.',
+      image: this.getPlanImage(plan.tipo)
+    }));
 
         this.loading = false;
       },
