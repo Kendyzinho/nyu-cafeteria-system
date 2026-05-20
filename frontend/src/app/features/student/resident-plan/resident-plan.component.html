@@ -18,7 +18,7 @@
             Comidas restantes este mes: {{ totalMeals - mealsConsumed }}/{{ totalMeals }}
           </h5>
           <p class="mb-0 fw-bold text-muted">
-            {{ availablePlans[currentPlanId - 1].name }} <br>
+            {{ getCurrentPlanName() }} <br>
             <span *ngIf="preferences.vegano">(Vegano Preference)</span>
           </p>
         </div>
@@ -34,7 +34,11 @@
                [ngStyle]="{'background-color': plan.id === currentPlanId ? '#FFCDD2' : '#F5F5F5'}">
             
             <div class="card-body p-3 d-flex flex-column">
-              <h6 class="fw-bold text-center mb-3" style="color: var(--nyu-dark);">{{ plan.name.split('(')[0] }} <br> ({{ plan.name.split('(')[1] }}</h6>
+              <h6 class="fw-bold text-center mb-3" style="color: var(--nyu-dark);">
+                {{ plan.name.includes('(') ? plan.name.split('(')[0] : plan.name }} 
+                <br *ngIf="plan.name.includes('(')"> 
+                {{ plan.name.includes('(') ? '(' + plan.name.split('(')[1] : '' }}
+              </h6>
               
               <img [src]="plan.image" class="img-fluid mb-3 shadow-sm" style="border-radius: 4px; height: 100px; object-fit: cover;">
               

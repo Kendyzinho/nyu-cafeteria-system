@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsNotEmpty, IsDateString, Min, Max } from 'class-validator';
+import { IsString, IsNumber, IsNotEmpty, IsOptional, Min, Max } from 'class-validator';
 
 export class IPostPromotionRequest {
   @IsString()
@@ -12,11 +12,17 @@ export class IPostPromotionRequest {
   @IsNumber()
   @Min(0)
   @Max(100)
-  descuento: number;
+  porcentaje_descuento: number;
 
-  @IsDateString()
-  fechaInicio: Date;
+  @IsString()
+  @IsNotEmpty()
+  hora_inicio_activa: string;
 
-  @IsDateString()
-  fechaFin: Date;
+  @IsString()
+  @IsNotEmpty()
+  hora_fin_activa: string;
+
+  @IsNumber()
+  @IsOptional()
+  comida_id?: number;
 }

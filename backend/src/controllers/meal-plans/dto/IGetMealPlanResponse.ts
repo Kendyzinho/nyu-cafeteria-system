@@ -2,7 +2,6 @@ export interface IGetMealPlanResponse {
   id: number;
   nombre: string;
   descripcion: string;
-  precio: number;
-  tipo: string;
+  precio_mensual: number;
   activo: boolean;
 }

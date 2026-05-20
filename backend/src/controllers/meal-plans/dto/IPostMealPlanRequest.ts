@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsNotEmpty, Min } from 'class-validator';
+import { IsString, IsNumber, IsNotEmpty, IsBoolean, IsOptional, Min } from 'class-validator';
 
 export class IPostMealPlanRequest {
   @IsString()
@@ -11,9 +11,9 @@ export class IPostMealPlanRequest {
 
   @IsNumber()
   @Min(0)
-  precio: number;
+  precio_mensual: number;
 
-  @IsString()
-  @IsNotEmpty()
-  tipo: string;
+  @IsBoolean()
+  @IsOptional()
+  activo?: boolean;
 }

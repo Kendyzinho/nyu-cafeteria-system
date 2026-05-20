@@ -1,4 +1,6 @@
 export interface IPutOrderRequest {
   estado?: string;
-  items?: any[];
+  total?: number;
+  horario_retiro?: string;
+  orden_pago_id?: string;
 }

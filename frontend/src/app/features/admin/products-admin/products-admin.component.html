@@ -1,0 +1,112 @@
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold" style="color: #4E342E;">Gestión de Catálogo</h2>
+    <button class="btn btn-cafeteria" (click)="openCreateModal()">+ Añadir Producto</button>
+  </div>
+
+  <div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="bg-light">
+            <tr>
+              <th class="border-0">Nombre</th>
+              <th class="border-0">Categoría</th>
+              <th class="border-0">Precio Gral.</th>
+              <th class="border-0">Precio Est.</th>
+              <th class="border-0">Stock</th>
+              <th class="border-0 text-center">Menú del Día</th>
+              <th class="border-0 text-end">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of products">
+              <td>
+                <div class="fw-bold text-dark">{{ product.name }}</div>
+              </td>
+              <td><span class="badge bg-cafe-light">{{ product.category }}</span></td>
+              <td>${{ product.price }}</td>
+              <td>${{ product.studentPrice }}</td>
+              <td>
+                <span class="badge" [ngClass]="product.stock > 0 ? 'bg-success' : 'bg-danger'">
+                  {{ product.stock }}
+                </span>
+              </td>
+              <td class="text-center">
+                <i class="bi" [ngClass]="product.isDailyMenu ? 'bi-star-fill text-warning' : 'bi-star text-muted'"></i>
+              </td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-outline-primary me-2" (click)="openEditModal(product)">Editar</button>
+                <button class="btn btn-sm btn-outline-danger" (click)="confirmDelete(product)">Eliminar</button>
+              </td>
+            </tr>
+            <tr *ngIf="products.length === 0">
+              <td colspan="7" class="text-center py-4 text-muted">No hay productos registrados.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Form -->
+<div class="modal fade show d-block" tabindex="-1" *ngIf="showFormModal" style="background: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold">{{ isEditing ? 'Editar Producto' : 'Añadir Producto' }}</h5>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <label class="form-label">Nombre del Producto</label>
+            <input type="text" class="form-control" formControlName="name">
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label">Descripción</label>
+            <textarea class="form-control" rows="2" formControlName="description"></textarea>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col">
+              <label class="form-label">Categoría</label>
+              <select class="form-select" formControlName="category">
+                <option value="almuerzos">Almuerzos</option>
+                <option value="ligeras">Ligeras</option>
+                <option value="bebidas">Bebidas</option>
+              </select>
+            </div>
+            <div class="col">
+              <label class="form-label">Stock Inicial</label>
+              <input type="number" class="form-control" formControlName="stock">
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col">
+              <label class="form-label">Precio General ($)</label>
+              <input type="number" class="form-control" formControlName="price">
+            </div>
+            <div class="col">
+              <label class="form-label">Precio Estudiante ($)</label>
+              <input type="number" class="form-control" formControlName="studentPrice">
+            </div>
+          </div>
+
+          <div class="form-check form-switch mb-4">
+            <input class="form-check-input" type="checkbox" role="switch" id="dailyMenuSwitch" formControlName="isDailyMenu">
+            <label class="form-check-label" for="dailyMenuSwitch">Establecer como Menú del Día</label>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-light" (click)="closeModal()">Cancelar</button>
+            <button type="submit" class="btn btn-cafeteria">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

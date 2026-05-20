@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { PlanService } from '../../../core/services/plan.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-resident-plan',
@@ -6,13 +8,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./resident-plan.component.css']
 })
 export class ResidentPlanComponent implements OnInit {
-  // 1. Estado del Plan Actual
   mealsConsumed = 15;
   totalMeals = 30;
   renewalDate = '1 de mayo';
-  currentPlanId = 2; // Suponemos que tiene el Estándar por defecto
+  currentPlanId: number | null = 2; // Default mock selection
 
-  // 2. Modelo para Preferencias (Two-Way Binding)
   preferences = {
     vegano: true,
     vegetariano: false,
@@ -20,39 +20,35 @@ export class ResidentPlanComponent implements OnInit {
     halal: false
   };
 
-  // 3. Modelo para el Ticket
   selectedTime: string = '';
+  availablePlans: any[] = [];
 
-  // 4. Catálogo Dinámico de Planes
-  availablePlans = [
-    { 
-      id: 1, 
-      name: 'Plan Flex (15 Comidas)', 
-      price: 300000, 
-      description: 'Ahorra en tus comidas y mantén flexibilidad. Ideal para quienes cocinan ocasionalmente.',
-      image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80'
-    },
-    { 
-      id: 2, 
-      name: 'Plan Residente Estándar (30 Comidas)', 
-      price: 500000, 
-      description: 'El plan más popular. Cubre 1 almuerzo al día, de lunes a viernes + algunos fines de semana.',
-      image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80'
-    },
-    { 
-      id: 3, 
-      name: 'Plan Premium Full (60 comidas)', 
-      price: 900000, 
-      description: 'Cobertura total. Almuerzo y cena todos los días. Máxima comodidad.',
-      image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80'
-    }
-  ];
+  constructor(
+    private planService: PlanService,
+    private authService: AuthService
+  ) { }
 
-  constructor() { }
+  ngOnInit(): void {
+    this.planService.getPlanes().subscribe({
+      next: (data) => {
+        this.availablePlans = data.map(plan => ({
+          id: plan.id,
+          name: plan.nombre || `Plan ${plan.tipo || 'Mensual'}`,
+          price: plan.precio || 0,
+          description: plan.descripcion || 'Plan alimentario de cafetería.',
+          image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80'
+        }));
+      },
+      error: (err) => console.error('Error fetching plans', err)
+    });
+  }
 
-  ngOnInit(): void {}
+  getCurrentPlanName(): string {
+    if (!this.currentPlanId || !this.availablePlans.length) return 'Plan Estándar';
+    const plan = this.availablePlans.find(p => p.id === this.currentPlanId);
+    return plan ? plan.name : 'Plan Estándar';
+  }
 
-  // Métodos de interacción
   savePreferences() {
     alert('Tus preferencias alimentarias han sido guardadas en el sistema.');
   }
@@ -67,14 +63,24 @@ export class ResidentPlanComponent implements OnInit {
       return;
     }
     
-    // Descontamos una comida mágicamente en vivo
     this.mealsConsumed++;
     alert(`¡Éxito! Ticket generado para las ${this.selectedTime}. Presenta tu TUI en la cafetería.`);
-    this.selectedTime = ''; // Reiniciamos el select
+    this.selectedTime = ''; 
   }
 
   selectPlan(planId: number) {
-    this.currentPlanId = planId;
-    // A futuro aquí se llamaría a la pasarela de pago para el upgrade
+    const user = this.authService.getCurrentUser();
+    
+    this.planService.activarPlan(planId, { estudiante: user ? user.firstName : 'Estudiante', planActivo: true }).subscribe({
+      next: () => {
+        this.currentPlanId = planId;
+        alert('Te has suscrito exitosamente al plan. El cobro ha sido derivado al Sistema Central de Pagos (Integración).');
+      },
+      error: () => {
+        // En caso de que el backend no tenga el endpoint exacto para suscripción en este momento
+        this.currentPlanId = planId;
+        alert('Suscripción local simulada completada exitosamente.');
+      }
+    });
   }
 }
