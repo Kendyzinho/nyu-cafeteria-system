@@ -7,11 +7,14 @@ import { StockController } from './stock/stock.controller';
 import { PromotionsController } from './promotions/promotions.controller';
 import { UsersController } from './users/users.controller';
 import { AuthController } from './auth/auth.controller';
-import { MenuEntity } from 'src/database/entities/menu.entity';
-import { OrderEntity } from 'src/database/entities/order.entity';
-import { MealPlanEntity } from 'src/database/entities/meal-plan.entity';
-import { StockEntity } from 'src/database/entities/stock.entity';
-import { PromotionEntity } from 'src/database/entities/promotion.entity';
+import { ComidaEntity } from 'src/database/entities/comida.entity';
+import { PedidoEntity } from 'src/database/entities/pedido.entity';
+import { DetallePedidoEntity } from 'src/database/entities/detalle-pedido.entity';
+import { PlanesCatalogoEntity } from 'src/database/entities/planes-catalogo.entity';
+import { InsumosEntity } from 'src/database/entities/insumos.entity';
+import { RecetaComidaEntity } from 'src/database/entities/receta-comida.entity';
+import { PromocionEntity } from 'src/database/entities/promocion.entity';
+import { SuscripcionAlumnoEntity } from 'src/database/entities/suscripcion-alumno.entity';
 import { UserEntity } from 'src/database/entities/user.entity';
 import { MenuService } from 'src/providers/menu/menu.service';
 import { OrdersService } from 'src/providers/orders/orders.service';
@@ -24,11 +27,14 @@ import { AuthService } from 'src/providers/auth/auth.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      MenuEntity,
-      OrderEntity,
-      MealPlanEntity,
-      StockEntity,
-      PromotionEntity,
+      ComidaEntity,
+      PedidoEntity,
+      DetallePedidoEntity,
+      PlanesCatalogoEntity,
+      InsumosEntity,
+      RecetaComidaEntity,
+      PromocionEntity,
+      SuscripcionAlumnoEntity,
       UserEntity,
     ]),
   ],
@@ -42,13 +48,13 @@ import { AuthService } from 'src/providers/auth/auth.service';
     AuthController,
   ],
   providers: [
-  MenuService,
-  OrdersService,
-  MealPlansService,
-  StockService,
-  PromotionsService,
-  UsersService,
-  AuthService,
+    MenuService,
+    OrdersService,
+    MealPlansService,
+    StockService,
+    PromotionsService,
+    UsersService,
+    AuthService,
   ],
 })
 export class ControllersModule {}

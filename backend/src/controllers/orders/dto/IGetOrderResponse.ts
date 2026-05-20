@@ -1,8 +1,9 @@
 export interface IGetOrderResponse {
   id: number;
-  usuarioId: number;
-  items: any[];
+  usuario_id: number;
   total: number;
   estado: string;
-  fechaCreacion: Date;
+  orden_pago_id: string;
+  fecha_creacion: Date;
+  horario_retiro: string;
 }

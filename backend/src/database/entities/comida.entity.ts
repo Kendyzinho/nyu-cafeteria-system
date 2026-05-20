@@ -1,8 +1,8 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity({ name: 'menu' })
-export class MenuEntity {
-  constructor(data?: Partial<MenuEntity>) {
+@Entity({ name: 'comida' })
+export class ComidaEntity {
+  constructor(data?: Partial<ComidaEntity>) {
     if (data) Object.assign(this, data);
   }
 
@@ -21,15 +21,15 @@ export class MenuEntity {
   @Column()
   categoria!: string;
 
+  @Column({ name: 'imagen_url', nullable: true })
+  imagen_url!: string;
+
+  @Column({ default: 0 })
+  stock_actual!: number;
+
   @Column({ default: true })
   disponible!: boolean;
 
-  @Column({ default: 0 })
-  stockActual!: number;
-
-  @Column()
-  fechaDisponible!: Date;
-
-  @Column({ nullable: true })
-  image!: string;
+  @Column({ name: 'fecha_disponible', nullable: true })
+  fecha_disponible!: Date;
 }

@@ -1,7 +1,6 @@
 export interface IPutMealPlanRequest {
   nombre?: string;
   descripcion?: string;
-  precio?: number;
-  tipo?: string;
+  precio_mensual?: number;
   activo?: boolean;
 }

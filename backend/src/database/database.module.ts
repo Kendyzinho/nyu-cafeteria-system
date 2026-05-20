@@ -1,13 +1,15 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { join } from 'path';
 import { UserEntity } from './entities/user.entity';
-import { MenuEntity } from './entities/menu.entity';
-import { OrderEntity } from './entities/order.entity';
-import { MealPlanEntity } from './entities/meal-plan.entity';
-import { StockEntity } from './entities/stock.entity';
-import { PromotionEntity } from './entities/promotion.entity';
+import { ComidaEntity } from './entities/comida.entity';
+import { PedidoEntity } from './entities/pedido.entity';
+import { DetallePedidoEntity } from './entities/detalle-pedido.entity';
+import { PlanesCatalogoEntity } from './entities/planes-catalogo.entity';
+import { InsumosEntity } from './entities/insumos.entity';
+import { RecetaComidaEntity } from './entities/receta-comida.entity';
+import { PromocionEntity } from './entities/promocion.entity';
+import { SuscripcionAlumnoEntity } from './entities/suscripcion-alumno.entity';
 
 @Module({
   imports: [
@@ -26,11 +28,14 @@ import { PromotionEntity } from './entities/promotion.entity';
         database: configService.get<string>('DB_NAME'),
         entities: [
           UserEntity,
-          MenuEntity,
-          OrderEntity,
-          MealPlanEntity,
-          StockEntity,
-          PromotionEntity,
+          ComidaEntity,
+          PedidoEntity,
+          DetallePedidoEntity,
+          PlanesCatalogoEntity,
+          InsumosEntity,
+          RecetaComidaEntity,
+          PromocionEntity,
+          SuscripcionAlumnoEntity,
         ],
         synchronize: true,
         autoLoadEntities: true,
