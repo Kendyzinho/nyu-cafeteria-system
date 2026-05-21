@@ -6,5 +6,6 @@ export interface IPutMenuRequest {
   imagen_url?: string;
   stock_actual?: number;
   disponible?: boolean;
-  fecha_disponible?: Date;
+  stock_actual?: number;
+  imagen_url?: string;
 }

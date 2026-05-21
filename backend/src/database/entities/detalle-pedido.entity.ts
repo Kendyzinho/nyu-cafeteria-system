@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { PedidoEntity } from './pedido.entity';
+import { ComidaEntity } from './comida.entity';
 
 @Entity({ name: 'detalle_pedido' })
 export class DetallePedidoEntity {
@@ -10,14 +12,22 @@ export class DetallePedidoEntity {
   id!: number;
 
   @Column({ name: 'pedido_id' })
-  pedido_id!: number;
+  pedidoId!: number;
 
   @Column({ name: 'comida_id' })
-  comida_id!: number;
+  comidaId!: number;
 
-  @Column({ default: 1 })
+  @Column()
   cantidad!: number;
 
-  @Column('decimal', { precision: 10, scale: 2, name: 'precio_unitario' })
-  precio_unitario!: number;
+  @Column('decimal', { name: 'precio_unitario', precision: 10, scale: 2 })
+  precioUnitario!: number;
+
+  @ManyToOne(() => PedidoEntity, (pedido) => pedido.detalles, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'pedido_id' })
+  pedido!: PedidoEntity;
+
+  @ManyToOne(() => ComidaEntity, { eager: true })
+  @JoinColumn({ name: 'comida_id' })
+  comida!: ComidaEntity;
 }

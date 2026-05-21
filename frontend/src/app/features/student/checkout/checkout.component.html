@@ -55,9 +55,24 @@
             </svg>
             Retiro en Local
           </h5>
-          <div class="mb-2">
+          <div class="mb-3">
             <label class="form-label text-muted small fw-bold">Hora estimada de retiro en cafetería</label>
-            <input type="time" class="form-control form-control-lg shadow-sm" [(ngModel)]="pickupTime" style="border-radius: 8px;">
+            <select
+              class="form-select form-select-lg shadow-sm"
+              [(ngModel)]="horarioSeleccionadoIso"
+              [disabled]="slotsDisponibles.length === 0"
+              style="border-radius: 8px;">
+              <option [ngValue]="null" disabled>-- Selecciona un horario --</option>
+              <option *ngFor="let slot of slotsDisponibles" [ngValue]="slot.toISOString()">
+                {{ formatearSlot(slot) }}
+              </option>
+            </select>
+            <small *ngIf="slotsDisponibles.length === 0" class="text-danger d-block mt-2">
+              No hay horarios disponibles hoy. Vuelve mañana.
+            </small>
+            <small *ngIf="slotsDisponibles.length > 0" class="text-muted d-block mt-2" style="font-size: 0.75rem;">
+              Retiro disponible hoy entre 08:00 y 18:00 (intervalos de 15 min).
+            </small>
           </div>
         </div>
       </div>
@@ -115,7 +130,7 @@
           </div>
           
           <button class="btn w-100 fw-bold shadow mt-2 py-3 rounded-pill text-white d-flex align-items-center justify-content-center gap-2" 
-                  [disabled]="cartItems.length === 0 || isProcessing"
+                  [disabled]="cartItems.length === 0 || isProcessing || !horarioSeleccionadoIso || slotsDisponibles.length === 0"
                   (click)="confirmOrder()"
                   style="background-color: var(--nyu-primary); transition: all 0.2s; font-size: 1.1rem;">
             <svg *ngIf="!isProcessing" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-shield-lock-fill" viewBox="0 0 16 16">

@@ -12,21 +12,30 @@ export class PromocionEntity {
   @Column()
   nombre!: string;
 
-  @Column()
+  @Column('text')
   descripcion!: string;
 
-  @Column('decimal', { precision: 5, scale: 2, name: 'porcentaje_descuento' })
-  porcentaje_descuento!: number;
+  @Column('decimal', { name: 'porcentaje_descuento', precision: 10, scale: 2 })
+  descuento!: number;
 
-  @Column({ type: 'time', name: 'hora_inicio_activa' })
-  hora_inicio_activa!: string;
+  @Column({ name: 'hora_inicio_activa', type: 'time' })
+  horaInicio!: string;
 
-  @Column({ type: 'time', name: 'hora_fin_activa' })
-  hora_fin_activa!: string;
+  @Column({ name: 'hora_fin_activa', type: 'time' })
+  horaFin!: string;
 
-  @Column({ default: true })
+  @Column({ type: 'tinyint', default: 1 })
   activa!: boolean;
 
-  @Column({ name: 'comida_id', nullable: true })
-  comida_id!: number;
+  @Column('json', { name: 'comidas_ids', nullable: true })
+  comidasIds?: number[] | null;
+
+  // Lógica de negocio derivada (no se guarda en BD)
+  get reqMatricula(): boolean {
+    return true; // Todas las promociones requieren matrícula activa
+  }
+
+  get reqResidencia(): boolean {
+    return this.nombre?.toLowerCase().includes('residente') ?? false;
+  }
 }

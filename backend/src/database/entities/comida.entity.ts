@@ -12,7 +12,7 @@ export class ComidaEntity {
   @Column()
   nombre!: string;
 
-  @Column()
+  @Column('text')
   descripcion!: string;
 
   @Column('decimal', { precision: 10, scale: 2 })
@@ -21,15 +21,27 @@ export class ComidaEntity {
   @Column()
   categoria!: string;
 
+
   @Column({ name: 'imagen_url', nullable: true })
   imagen_url!: string;
 
-  @Column({ default: 0 })
   stock_actual!: number;
 
-  @Column({ default: true })
-  disponible!: boolean;
+  get stockActual(): number {
+    return this.stock_actual;
+  }
+  set stockActual(val: number) {
+    this.stock_actual = val;
+  }
 
-  @Column({ name: 'fecha_disponible', nullable: true })
-  fecha_disponible!: Date;
+  @Column({ name: 'imagen_url', nullable: true })
+  imagen_url!: string;
+
+  get image(): string {
+    return this.imagen_url || '';
+  }
+  set image(val: string) {
+    this.imagen_url = val;
+  }
+
 }

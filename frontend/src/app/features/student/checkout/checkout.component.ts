@@ -6,6 +6,7 @@ import { OrderService } from '../../../core/services/order.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { IntegrationService } from '../../../core/services/integration.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { formatearSlot, getSlotsDisponiblesHoy } from '../../../core/constants/cafeteria-horario';
 
 @Component({
   selector: 'app-checkout',
@@ -17,7 +18,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   totalAmount: number = 0;
   private cartSub!: Subscription;
 
-  pickupTime: string = '';
+  slotsDisponibles: Date[] = [];
+  horarioSeleccionadoIso: string | null = null;
   paymentMethod: string = 'Tarjeta';
   isProcessing: boolean = false;
 
@@ -35,10 +37,25 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       this.cartItems = items;
       this.totalAmount = this.cartService.getTotalAmount();
     });
+    this.recargarSlots();
   }
 
   ngOnDestroy(): void {
     if (this.cartSub) this.cartSub.unsubscribe();
+  }
+
+  recargarSlots() {
+    this.slotsDisponibles = getSlotsDisponiblesHoy();
+    if (this.horarioSeleccionadoIso) {
+      const sigueDisponible = this.slotsDisponibles.some(
+        s => s.toISOString() === this.horarioSeleccionadoIso,
+      );
+      if (!sigueDisponible) this.horarioSeleccionadoIso = null;
+    }
+  }
+
+  formatearSlot(fecha: Date): string {
+    return formatearSlot(fecha);
   }
 
   updateQuantity(item: CartItem, change: number) {
@@ -50,7 +67,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   }
 
   confirmOrder() {
-    if (!this.pickupTime) {
+    if (!this.horarioSeleccionadoIso) {
       this.toastService.show('Por favor selecciona una hora de retiro.', 'warning');
       return;
     }
@@ -99,20 +116,27 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       items: this.cartItems.map(i => ({
         productId: i.product.id,
         quantity: i.quantity,
-        price: i.product.price
-      }))
+        price: i.product.studentPrice || i.product.price || 0
+      })),
+      horarioRetiro: this.horarioSeleccionadoIso
     };
 
     this.orderService.createOrder(payload).subscribe({
       next: () => {
         this.isProcessing = false;
         this.cartService.clearCart();
-        this.toastService.show(`¡Pedido confirmado! Retira a las ${this.pickupTime}`, 'success');
+        const hr = new Date(this.horarioSeleccionadoIso!);
+        this.toastService.show(`¡Pedido confirmado! Retira a las ${formatearSlot(hr)}`, 'success');
         this.router.navigate(['/history']);
       },
       error: (err: any) => {
         console.error('Error al procesar orden', err);
-        this.toastService.show('Hubo un problema procesando tu orden internamente.', 'danger');
+        let errorMsg = 'Hubo un problema procesando tu orden internamente.';
+        if (err.error && err.error.message) {
+          errorMsg = err.error.message;
+        }
+        this.recargarSlots();
+        this.toastService.show(errorMsg, 'danger');
         this.isProcessing = false;
       }
     });

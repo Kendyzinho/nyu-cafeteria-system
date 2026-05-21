@@ -12,12 +12,31 @@ export class PlanesCatalogoEntity {
   @Column()
   nombre!: string;
 
-  @Column()
+  @Column('text')
   descripcion!: string;
 
-  @Column('decimal', { precision: 10, scale: 2, name: 'precio_mensual' })
+  @Column('decimal', { name: 'precio_mensual', precision: 10, scale: 2 })
   precio_mensual!: number;
 
-  @Column({ default: true })
+  get precio(): number {
+    return this.precio_mensual;
+  }
+  set precio(val: number) {
+    this.precio_mensual = val;
+  }
+
+  // tipo derivado del nombre para compatibilidad con el frontend
+  tipo?: string;
+
+  @Column({ type: 'tinyint', default: 1 })
   activo!: boolean;
+
+  // Lógica de negocio derivada (no se guarda en BD)
+  get reqMatricula(): boolean {
+    return true; // Todos los planes requieren matrícula activa
+  }
+
+  get reqResidencia(): boolean {
+    return this.nombre?.toLowerCase().includes('residente') ?? false;
+  }
 }

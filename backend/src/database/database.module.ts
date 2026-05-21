@@ -1,15 +1,17 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UserEntity } from './entities/user.entity';
+import { MockUsuarioEntity } from './entities/mock-usuario.entity';
 import { ComidaEntity } from './entities/comida.entity';
 import { PedidoEntity } from './entities/pedido.entity';
-import { DetallePedidoEntity } from './entities/detalle-pedido.entity';
 import { PlanesCatalogoEntity } from './entities/planes-catalogo.entity';
-import { InsumosEntity } from './entities/insumos.entity';
-import { RecetaComidaEntity } from './entities/receta-comida.entity';
 import { PromocionEntity } from './entities/promocion.entity';
 import { SuscripcionAlumnoEntity } from './entities/suscripcion-alumno.entity';
+import { DetallePedidoEntity } from './entities/detalle-pedido.entity';
+import { MockPagoEntity } from './entities/mock-pago.entity';
+import { InsumoEntity } from './entities/insumo.entity';
+import { RecetaComidaEntity } from './entities/receta-comida.entity';
+import { MockReservaBibliotecaEntity } from './entities/mock-reserva-biblioteca.entity';
 
 @Module({
   imports: [
@@ -27,15 +29,17 @@ import { SuscripcionAlumnoEntity } from './entities/suscripcion-alumno.entity';
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
         entities: [
-          UserEntity,
+          MockUsuarioEntity,
           ComidaEntity,
           PedidoEntity,
-          DetallePedidoEntity,
           PlanesCatalogoEntity,
-          InsumosEntity,
-          RecetaComidaEntity,
           PromocionEntity,
           SuscripcionAlumnoEntity,
+          DetallePedidoEntity,
+          MockPagoEntity,
+          InsumoEntity,
+          RecetaComidaEntity,
+          MockReservaBibliotecaEntity,
         ],
         synchronize: true,
         autoLoadEntities: true,

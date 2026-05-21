@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { OrderService } from '../../../core/services/order.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 interface Transaction {
   id: string;
@@ -8,6 +9,7 @@ interface Transaction {
   amount: number;
   method: 'Tarjeta' | 'Plan Residente' | 'Efectivo';
   status: 'Completado' | 'Pendiente' | 'Cancelado';
+  horarioRetiro: string | null;
 }
 
 @Component({
@@ -19,26 +21,44 @@ export class HistoryComponent implements OnInit {
   transactions: Transaction[] = [];
   totalSpentMonth: number = 0;
 
-  constructor(private orderService: OrderService) { }
+  constructor(
+    private orderService: OrderService,
+    private authService: AuthService
+  ) { }
 
   ngOnInit(): void {
-    this.orderService.getOrders().subscribe({
-      next: (data) => {
-        this.transactions = data.map(order => ({
-          id: `TRX-${order.id}`,
-          date: new Date().toISOString().split('T')[0],
-          item: `Pedido #${order.id}`,
-          amount: order.total || 0,
-          method: 'Tarjeta',
-          status: 'Completado'
-        }));
-        
-        this.calculateTotal();
-      },
-      error: () => {
-        console.error('Error fetching orders');
-      }
-    });
+    const user = this.authService.getCurrentUser();
+    if (user) {
+      this.orderService.getOrdersByUser(user.id).subscribe({
+        next: (orders) => {
+          this.transactions = orders.map(o => ({
+            id: `TRX-${o.id.toString().padStart(3, '0')}`,
+            date: o.fechaCreacion,
+            item: this.getItemsSummary(o.items),
+            amount: Number(o.total),
+            method: 'Tarjeta',
+            status: this.capitalize(o.estado) as any,
+            horarioRetiro: o.horarioRetiro ?? null,
+          }));
+          this.calculateTotal();
+        },
+        error: (err) => console.error('Error cargando historial', err)
+      });
+    }
+  }
+
+  getItemsSummary(items: any[]): string {
+    if (!items || items.length === 0) return 'Sin items';
+    return items.map(i => {
+      const name = i.product?.name || i.nombre || `Producto #${i.productId || i.id}`;
+      const qty = i.quantity || i.cantidad || 1;
+      return `${qty}x ${name}`;
+    }).join(', ');
+  }
+
+  capitalize(str: string): string {
+    if (!str) return 'Pendiente';
+    return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
   calculateTotal() {

@@ -144,3 +144,18 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
   transform: translateY(-1px);
 }
+
+.btn-coffee {
+  background-color: #4E342E;
+  color: white;
+  border: none;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-coffee:hover {
+  background-color: #3E2723;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}

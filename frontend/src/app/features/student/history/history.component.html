@@ -21,6 +21,7 @@
             <th class="px-4 py-3 border-0 small text-uppercase fw-bold text-muted">ID</th>
             <th class="py-3 border-0 small text-uppercase fw-bold text-muted">Fecha</th>
             <th class="py-3 border-0 small text-uppercase fw-bold text-muted">Producto / Servicio</th>
+            <th class="py-3 border-0 small text-uppercase fw-bold text-muted">Retiro</th>
             <th class="py-3 border-0 small text-uppercase fw-bold text-muted">Método</th>
             <th class="py-3 border-0 small text-uppercase fw-bold text-muted">Monto</th>
             <th class="py-3 border-0 small text-uppercase fw-bold text-muted text-center">Estado</th>
@@ -32,6 +33,9 @@
             <td class="py-3 fw-bold" style="color: #4E342E;">{{ trx.date | date:'dd/MM/yyyy' }}</td>
             <td class="py-3">
               <span class="fw-bold d-block" style="color: #4E342E;">{{ trx.item }}</span>
+            </td>
+            <td class="py-3 fw-bold" style="color: #6F4E37;">
+              {{ trx.horarioRetiro ? (trx.horarioRetiro | date:'HH:mm') : '—' }}
             </td>
             <td class="py-3">
               <span [ngClass]="getMethodClass(trx.method)">{{ trx.method }}</span>

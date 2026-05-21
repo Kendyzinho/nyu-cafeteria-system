@@ -1,27 +1,23 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MenuController } from './menu/menu.controller';
-import { OrdersController } from './orders/orders.controller';
-import { MealPlansController } from './meal-plans/meal-plans.controller';
+import { PedidosController } from './pedidos/pedidos.controller';
+import { PlanesComidaController } from './planes-comida/planes-comida.controller';
 import { StockController } from './stock/stock.controller';
-import { PromotionsController } from './promotions/promotions.controller';
-import { UsersController } from './users/users.controller';
+import { PromocionesController } from './promociones/promociones.controller';
+import { UsuariosController } from './usuarios/usuarios.controller';
 import { AuthController } from './auth/auth.controller';
 import { ComidaEntity } from 'src/database/entities/comida.entity';
 import { PedidoEntity } from 'src/database/entities/pedido.entity';
-import { DetallePedidoEntity } from 'src/database/entities/detalle-pedido.entity';
 import { PlanesCatalogoEntity } from 'src/database/entities/planes-catalogo.entity';
-import { InsumosEntity } from 'src/database/entities/insumos.entity';
-import { RecetaComidaEntity } from 'src/database/entities/receta-comida.entity';
 import { PromocionEntity } from 'src/database/entities/promocion.entity';
-import { SuscripcionAlumnoEntity } from 'src/database/entities/suscripcion-alumno.entity';
-import { UserEntity } from 'src/database/entities/user.entity';
+import { MockUsuarioEntity } from 'src/database/entities/mock-usuario.entity';
 import { MenuService } from 'src/providers/menu/menu.service';
-import { OrdersService } from 'src/providers/orders/orders.service';
-import { MealPlansService } from 'src/providers/meal-plans/meal-plans.service';
+import { PedidosService } from 'src/providers/pedidos/pedidos.service';
+import { PlanesComidaService } from 'src/providers/planes-comida/planes-comida.service';
 import { StockService } from 'src/providers/stock/stock.service';
-import { PromotionsService } from 'src/providers/promotions/promotions.service';
-import { UsersService } from 'src/providers/users/users.service';
+import { PromocionesService } from 'src/providers/promociones/promociones.service';
+import { UsuariosService } from 'src/providers/usuarios/usuarios.service';
 import { AuthService } from 'src/providers/auth/auth.service';
 
 @Module({
@@ -29,31 +25,27 @@ import { AuthService } from 'src/providers/auth/auth.service';
     TypeOrmModule.forFeature([
       ComidaEntity,
       PedidoEntity,
-      DetallePedidoEntity,
       PlanesCatalogoEntity,
-      InsumosEntity,
-      RecetaComidaEntity,
       PromocionEntity,
-      SuscripcionAlumnoEntity,
-      UserEntity,
+      MockUsuarioEntity,
     ]),
   ],
   controllers: [
     MenuController,
-    OrdersController,
-    MealPlansController,
+    PedidosController,
+    PlanesComidaController,
     StockController,
-    PromotionsController,
-    UsersController,
+    PromocionesController,
+    UsuariosController,
     AuthController,
   ],
   providers: [
     MenuService,
-    OrdersService,
-    MealPlansService,
+    PedidosService,
+    PlanesComidaService,
     StockService,
-    PromotionsService,
-    UsersService,
+    PromocionesService,
+    UsuariosService,
     AuthService,
   ],
 })

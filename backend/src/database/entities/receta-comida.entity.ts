@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { ComidaEntity } from './comida.entity';
+import { InsumoEntity } from './insumo.entity';
 
 @Entity({ name: 'receta_comida' })
 export class RecetaComidaEntity {
@@ -13,8 +15,15 @@ export class RecetaComidaEntity {
   comida_id!: number;
 
   @Column({ name: 'insumo_id' })
-  insumo_id!: number;
 
-  @Column('decimal', { precision: 10, scale: 3, name: 'cantidad_requerida' })
-  cantidad_requerida!: number;
+  @Column({ name: 'cantidad_requerida' })
+  cantidadRequerida!: number;
+
+  @ManyToOne(() => ComidaEntity, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'comida_id' })
+  comida!: ComidaEntity;
+
+  @ManyToOne(() => InsumoEntity, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'insumo_id' })
+  insumo!: InsumoEntity;
 }

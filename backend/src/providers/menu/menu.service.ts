@@ -13,23 +13,26 @@ export class MenuService {
     private readonly menuRepository: Repository<ComidaEntity>,
   ) {}
 
-  private toResponse(item: ComidaEntity) {
+  // mapea la entidad al formato que espera el frontend
+  private async toResponse(item: ComidaEntity) {
+    const isActuallyAvailable = item.disponible && item.stock_actual > 0;
+
     return {
       id: item.id,
-      name: item.nombre,
-      category: item.categoria,
-      description: item.descripcion,
-      price: Number(item.precio),
-      studentPrice: +(Number(item.precio) * 0.75).toFixed(0),
-      image: item.imagen_url ?? '',
-      isAvailable: item.disponible,
-      stock: item.stock_actual,
+      nombre: item.nombre,
+      descripcion: item.descripcion,
+      precio: Number(item.precio),
+      categoria: item.categoria,
+      disponible: isActuallyAvailable,
+      stock_actual: item.stock_actual,
+      imagen_url: item.imagen_url ?? '',
+      precio_estudiante: +(Number(item.precio) * 0.75).toFixed(0),
     };
   }
 
   public async getAll() {
     const items = await this.menuRepository.find();
-    return items.map(item => this.toResponse(item));
+    return await Promise.all(items.map(item => this.toResponse(item)));
   }
 
   public async getOne(id: number) {
@@ -38,9 +41,10 @@ export class MenuService {
       .where('comida.id = :id', { id })
       .getOne();
     if (!item) return null;
-    return this.toResponse(item);
+    return await this.toResponse(item);
   }
 
+  // crea un nuevo ítem en la base de datos
   public async create(data: IPostMenuRequest): Promise<ComidaEntity> {
     const item = this.menuRepository.create(data);
     return await this.menuRepository.save(item);
