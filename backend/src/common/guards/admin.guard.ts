@@ -6,11 +6,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import type { Request } from 'express';
-import { UsersService } from 'src/providers/users/users.service';
+import { UsuariosService } from 'src/providers/usuarios/usuarios.service';
 
 @Injectable()
 export class AdminGuard implements CanActivate {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsuariosService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();

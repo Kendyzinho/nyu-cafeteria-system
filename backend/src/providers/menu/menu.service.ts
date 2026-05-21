@@ -15,18 +15,18 @@ export class MenuService {
 
   // mapea la entidad al formato que espera el frontend
   private async toResponse(item: ComidaEntity) {
-    const isActuallyAvailable = item.disponible && item.stockActual > 0;
+    const isActuallyAvailable = item.disponible && item.stock_actual > 0;
 
     return {
       id: item.id,
-      name: item.nombre,
-      category: item.categoria,
-      description: item.descripcion,
-      price: Number(item.precio),
-      studentPrice: +(Number(item.precio) * 0.75).toFixed(0),
-      image: item.image ?? '',
-      isAvailable: isActuallyAvailable,
-      stock: item.stockActual
+      nombre: item.nombre,
+      descripcion: item.descripcion,
+      precio: Number(item.precio),
+      categoria: item.categoria,
+      disponible: isActuallyAvailable,
+      stock_actual: item.stock_actual,
+      imagen_url: item.imagen_url ?? '',
+      precio_estudiante: +(Number(item.precio) * 0.75).toFixed(0),
     };
   }
 

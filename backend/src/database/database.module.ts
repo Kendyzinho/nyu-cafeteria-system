@@ -41,7 +41,7 @@ import { MockReservaBibliotecaEntity } from './entities/mock-reserva-biblioteca.
           RecetaComidaEntity,
           MockReservaBibliotecaEntity,
         ],
-        synchronize: false,
+        synchronize: true,
         autoLoadEntities: true,
       }),
       inject: [ConfigService],
