@@ -7,7 +7,5 @@ export interface IGetMenuResponse {
   imagen_url: string;
   stock_actual: number;
   disponible: boolean;
-  stock_actual: number;
-  imagen_url: string;
   precio_estudiante: number;
 }
