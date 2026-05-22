@@ -3,9 +3,9 @@ export interface IPostSubscriptionResponse {
     subscriptionId: number;
     userId: number;
     planId: number;
-    fechaInicio: string;
-    fechaFin: string;
-    descuentoAplicado: number;
+    nombrePlan: string;
+    mesVigencia: string;
+    estado: string;
     precioFinal: number;
   } | null;
   statusCode: number;
