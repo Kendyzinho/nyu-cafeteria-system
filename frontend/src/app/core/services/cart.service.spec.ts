@@ -20,7 +20,7 @@ describe('CartService', () => {
     
     service.cartItems$.subscribe(items => {
       expect(items.length).toBe(1);
-      expect(items[0].product.name).toBe('Café');
+      expect(items[0].product.nombre).toBe('Café');
       expect(items[0].quantity).toBe(1);
       done();
     });
@@ -52,7 +52,7 @@ describe('CartService', () => {
 
   it('debería calcular correctamente el monto total', () => {
     const productA = { id: 1, name: 'Café', price: 100, stock: 10 }; // Usará price
-    const productB = { id: 2, name: 'Torta', studentPrice: 150, price: 200, stock: 5 }; // Usará studentPrice
+    const productB = { id: 2, name: 'Torta', precio_estudiante: 150, price: 200, stock: 5 }; // Usará studentPrice
     
     service.addItem(productA);
     service.addItem(productB);

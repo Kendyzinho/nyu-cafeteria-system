@@ -33,9 +33,9 @@ export class ResidentPlanComponent implements OnInit {
       next: (data) => {
         this.availablePlans = data.map(plan => ({
           id: plan.id,
-          name: plan.nombre || `Plan ${plan.tipo || 'Mensual'}`,
-          price: plan.precio || 0,
-          description: plan.descripcion || 'Plan alimentario de cafetería.',
+          nombre: plan.nombre || `Plan ${plan.tipo || 'Mensual'}`,
+          precio_mensual: plan.precio_mensual || plan.precio || 0,
+          descripcion: plan.descripcion || 'Plan alimentario de cafetería.',
           image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80'
         }));
       },
@@ -46,7 +46,7 @@ export class ResidentPlanComponent implements OnInit {
   getCurrentPlanName(): string {
     if (!this.currentPlanId || !this.availablePlans.length) return 'Plan Estándar';
     const plan = this.availablePlans.find(p => p.id === this.currentPlanId);
-    return plan ? plan.name : 'Plan Estándar';
+    return plan ? plan.nombre : 'Plan Estándar';
   }
 
   savePreferences() {
