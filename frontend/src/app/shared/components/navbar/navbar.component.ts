@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { User } from '../../../core/models/user';
+import { CartService, CartItem } from '../../../core/services/cart.service';
 
 @Component({
   selector: 'app-navbar',
@@ -11,8 +12,15 @@ import { User } from '../../../core/models/user';
 export class NavbarComponent implements OnInit {
   currentUser: User | null = null;
   initials: string = '';
+  cartItems: CartItem[] = [];
+  cartCount: number = 0;
+  cartTotal: number = 0;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private cartService: CartService
+  ) {}
 
   ngOnInit(): void {
     // Nos suscribimos al usuario actual para que el Navbar reaccione dinámicamente
@@ -25,10 +33,24 @@ export class NavbarComponent implements OnInit {
         this.initials = '';
       }
     });
+
+    this.cartService.cartItems$.subscribe(items => {
+      this.cartItems = items;
+      this.cartCount = items.reduce((acc, item) => acc + item.quantity, 0);
+      this.cartTotal = this.cartService.getTotalAmount();
+    });
   }
 
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  updateCartItem(item: CartItem, change: number) {
+    this.cartService.updateQuantity(item.product.id, item.quantity + change);
+  }
+
+  removeCartItem(item: CartItem) {
+    this.cartService.removeItem(item.product.id);
   }
 }

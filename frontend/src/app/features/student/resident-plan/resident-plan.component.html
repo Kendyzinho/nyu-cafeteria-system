@@ -17,47 +17,13 @@
         </div>
 
         <div class="card-body text-center py-4">
-
-          <div *ngIf="successMessage" class="alert alert-success fw-bold">
-            {{ successMessage }}
-          </div>
-
-          <div *ngIf="errorMessage" class="alert alert-danger fw-bold">
-            {{ errorMessage }}
-          </div>
-
-          <div *ngIf="!currentPlan">
-            <h5 class="fw-bold mb-3" style="color: var(--nyu-dark);">
-              Actualmente no tienes un plan activo
-            </h5>
-
-            <p class="text-muted mb-0">
-              Selecciona uno de los planes mensuales disponibles para residentes.
-            </p>
-          </div>
-
-          <div *ngIf="currentPlan">
-            <h5 class="fw-bold mb-3" style="color: var(--nyu-dark);">
-              Comidas restantes este mes: {{ getRemainingMeals() }}/{{ totalMeals }}
-            </h5>
-
-            <p class="mb-2 fw-bold text-muted">
-              {{ getCurrentPlanName() }}
-            </p>
-
-            <span class="badge bg-success mb-3">
-              Estado: {{ currentPlan.status }}
-            </span>
-
-            <p class="mb-1 text-muted">
-              Valor mensual: ${{ currentPlan.price | number }}
-            </p>
-
-            <p class="mb-0 fw-bold text-muted" *ngIf="preferences.vegano">
-              Preferencia: Vegano
-            </p>
-          </div>
-
+          <h5 class="fw-bold mb-3" style="color: var(--nyu-dark);">
+            Comidas restantes este mes: {{ totalMeals - mealsConsumed }}/{{ totalMeals }}
+          </h5>
+          <p class="mb-0 fw-bold text-muted">
+            {{ getCurrentPlanName() }} <br>
+            <span *ngIf="preferences.vegano">(Vegano Preference)</span>
+          </p>
         </div>
 
         <div class="card-footer bg-white text-center py-3">
@@ -84,9 +50,9 @@
             
             <div class="card-body p-3 d-flex flex-column">
               <h6 class="fw-bold text-center mb-3" style="color: var(--nyu-dark);">
-                {{ plan.name.includes('(') ? plan.name.split('(')[0] : plan.name }} 
-                <br *ngIf="plan.name.includes('(')"> 
-                {{ plan.name.includes('(') ? '(' + plan.name.split('(')[1] : '' }}
+                {{ plan.nombre.includes('(') ? plan.nombre.split('(')[0] : plan.nombre }} 
+                <br *ngIf="plan.nombre.includes('(')"> 
+                {{ plan.nombre.includes('(') ? '(' + plan.nombre.split('(')[1] : '' }}
               </h6>
               
               <img 
@@ -94,13 +60,8 @@
                 class="img-fluid mb-3 shadow-sm" 
                 style="border-radius: 4px; height: 100px; object-fit: cover;">
               
-              <h5 class="fw-bold" style="color: var(--nyu-dark);">
-                ${{ plan.price | number }}
-              </h5>
-
-              <p class="small text-muted flex-grow-1">
-                {{ plan.description }}
-              </p>
+              <h5 class="fw-bold" style="color: var(--nyu-dark);">${{ plan.precio_mensual | number }}</h5>
+              <p class="small text-muted flex-grow-1">{{ plan.descripcion }}</p>
               
               <button 
                 class="btn w-100 fw-bold text-white mt-3" 

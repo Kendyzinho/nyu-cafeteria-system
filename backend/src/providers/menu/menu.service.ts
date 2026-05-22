@@ -1,37 +1,39 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { MenuEntity } from '../../database/entities/menu.entity';
-import type { IPutMenuRequest } from '../../controllers/menu/dto/IPutMenuRequest';
-import type { IPostMenuRequest } from '../../controllers/menu/dto/IPostMenuRequest';
+import { ComidaEntity } from 'src/database/entities/comida.entity';
+import type { IPutMenuRequest } from 'src/controllers/menu/dto/IPutMenuRequest';
+import type { IPostMenuRequest } from 'src/controllers/menu/dto/IPostMenuRequest';
 
 @Injectable() // marca la clase como un provider inyectable
 export class MenuService {
 
   constructor(
-    // inyecta el repositorio para operar sobre la tabla 'menu'
-    @InjectRepository(MenuEntity)
-    private readonly menuRepository: Repository<MenuEntity>,
+    @InjectRepository(ComidaEntity)
+    private readonly menuRepository: Repository<ComidaEntity>,
   ) {}
 
   // mapea la entidad al formato que espera el frontend
-  private toResponse(item: MenuEntity) {
+  private async toResponse(item: ComidaEntity) {
+    const isActuallyAvailable = item.disponible && item.stock_actual > 0;
+
     return {
       id: item.id,
-      name: item.nombre,
-      category: item.categoria,
-      description: item.descripcion,
-      price: Number(item.precio),
-      studentPrice: +(Number(item.precio) * 0.75).toFixed(0), // calcula 25% de descuento
-      image: item.image ?? '',   // si no tiene imagen retorna string vacío
-      isAvailable: item.disponible,
+      nombre: item.nombre,
+      descripcion: item.descripcion,
+      precio: Number(item.precio),
+      categoria: item.categoria,
+      disponible: isActuallyAvailable,
+      stock_actual: item.stock_actual,
+      imagen_url: item.imagen_url ?? '',
+      precio_estudiante: +(Number(item.precio) * 0.75).toFixed(0),
     };
   }
 
   // obtiene todos los ítems del menú y los mapea al formato del frontend
   public async getAll() {
     const items = await this.menuRepository.find();
-    return items.map(item => this.toResponse(item));
+    return await Promise.all(items.map(item => this.toResponse(item)));
   }
 
   // obtiene un ítem por id
@@ -41,11 +43,11 @@ export class MenuService {
       .where('menu.id = :id', { id })
       .getOne();
     if (!item) return null;
-    return this.toResponse(item);
+    return await this.toResponse(item);
   }
 
   // crea un nuevo ítem en la base de datos
-  public async create(data: IPostMenuRequest): Promise<MenuEntity> {
+  public async create(data: IPostMenuRequest): Promise<ComidaEntity> {
     const item = this.menuRepository.create(data);
     return await this.menuRepository.save(item);
   }

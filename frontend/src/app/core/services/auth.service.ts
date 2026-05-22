@@ -49,6 +49,7 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('jwt_token');
     localStorage.removeItem('current_user');
+    localStorage.removeItem('nyu_cart'); // Limpia el carrito al cerrar sesión
     this.currentUserSubject.next(null);
   }
 

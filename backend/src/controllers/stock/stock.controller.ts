@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Res } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, Res, UseGuards } from '@nestjs/common';
 import type { Response } from 'express';
 import type { IPostStockRequest } from './dto/IPostStockRequest';
 import type { IPostStockResponse } from './dto/IPostStockResponse';
-import type { IPutStockRequest } from './dto/IPutStockRequest';
-import { StockService } from '../../providers/stock/stock.service';
+import { IPutStockRequest } from './dto/IPutStockRequest';
+import { StockService } from 'src/providers/stock/stock.service';
+import { AdminGuard } from 'src/common/guards/admin.guard';
 
 @Controller('stock')
 export class StockController {
@@ -21,6 +22,7 @@ export class StockController {
   }
 
   @Post()
+  @UseGuards(AdminGuard)
   async postStock(
     @Body() request: IPostStockRequest
   ): Promise<IPostStockResponse> {
@@ -39,6 +41,7 @@ export class StockController {
   }
 
   @Put(':id')
+  @UseGuards(AdminGuard)
   async putStock(
     @Param('id') id: number,
     @Body() request: IPutStockRequest,
@@ -54,6 +57,7 @@ export class StockController {
   }
 
   @Delete(':id')
+  @UseGuards(AdminGuard)
   async deleteStock(
     @Param('id') id: number,
     @Res() response: Response,

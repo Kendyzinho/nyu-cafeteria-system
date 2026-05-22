@@ -313,4 +313,4 @@
 </div>
 
 <!-- Fondo oscuro difuminado para modales -->
-<div class="modal-backdrop-custom fade show" *ngIf="showFormModal || showDetailsModal || showDeleteModal"></div>
+<div class="modal-backdrop-custom" [ngClass]="{'show': showFormModal || showDetailsModal || showDeleteModal}" *ngIf="showFormModal || showDetailsModal || showDeleteModal"></div>

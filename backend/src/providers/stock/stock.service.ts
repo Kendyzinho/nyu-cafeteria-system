@@ -1,48 +1,82 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { StockEntity } from '../../database/entities/stock.entity';
-import type { IPostStockRequest } from '../../controllers/stock/dto/IPostStockRequest';
-import type { IPutStockRequest } from '../../controllers/stock/dto/IPutStockRequest';
+import { ComidaEntity } from 'src/database/entities/comida.entity';
+import type { IPostStockRequest } from 'src/controllers/stock/dto/IPostStockRequest';
+import type { IPutStockRequest } from 'src/controllers/stock/dto/IPutStockRequest';
+
+export interface IStockWithMenu {
+  id: number;
+  menuItemId: number;
+  cantidad: number;
+  umbralMinimo: number;
+  ultimaActualizacion: Date;
+  nombre: string | null;
+  categoria: string | null;
+}
 
 @Injectable()
 export class StockService {
   constructor(
-    @InjectRepository(StockEntity)
-    private readonly stockRepository: Repository<StockEntity>,
+    @InjectRepository(ComidaEntity)
+    private readonly menuRepository: Repository<ComidaEntity>,
   ) {}
 
-  public async getAll(): Promise<StockEntity[]> {
-    return await this.stockRepository.find();
-  }
-
-  public async getOne(id: number): Promise<StockEntity | null> {
-    return await this.stockRepository
-      .createQueryBuilder('stock')
-      .where('stock.id = :id', { id })
-      .getOne();
-  }
-
-  public async create(data: IPostStockRequest): Promise<StockEntity> {
-    const item = this.stockRepository.create({
-      ...data,
+  public async getAll(): Promise<IStockWithMenu[]> {
+    const items = await this.menuRepository.find();
+    return items.map(item => ({
+      id: item.id,
+      menuItemId: item.id,
+      cantidad: item.stockActual,
+      umbralMinimo: 5, // default threshold
       ultimaActualizacion: new Date(),
-    });
-    return await this.stockRepository.save(item);
+      nombre: item.nombre,
+      categoria: item.categoria
+    }));
+  }
+
+  public async getOne(id: number): Promise<any | null> {
+    const item = await this.menuRepository.findOne({ where: { id } });
+    if (!item) return null;
+    return {
+      id: item.id,
+      menuItemId: item.id,
+      cantidad: item.stockActual,
+      umbralMinimo: 5,
+      ultimaActualizacion: new Date(),
+    };
+  }
+
+  public async create(data: IPostStockRequest): Promise<any> {
+    const item = await this.menuRepository.findOne({ where: { id: data.menuItemId } });
+    if (item) {
+      item.stockActual = data.cantidad;
+      await this.menuRepository.save(item);
+    }
+    return {
+      id: data.menuItemId,
+      menuItemId: data.menuItemId,
+      cantidad: data.cantidad,
+      umbralMinimo: data.umbralMinimo,
+      ultimaActualizacion: new Date(),
+    };
   }
 
   public async update(id: number, data: IPutStockRequest) {
-    const result = await this.stockRepository.update(id, {
-      ...data,
-      ultimaActualizacion: new Date(),
-    });
-    if (result.affected === 0) return undefined;
-    return result;
+    const item = await this.menuRepository.findOne({ where: { id } });
+    if (!item) return undefined;
+    if (data.cantidad !== undefined) {
+      item.stockActual = data.cantidad;
+    }
+    await this.menuRepository.save(item);
+    return { affected: 1 };
   }
 
   public async delete(id: number) {
-    const result = await this.stockRepository.delete(id);
-    if (result.affected === 0) return undefined;
-    return result;
+    const item = await this.menuRepository.findOne({ where: { id } });
+    if (!item) return undefined;
+    item.stockActual = 0;
+    await this.menuRepository.save(item);
+    return { affected: 1 };
   }
 }
