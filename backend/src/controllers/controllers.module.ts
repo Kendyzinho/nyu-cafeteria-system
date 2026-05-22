@@ -38,7 +38,6 @@ import { AuthService } from 'src/providers/auth/auth.service';
     PromocionesController,
     UsuariosController,
     AuthController,
-    SubscriptionsController,
   ],
   providers: [
     MenuService,
