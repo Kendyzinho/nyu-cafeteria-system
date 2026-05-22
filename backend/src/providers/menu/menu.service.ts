@@ -5,7 +5,7 @@ import { ComidaEntity } from 'src/database/entities/comida.entity';
 import type { IPutMenuRequest } from 'src/controllers/menu/dto/IPutMenuRequest';
 import type { IPostMenuRequest } from 'src/controllers/menu/dto/IPostMenuRequest';
 
-@Injectable() // marca la clase como un provider inyectable
+@Injectable()
 export class MenuService {
 
   constructor(
@@ -30,17 +30,15 @@ export class MenuService {
     };
   }
 
-  // obtiene todos los ítems del menú y los mapea al formato del frontend
   public async getAll() {
     const items = await this.menuRepository.find();
     return await Promise.all(items.map(item => this.toResponse(item)));
   }
 
-  // obtiene un ítem por id
   public async getOne(id: number) {
     const item = await this.menuRepository
-      .createQueryBuilder('menu')
-      .where('menu.id = :id', { id })
+      .createQueryBuilder('comida')
+      .where('comida.id = :id', { id })
       .getOne();
     if (!item) return null;
     return await this.toResponse(item);
@@ -52,14 +50,12 @@ export class MenuService {
     return await this.menuRepository.save(item);
   }
 
-  // actualiza un ítem existente, retorna undefined si no existe
   public async update(id: number, data: IPutMenuRequest) {
     const result = await this.menuRepository.update(id, data);
     if (result.affected === 0) return undefined;
     return result;
   }
 
-  // elimina un ítem, retorna undefined si no existe
   public async delete(id: number) {
     const result = await this.menuRepository.delete(id);
     if (result.affected === 0) return undefined;

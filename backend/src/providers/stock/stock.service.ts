@@ -27,37 +27,39 @@ export class StockService {
     return items.map(item => ({
       id: item.id,
       menuItemId: item.id,
-      cantidad: item.stockActual,
-      umbralMinimo: 5, // default threshold
+      cantidad: item.stock_actual,
+      umbralMinimo: 5,
       ultimaActualizacion: new Date(),
       nombre: item.nombre,
       categoria: item.categoria
     }));
   }
 
-  public async getOne(id: number): Promise<any | null> {
+  public async getOne(id: number): Promise<IStockWithMenu | null> {
     const item = await this.menuRepository.findOne({ where: { id } });
     if (!item) return null;
     return {
       id: item.id,
       menuItemId: item.id,
-      cantidad: item.stockActual,
+      cantidad: item.stock_actual,
       umbralMinimo: 5,
       ultimaActualizacion: new Date(),
+      nombre: item.nombre,
+      categoria: item.categoria,
     };
   }
 
   public async create(data: IPostStockRequest): Promise<any> {
-    const item = await this.menuRepository.findOne({ where: { id: data.menuItemId } });
-    if (item) {
-      item.stockActual = data.cantidad;
-      await this.menuRepository.save(item);
-    }
+    const item = this.menuRepository.create({
+      nombre: data.nombre,
+      stock_actual: data.stock_Actual,
+    });
+    const saved = await this.menuRepository.save(item);
     return {
-      id: data.menuItemId,
-      menuItemId: data.menuItemId,
-      cantidad: data.cantidad,
-      umbralMinimo: data.umbralMinimo,
+      id: saved.id,
+      menuItemId: saved.id,
+      cantidad: saved.stock_actual,
+      umbralMinimo: data.umbral_minimo,
       ultimaActualizacion: new Date(),
     };
   }
@@ -66,7 +68,7 @@ export class StockService {
     const item = await this.menuRepository.findOne({ where: { id } });
     if (!item) return undefined;
     if (data.cantidad !== undefined) {
-      item.stockActual = data.cantidad;
+      item.stock_actual = data.cantidad;
     }
     await this.menuRepository.save(item);
     return { affected: 1 };
@@ -75,7 +77,7 @@ export class StockService {
   public async delete(id: number) {
     const item = await this.menuRepository.findOne({ where: { id } });
     if (!item) return undefined;
-    item.stockActual = 0;
+    item.stock_actual = 0;
     await this.menuRepository.save(item);
     return { affected: 1 };
   }

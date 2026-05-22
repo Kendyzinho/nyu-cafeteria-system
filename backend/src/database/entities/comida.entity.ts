@@ -21,26 +21,19 @@ export class ComidaEntity {
   @Column()
   categoria!: string;
 
-  @Column({ type: 'tinyint', default: 1 })
+  @Column({ default: true })
   disponible!: boolean;
 
   @Column({ name: 'stock_actual', default: 0 })
   stock_actual!: number;
+
+  @Column({ name: 'imagen_url', nullable: true })
+  imagen_url!: string;
 
   get stockActual(): number {
     return this.stock_actual;
   }
   set stockActual(val: number) {
     this.stock_actual = val;
-  }
-
-  @Column({ name: 'imagen_url', nullable: true })
-  imagen_url!: string;
-
-  get image(): string {
-    return this.imagen_url || '';
-  }
-  set image(val: string) {
-    this.imagen_url = val;
   }
 }

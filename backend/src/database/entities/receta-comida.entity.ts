@@ -12,10 +12,9 @@ export class RecetaComidaEntity {
   id!: number;
 
   @Column({ name: 'comida_id' })
-  comidaId!: number;
+  comida_id!: number;
 
   @Column({ name: 'insumo_id' })
-  insumoId!: number;
 
   @Column({ name: 'cantidad_requerida' })
   cantidadRequerida!: number;
