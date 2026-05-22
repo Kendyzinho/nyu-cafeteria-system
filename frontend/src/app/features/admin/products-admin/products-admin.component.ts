@@ -22,7 +22,7 @@ export class ProductsAdminComponent implements OnInit {
       name: ['', Validators.required],
       description: ['', Validators.required],
       price: [0, [Validators.required, Validators.min(0)]],
-      studentPrice: [0, [Validators.required, Validators.min(0)]],
+      precio_estudiante: [0, [Validators.required, Validators.min(0)]],
       category: ['almuerzos', Validators.required],
       stock: [0, [Validators.required, Validators.min(0)]],
       isDailyMenu: [false]
@@ -47,7 +47,7 @@ export class ProductsAdminComponent implements OnInit {
     this.selectedProductId = null;
     this.productForm.reset({
       price: 0,
-      studentPrice: 0,
+      precio_estudiante: 0,
       category: 'almuerzos',
       stock: 0,
       isDailyMenu: false
@@ -59,12 +59,12 @@ export class ProductsAdminComponent implements OnInit {
     this.isEditing = true;
     this.selectedProductId = product.id;
     this.productForm.patchValue({
-      name: product.name,
+      name: product.nombre,
       description: product.description,
-      price: product.price,
-      studentPrice: product.studentPrice,
+      price: product.precio,
+      precio_estudiante: product.precio_estudiante,
       category: product.category,
-      stock: product.stock,
+      stock: product.stock_actual,
       isDailyMenu: product.isDailyMenu || false
     });
     this.showFormModal = true;
@@ -120,7 +120,7 @@ export class ProductsAdminComponent implements OnInit {
   }
 
   confirmDelete(product: any) {
-    if (confirm(`¿Estás seguro que deseas eliminar "${product.name}"?`)) {
+    if (confirm(`¿Estás seguro que deseas eliminar "${product.nombre}"?`)) {
       this.menuService.delete(product.id).subscribe({
         next: () => {
           alert('Producto eliminado.');

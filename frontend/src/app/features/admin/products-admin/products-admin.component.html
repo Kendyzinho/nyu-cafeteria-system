@@ -22,14 +22,14 @@
           <tbody>
             <tr *ngFor="let product of products">
               <td>
-                <div class="fw-bold text-dark">{{ product.name }}</div>
+                <div class="fw-bold text-dark">{{ product.nombre }}</div>
               </td>
               <td><span class="badge bg-cafe-light">{{ product.category }}</span></td>
-              <td>${{ product.price }}</td>
-              <td>${{ product.studentPrice }}</td>
+              <td>${{ product.precio }}</td>
+              <td>${{ product.precio_estudiante }}</td>
               <td>
-                <span class="badge" [ngClass]="product.stock > 0 ? 'bg-success' : 'bg-danger'">
-                  {{ product.stock }}
+                <span class="badge" [ngClass]="product.stock_actual > 0 ? 'bg-success' : 'bg-danger'">
+                  {{ product.stock_actual }}
                 </span>
               </td>
               <td class="text-center">

@@ -38,7 +38,7 @@ export class MenuComponent implements OnInit {
     if (category === 'todos') {
       this.filteredMenuItems = this.menuItems;
     } else {
-      this.filteredMenuItems = this.menuItems.filter(item => item.category === category);
+      this.filteredMenuItems = this.menuItems.filter(item => item.categoria === category);
     }
   }
 

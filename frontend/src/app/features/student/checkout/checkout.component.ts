@@ -116,7 +116,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       items: this.cartItems.map(i => ({
         productId: i.product.id,
         quantity: i.quantity,
-        price: i.product.studentPrice || i.product.price || 0
+        price: i.product.precio_estudiante || i.product.precio || 0
       })),
       horarioRetiro: this.horarioSeleccionadoIso
     };
