@@ -23,8 +23,8 @@
               <div class="d-flex align-items-center gap-3">
                 <img [src]="item.product.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80'" alt="img" class="rounded-3 shadow-sm" style="width: 65px; height: 65px; object-fit: cover;">
                 <div>
-                  <h6 class="mb-1 fw-bold text-dark">{{ item.product.name }}</h6>
-                  <small class="text-muted fw-bold">${{ (item.product.studentPrice || item.product.price) | number }} c/u</small>
+                  <h6 class="mb-1 fw-bold text-dark">{{ item.product.nombre }}</h6>
+                  <small class="text-muted fw-bold">${{ (item.product.precio_estudiante || item.product.precio) | number }} c/u</small>
                 </div>
               </div>
               

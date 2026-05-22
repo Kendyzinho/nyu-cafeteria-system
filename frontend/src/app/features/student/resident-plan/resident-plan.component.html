@@ -35,15 +35,15 @@
             
             <div class="card-body p-3 d-flex flex-column">
               <h6 class="fw-bold text-center mb-3" style="color: var(--nyu-dark);">
-                {{ plan.name.includes('(') ? plan.name.split('(')[0] : plan.name }} 
-                <br *ngIf="plan.name.includes('(')"> 
-                {{ plan.name.includes('(') ? '(' + plan.name.split('(')[1] : '' }}
+                {{ plan.nombre.includes('(') ? plan.nombre.split('(')[0] : plan.nombre }} 
+                <br *ngIf="plan.nombre.includes('(')"> 
+                {{ plan.nombre.includes('(') ? '(' + plan.nombre.split('(')[1] : '' }}
               </h6>
               
               <img [src]="plan.image" class="img-fluid mb-3 shadow-sm" style="border-radius: 4px; height: 100px; object-fit: cover;">
               
-              <h5 class="fw-bold" style="color: var(--nyu-dark);">${{ plan.price | number }}</h5>
-              <p class="small text-muted flex-grow-1">{{ plan.description }}</p>
+              <h5 class="fw-bold" style="color: var(--nyu-dark);">${{ plan.precio_mensual | number }}</h5>
+              <p class="small text-muted flex-grow-1">{{ plan.descripcion }}</p>
               
               <button class="btn w-100 fw-bold text-white mt-3" 
                       [ngStyle]="{'background-color': plan.id === currentPlanId ? '#000000' : 'var(--nyu-dark)'}"
