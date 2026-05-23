@@ -71,27 +71,5 @@ export class SubscriptionsService {
     return { suscripcion: saved, plan, precioFinal };
 
   }
-  // HU18 — Ver estado del plan activo de un usuario residente
-public async getEstadoPlan(userId: number): Promise<{
-  suscripcion: SuscripcionAlumnoEntity;
-  plan: PlanesCatalogoEntity;
-} | null> {
 
-  // 1. Buscar la suscripción activa del usuario
-  const suscripcion = await this.suscripcionRepository.findOne({
-    where: { usuarioId: userId, estado: 'activo' },
-  });
-
-  // Si no tiene ninguna suscripción activa, retorna null
-  if (!suscripcion || !suscripcion.planActivoId) return null;
-
-  // 2. Buscar los detalles del plan asociado
-  const plan = await this.planRepository.findOne({
-    where: { id: suscripcion.planActivoId },
-  });
-
-  if (!plan) return null;
-
-  return { suscripcion, plan };
-}
 }
