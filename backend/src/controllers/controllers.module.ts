@@ -24,6 +24,7 @@ import { PromocionesService } from 'src/providers/promociones/promociones.servic
 import { UsuariosService } from 'src/providers/usuarios/usuarios.service';
 import { AuthService } from 'src/providers/auth/auth.service';
 import { JwtStrategy } from 'src/common/strategies/jwt.strategy';
+import { AdminGuard } from 'src/common/guards/admin.guard';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { JwtStrategy } from 'src/common/strategies/jwt.strategy';
     UsuariosService,
     AuthService,
     JwtStrategy,
+    AdminGuard,
   ],
 })
 export class ControllersModule {}
