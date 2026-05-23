@@ -29,10 +29,8 @@ export class UsersListComponent implements OnInit {
   constructor(private usersService: UsersService, private fb: FormBuilder) {
     this.userForm = this.fb.group({
       firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       role: ['Cliente', Validators.required],
-      planType: ['No asignado', Validators.required],
       isResident: [false]
     });
   }
@@ -59,10 +57,22 @@ export class UsersListComponent implements OnInit {
   }
 
   toggleStatus(user: UserAdminView): void {
-    // Local state toggle
-    user.isActive = !user.isActive;
-    this.filterUsers(); // update filtered list references if needed, although it modifies the object directly
-    this.showSuccess(user.isActive ? 'Usuario activado.' : 'Usuario suspendido.');
+    const previousStatus = user.isActive;
+    // Optimistic UI update
+    user.isActive = !previousStatus;
+    
+    this.usersService.toggleUserStatus(user.id, previousStatus).subscribe({
+      next: () => {
+        this.filterUsers();
+        this.showSuccess(user.isActive ? 'Usuario activado.' : 'Usuario suspendido.');
+      },
+      error: (err) => {
+        // Revert on error
+        user.isActive = previousStatus;
+        this.showSuccess('Error al actualizar estado del usuario.');
+        console.error(err);
+      }
+    });
   }
 
   getActiveCount(): number {
@@ -74,7 +84,7 @@ export class UsersListComponent implements OnInit {
   openCreateModal(): void {
     this.isEditing = false;
     this.selectedUser = null;
-    this.userForm.reset({ role: 'Cliente', planType: 'No asignado', isResident: false });
+    this.userForm.reset({ role: 'Cliente', isResident: false });
     this.showFormModal = true;
   }
 
@@ -83,10 +93,8 @@ export class UsersListComponent implements OnInit {
     this.selectedUser = user;
     this.userForm.patchValue({
       firstName: user.firstName,
-      lastName: user.lastName,
       email: user.email,
       role: user.role,
-      planType: user.planType,
       isResident: user.isResident
     });
     this.showFormModal = true;
@@ -105,32 +113,42 @@ export class UsersListComponent implements OnInit {
     const formValues = this.userForm.value;
 
     if (this.isEditing && this.selectedUser) {
-      // Update local state
-      this.selectedUser.firstName = formValues.firstName;
-      this.selectedUser.lastName = formValues.lastName;
-      this.selectedUser.email = formValues.email;
-      this.selectedUser.role = formValues.role;
-      this.selectedUser.planType = formValues.planType;
-      this.selectedUser.isResident = formValues.isResident;
-      this.showSuccess('Usuario actualizado correctamente.');
-    } else {
-      // Create local state
-      const newUser: UserAdminView = {
-        id: Math.floor(Math.random() * 1000000), // Temp ID
-        firstName: formValues.firstName,
-        lastName: formValues.lastName,
+      this.usersService.updateUser(this.selectedUser.id, {
+        nombre: formValues.firstName,
         email: formValues.email,
-        role: formValues.role,
-        planType: formValues.planType,
-        isResident: formValues.isResident,
-        isActive: true
-      };
-      this.users.unshift(newUser);
-      this.showSuccess('Usuario creado exitosamente.');
+        tipo: formValues.role,
+        es_residente: formValues.isResident
+      }).subscribe({
+        next: () => {
+          this.showSuccess('Usuario actualizado correctamente.');
+          this.loadUsers();
+          this.closeFormModal();
+        },
+        error: (err) => {
+          this.showSuccess('Error al actualizar el usuario.');
+          console.error(err);
+        }
+      });
+    } else {
+      this.usersService.createUser({
+        nombre: formValues.firstName,
+        email: formValues.email,
+        tipo: formValues.role,
+        es_residente: formValues.isResident,
+        password: 'Password123!', // Clave por defecto para la creación desde el admin
+        activo: true
+      }).subscribe({
+        next: () => {
+          this.showSuccess('Usuario creado exitosamente.');
+          this.loadUsers();
+          this.closeFormModal();
+        },
+        error: (err) => {
+          this.showSuccess('Error al crear el usuario.');
+          console.error(err);
+        }
+      });
     }
-
-    this.filterUsers();
-    this.closeFormModal();
   }
 
   // --- Delete ---
@@ -147,10 +165,18 @@ export class UsersListComponent implements OnInit {
 
   confirmDelete(): void {
     if (this.selectedUser) {
-      this.users = this.users.filter(u => u.id !== this.selectedUser!.id);
-      this.filterUsers();
-      this.showSuccess('Usuario eliminado.');
-      this.closeDeleteModal();
+      this.usersService.deleteUser(this.selectedUser.id).subscribe({
+        next: () => {
+          this.users = this.users.filter(u => u.id !== this.selectedUser!.id);
+          this.filterUsers();
+          this.showSuccess('Usuario eliminado.');
+          this.closeDeleteModal();
+        },
+        error: () => {
+          this.showSuccess('Error al eliminar el usuario.');
+          this.closeDeleteModal();
+        }
+      });
     }
   }
 

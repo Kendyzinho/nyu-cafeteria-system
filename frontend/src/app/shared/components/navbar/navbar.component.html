@@ -35,9 +35,8 @@
         </div>
 
         <div class="lh-sm">
-          <div class="fw-bold">{{ currentUser.firstName }} {{ currentUser.lastName }}</div>
-          <small class="text-light opacity-75">(Estudiante Activo, {{ currentUser.isResident ? 'Residente' : 'Regular'
-            }})</small>
+        <div class="fw-bold">{{ currentUser.firstName }}</div>
+          <small class="text-light opacity-75">({{ currentUser.role === 'Administrador' ? 'Administrador' : (currentUser.isResident ? 'Residente' : 'Estudiante Regular') }})</small>
         </div>
         <div class="ms-3 rounded-circle bg-success" style="width: 15px; height: 15px;"></div>
       </div>
@@ -85,10 +84,10 @@
             <div *ngFor="let item of cartItems" class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
               
               <div class="d-flex flex-column" style="font-size: 0.9rem; width: 45%;">
-                <span class="fw-bold text-truncate" [title]="item.product.nombre || item.product.nombre">
-                  {{ item.product.nombre || item.product.nombre }}
+                <span class="fw-bold text-truncate" [title]="item.product.nombre">
+                  {{ item.product.nombre }}
                 </span>
-                <span class="text-muted small">${{ (item.product.precio_estudiante || item.product.precio) | number }} c/u</span>
+                <span class="text-muted small">${{ item.product.precio | number }} c/u</span>
               </div>
 
               <!-- Controles de cantidad -->
@@ -101,7 +100,7 @@
               <!-- Subtotal y Eliminar -->
               <div class="d-flex align-items-center justify-content-end gap-2" style="width: 25%;">
                 <span class="fw-bold" style="color: var(--nyu-dark); font-size: 0.9rem;">
-                  ${{ ((item.product.precio_estudiante || item.product.precio) * item.quantity) | number }}
+                  ${{ (item.product.precio * item.quantity) | number }}
                 </span>
                 <button class="btn btn-sm text-danger p-0" (click)="$event.stopPropagation(); removeCartItem(item)" title="Eliminar producto">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">

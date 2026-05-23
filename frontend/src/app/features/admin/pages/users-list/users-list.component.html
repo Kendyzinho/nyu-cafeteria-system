@@ -71,7 +71,7 @@
                   {{ user.firstName.charAt(0) }}
                 </div>
                 <div>
-                  <div class="fw-bolder text-dark user-name">{{ user.firstName }} {{ user.lastName }}</div>
+                  <div class="fw-bolder text-dark user-name">{{ user.firstName }}</div>
                   <div class="small text-muted user-email">{{ user.email }}</div>
                 </div>
               </div>
@@ -84,7 +84,7 @@
             </td>
 
             <td class="py-3 px-4 fw-bold plan-text">
-              {{ user.planType }}
+              {{ user.isResident ? 'Residente' : 'Regular' }}
             </td>
             
             <td class="py-3 px-4 text-center">
@@ -151,20 +151,12 @@
       <div class="modal-body px-4 pb-4">
         <form [formGroup]="userForm" (ngSubmit)="onSubmitForm()" class="modern-form">
           <div class="row g-4">
-            <div class="col-md-6">
+            <div class="col-12">
               <div class="form-floating-custom">
-                <label class="fw-bold small text-muted mb-2">Nombre</label>
+                <label class="fw-bold small text-muted mb-2">Nombre completo</label>
                 <input type="text" class="form-control form-control-lg bg-light-subtle" formControlName="firstName" 
                        [ngClass]="{'is-invalid': userForm.get('firstName')?.invalid && userForm.get('firstName')?.touched}"
                        placeholder="Ingresa el nombre">
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-floating-custom">
-                <label class="fw-bold small text-muted mb-2">Apellido</label>
-                <input type="text" class="form-control form-control-lg bg-light-subtle" formControlName="lastName" 
-                       [ngClass]="{'is-invalid': userForm.get('lastName')?.invalid && userForm.get('lastName')?.touched}"
-                       placeholder="Ingresa el apellido">
               </div>
             </div>
             <div class="col-12">
@@ -184,17 +176,6 @@
                 <select class="form-select form-select-lg bg-light-subtle" formControlName="role">
                   <option value="Cliente">Cliente Estándar</option>
                   <option value="Administrador">Administrador</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-floating-custom">
-                <label class="fw-bold small text-muted mb-2">Plan Alimenticio</label>
-                <select class="form-select form-select-lg bg-light-subtle" formControlName="planType">
-                  <option value="No asignado">Ninguno (No asignado)</option>
-                  <option value="Plan Completo">Plan Completo (Ilimitado)</option>
-                  <option value="Plan Medio">Plan Medio (2 Comidas)</option>
-                  <option value="Plan Básico">Plan Básico (1 Comida)</option>
                 </select>
               </div>
             </div>
@@ -235,7 +216,7 @@
           <div class="avatar-circle-lg shadow-lg mb-3 mx-auto">
             {{ selectedUser.firstName.charAt(0) }}
           </div>
-          <h3 class="fw-bolder text-white mb-1">{{ selectedUser.firstName }} {{ selectedUser.lastName }}</h3>
+          <h3 class="fw-bolder text-white mb-1">{{ selectedUser.firstName }}</h3>
           <p class="text-white-50 mb-0 d-flex align-items-center justify-content-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/></svg>
             {{ selectedUser.email }}
@@ -267,7 +248,7 @@
               <div class="info-card">
                 <div class="info-label">Plan Asignado</div>
                 <div class="info-value fw-bolder text-primary">
-                  {{ selectedUser.planType || 'No asignado' }}
+                  {{ selectedUser.isResident ? 'Residente' : 'Regular' }}
                 </div>
               </div>
             </div>
@@ -301,7 +282,7 @@
       <div class="p-4 bg-white">
         <h5 class="fw-bolder mb-2 text-dark">Confirmar Acción</h5>
         <p class="text-muted small mb-4 lh-lg">
-          Se eliminará permanentemente la cuenta de <br><strong class="text-dark fs-6">{{ selectedUser.firstName }} {{ selectedUser.lastName }}</strong>.<br>Esta acción no puede deshacerse.
+          Se eliminará permanentemente la cuenta de <br><strong class="text-dark fs-6">{{ selectedUser.firstName }}</strong>.<br>Esta acción no puede deshacerse.
         </p>
         <div class="d-flex flex-column gap-2">
           <button type="button" class="btn btn-danger fw-bold py-2 shadow-sm" (click)="confirmDelete()">Sí, Eliminar Cuenta</button>

@@ -10,10 +10,11 @@ export class ResidentGuard  {
 
   canActivate(): boolean {
     const user = this.authService.getCurrentUser();
+    // Verificamos que sea un cliente activo (rol Cliente de mock_usuario.tipo)
     if (user && user.role === 'Cliente') {
       return true;
     }
-    // Si no es residente, lo mandamos al home
+    // Si no es cliente, lo mandamos al home
     this.router.navigate(['/home']);
     return false;
   }

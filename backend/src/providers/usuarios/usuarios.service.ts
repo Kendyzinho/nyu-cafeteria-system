@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MockUsuarioEntity } from 'src/database/entities/mock-usuario.entity';
-import type { IPostUsuarioRequest } from 'src/controllers/usuarios/dto/IPostUsuarioRequest';
-import type { IPutUsuarioRequest } from 'src/controllers/usuarios/dto/IPutUsuarioRequest';
+import { IPostUsuarioRequest } from 'src/controllers/usuarios/dto/IPostUsuarioRequest';
+import { IPutUsuarioRequest } from 'src/controllers/usuarios/dto/IPutUsuarioRequest';
 
 @Injectable()
 export class UsuariosService {

@@ -2,14 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { User } from '../models/user';
-
-// Extendemos la interfaz User INTERNAMENTE para simular la base de datos con contraseñas y planes.
-// Esto evita que la contraseña se filtre a otros componentes por seguridad.
-export interface MockUser extends User {
-  password?: string;
-  planType?: string;
-}
+import { User, LoginResponse } from '../models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -35,12 +28,12 @@ export class AuthService {
   /**
    * LOGIN: Valida que exista el correo en la BD Maestra y que LA CONTRASEÑA COINCIDA.
    */
-  login(email: string, password: string): Observable<any> {
-  return this.http.post<any>(`${this.apiUrl}/auth/login`, { email, password }).pipe(
+  login(email: string, password: string): Observable<LoginResponse> {
+  return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, { email, password }).pipe(
     tap(response => {
       localStorage.setItem('jwt_token', response.access_token);
       localStorage.setItem('current_user', JSON.stringify(response.user));
-      this.currentUserSubject.next(response.user as User);
+      this.currentUserSubject.next(response.user);
     })
   );
 }
