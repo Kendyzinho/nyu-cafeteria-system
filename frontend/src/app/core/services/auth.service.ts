@@ -29,14 +29,18 @@ export class AuthService {
    * LOGIN: Valida que exista el correo en la BD Maestra y que LA CONTRASEÑA COINCIDA.
    */
   login(email: string, password: string): Observable<LoginResponse> {
-  return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, { email, password }).pipe(
-    tap(response => {
-      localStorage.setItem('jwt_token', response.access_token);
-      localStorage.setItem('current_user', JSON.stringify(response.user));
-      this.currentUserSubject.next(response.user);
-    })
-  );
-}
+    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, { email, password }).pipe(
+      tap(response => {
+        localStorage.setItem('jwt_token', response.access_token);
+        localStorage.setItem('current_user', JSON.stringify(response.user));
+        this.currentUserSubject.next(response.user);
+      })
+    );
+  }
+
+  register(userData: { firstName: string, lastName: string, email: string, password: string }): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/auth/register`, userData);
+  }
 
 
   logout(): void {
@@ -64,6 +68,15 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return !!this.getToken();
+    const token = this.getToken();
+    if (!token) return false;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const now = Math.floor(Date.now() / 1000);
+      return payload.exp > now;
+    } catch (e) {
+      return false;
+    }
   }
 }
