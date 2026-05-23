@@ -17,7 +17,7 @@ export class IntegrationService {
       map(res => res.isValid),
       catchError(err => {
         console.warn('API Eq1 inalcanzable. Usando fallback local para Estudiante Activo.');
-        return of(estudiante.estudianteActivo === true); // Fallback mock
+        return of(estudiante.isActive === true); // Fallback usando mock_usuario.activo
       })
     );
   }

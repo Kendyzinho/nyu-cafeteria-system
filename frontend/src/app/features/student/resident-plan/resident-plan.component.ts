@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PlanService } from '../../../core/services/plan.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { Plan } from '../../../core/models/plan';
 
 @Component({
   selector: 'app-resident-plan',
@@ -21,7 +22,7 @@ export class ResidentPlanComponent implements OnInit {
   };
 
   selectedTime: string = '';
-  availablePlans: any[] = [];
+  availablePlans: (Plan & { image?: string })[] = [];
 
   constructor(
     private planService: PlanService,
@@ -30,12 +31,9 @@ export class ResidentPlanComponent implements OnInit {
 
   ngOnInit(): void {
     this.planService.getPlanes().subscribe({
-      next: (data) => {
+      next: (data: Plan[]) => {
         this.availablePlans = data.map(plan => ({
-          id: plan.id,
-          nombre: plan.nombre || `Plan ${plan.tipo || 'Mensual'}`,
-          precio_mensual: plan.precio_mensual || plan.precio || 0,
-          descripcion: plan.descripcion || 'Plan alimentario de cafetería.',
+          ...plan,
           image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80'
         }));
       },

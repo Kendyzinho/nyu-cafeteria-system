@@ -1,42 +1,11 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  ForbiddenException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
-import type { Request } from 'express';
-import { UsuariosService } from 'src/providers/usuarios/usuarios.service';
+import { Injectable, ForbiddenException } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
-export class AdminGuard implements CanActivate {
-  constructor(private readonly usersService: UsuariosService) {}
-
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<Request>();
-    const header = request.headers['authorization'];
-
-    if (!header || typeof header !== 'string') {
-      throw new UnauthorizedException('Token requerido');
-    }
-
-    const match = header.match(/^Bearer\s+token-(\d+)$/);
-    if (!match) {
-      throw new UnauthorizedException('Token inválido');
-    }
-
-    const userId = Number(match[1]);
-    const user = await this.usersService.getOne(userId);
-
-    if (!user) {
-      throw new UnauthorizedException('Usuario no encontrado');
-    }
-
-    if (user.tipo !== 'Administrador') {
-      throw new ForbiddenException('Acceso restringido a administradores');
-    }
-
-    (request as Request & { user?: unknown }).user = user;
-    return true;
+export class AdminGuard extends AuthGuard('jwt') {
+  handleRequest(err: any, user: any) {
+    if (err || !user) throw err || new ForbiddenException('Token requerido');
+    if (user.role !== 'Administrador') throw new ForbiddenException('Acceso restringido a administradores');
+    return user;
   }
 }
