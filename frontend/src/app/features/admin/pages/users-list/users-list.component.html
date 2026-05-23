@@ -180,13 +180,19 @@
                 </select>
               </div>
             </div>
-            <div class="col-12 mt-4 pt-3 border-top">
+            <div class="col-12 mt-4 pt-3 border-top" *ngIf="userForm.get('role')?.value !== 'Administrador'">
               <div class="form-check form-switch custom-switch d-flex align-items-center">
                 <input class="form-check-input mt-0 me-3" type="checkbox" role="switch" id="residentSwitch" formControlName="isResident">
                 <label class="form-check-label fw-bold text-dark mb-0 user-select-none" for="residentSwitch">
                   Marcar como Residente del Campus
                   <small class="d-block text-muted fw-normal mt-1">Habilita beneficios exclusivos para alojamiento.</small>
                 </label>
+              </div>
+            </div>
+            <div class="col-12 mt-4 pt-3 border-top" *ngIf="userForm.get('role')?.value === 'Administrador'">
+              <div class="d-flex align-items-center gap-2 text-muted">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.399l-.292-.004.072-.33H8.93zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2"/></svg>
+                <small class="fw-bold">Los administradores no pueden ser marcados como residentes.</small>
               </div>
             </div>
           </div>

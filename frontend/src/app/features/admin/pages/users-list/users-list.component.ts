@@ -50,6 +50,13 @@ export class UsersListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUsers();
+
+    // Cuando el rol cambia a Administrador, forzamos isResident = false
+    this.userForm.get('role')?.valueChanges.subscribe(role => {
+      if (role === 'Administrador') {
+        this.userForm.get('isResident')?.setValue(false);
+      }
+    });
   }
 
   loadUsers(): void {
@@ -130,11 +137,12 @@ export class UsersListComponent implements OnInit {
     const formValues = this.userForm.value;
 
     if (this.isEditing && this.selectedUser) {
+      const isAdmin = formValues.role === 'Administrador';
       this.usersService.updateUser(this.selectedUser.id, {
         nombre: formValues.firstName,
         email: formValues.email,
         tipo: formValues.role,
-        es_residente: formValues.isResident
+        es_residente: isAdmin ? false : formValues.isResident
       }).subscribe({
         next: () => {
           this.showSuccess('Usuario actualizado correctamente.');
@@ -147,11 +155,12 @@ export class UsersListComponent implements OnInit {
         }
       });
     } else {
+      const isAdmin = formValues.role === 'Administrador';
       this.usersService.createUser({
         nombre: formValues.firstName,
         email: formValues.email,
         tipo: formValues.role,
-        es_residente: formValues.isResident,
+        es_residente: isAdmin ? false : formValues.isResident,
         password: 'Password123!', // Clave por defecto para la creación desde el admin
         activo: true
       }).subscribe({
