@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UsersService, UserAdminView } from '../../../../core/services/users.service';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-users-list',
@@ -9,9 +10,12 @@ import { UsersService, UserAdminView } from '../../../../core/services/users.ser
 })
 export class UsersListComponent implements OnInit {
   users: UserAdminView[] = [];
-  filteredUsers: UserAdminView[] = []; 
+  filteredUsers: UserAdminView[] = [];
   isLoading: boolean = true;
-  searchTerm: string = ''; 
+  searchTerm: string = '';
+
+  // Current session info
+  currentUserId?: number;
 
   // Modals state
   showFormModal: boolean = false;
@@ -26,13 +30,22 @@ export class UsersListComponent implements OnInit {
   // Alerts
   successMessage: string = '';
 
-  constructor(private usersService: UsersService, private fb: FormBuilder) {
+  constructor(
+    private usersService: UsersService,
+    private fb: FormBuilder,
+    private authService: AuthService
+  ) {
     this.userForm = this.fb.group({
       firstName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       role: ['Cliente', Validators.required],
       isResident: [false]
     });
+    
+    const user = this.authService.getCurrentUser();
+    if (user) {
+      this.currentUserId = user.id;
+    }
   }
 
   ngOnInit(): void {
@@ -50,17 +63,21 @@ export class UsersListComponent implements OnInit {
   }
 
   filterUsers(): void {
-    this.filteredUsers = this.users.filter(user => 
+    this.filteredUsers = this.users.filter(user =>
       user.firstName.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
   }
 
   toggleStatus(user: UserAdminView): void {
+    if (user.id === this.currentUserId) {
+      this.showSuccess('No puedes suspender tu propia cuenta de administrador.');
+      return;
+    }
     const previousStatus = user.isActive;
     // Optimistic UI update
     user.isActive = !previousStatus;
-    
+
     this.usersService.toggleUserStatus(user.id, previousStatus).subscribe({
       next: () => {
         this.filterUsers();
@@ -154,6 +171,10 @@ export class UsersListComponent implements OnInit {
   // --- Delete ---
 
   openDeleteModal(user: UserAdminView): void {
+    if (user.id === this.currentUserId) {
+      this.showSuccess('No puedes eliminar tu propia cuenta de administrador.');
+      return;
+    }
     this.selectedUser = user;
     this.showDeleteModal = true;
   }
@@ -165,6 +186,11 @@ export class UsersListComponent implements OnInit {
 
   confirmDelete(): void {
     if (this.selectedUser) {
+      if (this.selectedUser.id === this.currentUserId) {
+        this.showSuccess('No puedes eliminar tu propia cuenta de administrador.');
+        this.closeDeleteModal();
+        return;
+      }
       this.usersService.deleteUser(this.selectedUser.id).subscribe({
         next: () => {
           this.users = this.users.filter(u => u.id !== this.selectedUser!.id);

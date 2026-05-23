@@ -50,6 +50,15 @@ export class AuthService {
     return this.currentUserSubject.value;
   }
 
+  updateCurrentUser(user: User): void {
+    localStorage.setItem('current_user', JSON.stringify(user));
+    this.currentUserSubject.next(user);
+  }
+
+  checkUserStatus(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/users/${id}`);
+  }
+
   getToken(): string | null {
     return localStorage.getItem('jwt_token');
   }
