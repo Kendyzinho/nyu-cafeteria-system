@@ -10,6 +10,13 @@ export class AuthGuard  {
 
   canActivate(): boolean {
     if (this.authService.isAuthenticated()) {
+      const user = this.authService.getCurrentUser();
+      // Si está logueado pero el usuario fue suspendido (activo = 0)
+      if (user && !user.isActive) {
+        this.authService.logout();
+        this.router.navigate(['/login']);
+        return false;
+      }
       return true;
     }
     // Si no está logueado, lo pateamos al login
