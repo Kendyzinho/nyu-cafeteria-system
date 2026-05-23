@@ -1,31 +1,38 @@
 import { IsString, IsNumber, IsNotEmpty, IsDateString, IsOptional, Min } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class IPostMenuRequest {
-
-  @IsString()     // debe ser texto
-  @IsNotEmpty()   // no puede estar vacío
+  @ApiProperty({ example: 'Arepa de Choclo' })
+  @IsString()
+  @IsNotEmpty()
   nombre: string;
 
-  @IsString()     // debe ser texto
-  @IsNotEmpty()   // no puede estar vacío
+  @ApiProperty({ example: 'Arepa dulce de maíz con queso' })
+  @IsString()
+  @IsNotEmpty()
   descripcion: string;
 
-  @IsNumber()     // debe ser número
-  @Min(0)         // no puede ser negativo
+  @ApiProperty({ example: 5.50 })
+  @IsNumber()
+  @Min(0)
   precio: number;
 
-  @IsString()     // debe ser texto
-  @IsNotEmpty()   // no puede estar vacío
+  @ApiProperty({ example: 'Desayuno', enum: ['Desayuno', 'Almuerzo', 'Cena', 'Snack'] })
+  @IsString()
+  @IsNotEmpty()
   categoria: string;
 
-  @IsNumber()     // debe ser número
-  @Min(0)         // mínimo 0
+  @ApiProperty({ example: 20 })
+  @IsNumber()
+  @Min(0)
   stockActual: number;
 
-  @IsDateString() // debe ser una fecha válida (ej. "2026-04-24")
+  @ApiProperty({ example: '2026-04-24' })
+  @IsDateString()
   fechaDisponible: Date;
 
-  @IsString()     // debe ser texto
-  @IsOptional()   // campo opcional, puede no enviarse
+  @ApiPropertyOptional({ example: 'https://example.com/imagen.jpg' })
+  @IsString()
+  @IsOptional()
   image?: string;
 }

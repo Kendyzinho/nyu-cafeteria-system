@@ -20,6 +20,7 @@ import { StockService } from 'src/providers/stock/stock.service';
 import { PromotionsService } from 'src/providers/promotions/promotions.service';
 import { UsersService } from 'src/providers/users/users.service';
 import { AuthService } from 'src/providers/auth/auth.service';
+import { AdminGuard } from 'src/common/guards/admin.guard';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { AuthService } from 'src/providers/auth/auth.service';
   PromotionsService,
   UsersService,
   AuthService,
+  AdminGuard,
   ],
 })
 export class ControllersModule {}
