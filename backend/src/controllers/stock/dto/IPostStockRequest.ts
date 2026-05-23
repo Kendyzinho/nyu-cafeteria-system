@@ -1,15 +1,19 @@
-import { IsNumber, Min } from 'class-validator';
+import { IsString, IsNumber, IsNotEmpty, Min } from 'class-validator';
 
 export class IPostStockRequest {
-  @IsNumber()
-  @Min(1)
-  menuItemId: number;
+  @IsString()
+  @IsNotEmpty()
+  nombre: string;
+
+  @IsString()
+  @IsNotEmpty()
+  unidad_medida: string;
 
   @IsNumber()
   @Min(0)
-  cantidad: number;
+  stock_Actual: number;
 
   @IsNumber()
   @Min(0)
-  umbralMinimo: number;
+  umbral_minimo: number;
 }

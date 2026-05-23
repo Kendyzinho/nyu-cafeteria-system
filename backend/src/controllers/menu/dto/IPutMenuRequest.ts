@@ -22,25 +22,7 @@ export class IPutMenuRequest {
   @IsString()
   @IsOptional()
   categoria?: string;
-
-  @ApiPropertyOptional({ example: true })
-  @IsBoolean()
-  @IsOptional()
+  imagen_url?: string;
+  stock_actual?: number;
   disponible?: boolean;
-
-  @ApiPropertyOptional({ example: 15 })
-  @IsNumber()
-  @Min(0)
-  @IsOptional()
-  stockActual?: number;
-
-  @ApiPropertyOptional({ example: '2026-04-24' })
-  @IsDateString()
-  @IsOptional()
-  fechaDisponible?: Date;
-
-  @ApiPropertyOptional({ example: 'https://example.com/imagen.jpg' })
-  @IsString()
-  @IsOptional()
-  image?: string;
 }

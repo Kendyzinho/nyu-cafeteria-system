@@ -1,56 +1,68 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MenuController } from './menu/menu.controller';
-import { OrdersController } from './orders/orders.controller';
-import { MealPlansController } from './meal-plans/meal-plans.controller';
+import { PedidosController } from './pedidos/pedidos.controller';
+import { PlanesComidaController } from './planes-comida/planes-comida.controller';
 import { StockController } from './stock/stock.controller';
-import { PromotionsController } from './promotions/promotions.controller';
-import { UsersController } from './users/users.controller';
+import { PromocionesController } from './promociones/promociones.controller';
+import { UsuariosController } from './usuarios/usuarios.controller';
 import { AuthController } from './auth/auth.controller';
-import { MenuEntity } from 'src/database/entities/menu.entity';
-import { OrderEntity } from 'src/database/entities/order.entity';
-import { MealPlanEntity } from 'src/database/entities/meal-plan.entity';
-import { StockEntity } from 'src/database/entities/stock.entity';
-import { PromotionEntity } from 'src/database/entities/promotion.entity';
-import { UserEntity } from 'src/database/entities/user.entity';
+import { ComidaEntity } from 'src/database/entities/comida.entity';
+import { PedidoEntity } from 'src/database/entities/pedido.entity';
+import { PlanesCatalogoEntity } from 'src/database/entities/planes-catalogo.entity';
+import { PromocionEntity } from 'src/database/entities/promocion.entity';
+import { MockUsuarioEntity } from 'src/database/entities/mock-usuario.entity';
+import { DetallePedidoEntity } from 'src/database/entities/detalle-pedido.entity';
 import { MenuService } from 'src/providers/menu/menu.service';
-import { OrdersService } from 'src/providers/orders/orders.service';
-import { MealPlansService } from 'src/providers/meal-plans/meal-plans.service';
+import { PedidosService } from 'src/providers/pedidos/pedidos.service';
+import { PlanesComidaService } from 'src/providers/planes-comida/planes-comida.service';
 import { StockService } from 'src/providers/stock/stock.service';
-import { PromotionsService } from 'src/providers/promotions/promotions.service';
-import { UsersService } from 'src/providers/users/users.service';
+import { PromocionesService } from 'src/providers/promociones/promociones.service';
+import { UsuariosService } from 'src/providers/usuarios/usuarios.service';
 import { AuthService } from 'src/providers/auth/auth.service';
-import { AdminGuard } from 'src/common/guards/admin.guard';
+import { JwtStrategy } from 'src/common/strategies/jwt.strategy';
 
 @Module({
   imports: [
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '24h' },
+      }),
+      inject: [ConfigService],
+    }),
     TypeOrmModule.forFeature([
-      MenuEntity,
-      OrderEntity,
-      MealPlanEntity,
-      StockEntity,
-      PromotionEntity,
-      UserEntity,
+      ComidaEntity,
+      PedidoEntity,
+      DetallePedidoEntity,
+      PlanesCatalogoEntity,
+      PromocionEntity,
+      MockUsuarioEntity,
     ]),
   ],
   controllers: [
     MenuController,
-    OrdersController,
-    MealPlansController,
+    PedidosController,
+    PlanesComidaController,
     StockController,
-    PromotionsController,
-    UsersController,
+    PromocionesController,
+    UsuariosController,
     AuthController,
   ],
   providers: [
-  MenuService,
-  OrdersService,
-  MealPlansService,
-  StockService,
-  PromotionsService,
-  UsersService,
-  AuthService,
-  AdminGuard,
+    MenuService,
+    PedidosService,
+    PlanesComidaService,
+    StockService,
+    PromocionesService,
+    UsuariosService,
+    AuthService,
+    JwtStrategy,
   ],
 })
 export class ControllersModule {}

@@ -1,13 +1,17 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { join } from 'path';
-import { UserEntity } from './entities/user.entity';
-import { MenuEntity } from './entities/menu.entity';
-import { OrderEntity } from './entities/order.entity';
-import { MealPlanEntity } from './entities/meal-plan.entity';
-import { StockEntity } from './entities/stock.entity';
-import { PromotionEntity } from './entities/promotion.entity';
+import { MockUsuarioEntity } from './entities/mock-usuario.entity';
+import { ComidaEntity } from './entities/comida.entity';
+import { PedidoEntity } from './entities/pedido.entity';
+import { PlanesCatalogoEntity } from './entities/planes-catalogo.entity';
+import { PromocionEntity } from './entities/promocion.entity';
+import { SuscripcionAlumnoEntity } from './entities/suscripcion-alumno.entity';
+import { DetallePedidoEntity } from './entities/detalle-pedido.entity';
+import { MockPagoEntity } from './entities/mock-pago.entity';
+import { InsumoEntity } from './entities/insumo.entity';
+import { RecetaComidaEntity } from './entities/receta-comida.entity';
+import { MockReservaBibliotecaEntity } from './entities/mock-reserva-biblioteca.entity';
 
 @Module({
   imports: [
@@ -25,12 +29,17 @@ import { PromotionEntity } from './entities/promotion.entity';
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
         entities: [
-          UserEntity,
-          MenuEntity,
-          OrderEntity,
-          MealPlanEntity,
-          StockEntity,
-          PromotionEntity,
+          MockUsuarioEntity,
+          ComidaEntity,
+          PedidoEntity,
+          PlanesCatalogoEntity,
+          PromocionEntity,
+          SuscripcionAlumnoEntity,
+          DetallePedidoEntity,
+          MockPagoEntity,
+          InsumoEntity,
+          RecetaComidaEntity,
+          MockReservaBibliotecaEntity,
         ],
         synchronize: true,
         autoLoadEntities: true,
