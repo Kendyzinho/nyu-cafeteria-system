@@ -30,17 +30,7 @@ export class AuthService {
     }
   }
 
-  /**
-   * REGISTRO: Guarda al nuevo usuario y SU CONTRASEÑA en la lista maestra.
-   */
-  register(userData: any): Observable<any> {
-  return this.http.post<any>(`${this.apiUrl}/auth/register`, {
-    firstName: userData.firstName,
-    lastName: userData.lastName,
-    email: userData.email,
-    password: userData.password
-  });
-}
+
 
   /**
    * LOGIN: Valida que exista el correo en la BD Maestra y que LA CONTRASEÑA COINCIDA.
@@ -59,6 +49,7 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('jwt_token');
     localStorage.removeItem('current_user');
+    localStorage.removeItem('nyu_cart'); // Limpia el carrito al cerrar sesión
     this.currentUserSubject.next(null);
   }
 

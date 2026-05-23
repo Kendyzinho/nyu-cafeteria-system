@@ -1,7 +1,8 @@
 export interface IGetStockResponse {
   id: number;
-  menuItemId: number;
-  cantidad: number;
-  umbralMinimo: number;
-  ultimaActualizacion: Date;
+  nombre: string;
+  unidad_medida: string;
+  stock_Actual: number;
+  umbral_minimo: number;
+  ultima_actualizacion: Date;
 }

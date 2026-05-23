@@ -1,60 +1,92 @@
-# ☕ Sistema de Gestión Integrado - Cafetería Estudiantil
+# Sistema de Cafetería y Planes de Alimentación NYU (Problema 4)
 
-![Angular](https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
-![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)
+Este repositorio contiene la solución completa para el **Problema 4: Sistema de Cafetería y Planes de Alimentación** del ecosistema de la Universidad de New York (NYU). Desarrollado como un sistema web Fullstack utilizando **Angular** (Frontend) y **NestJS** (Backend).
 
-Este proyecto corresponde al desarrollo del frontend (Single Page Application) para la resolución del **Problema 4: Gestión de Cafetería**, desarrollado como proyecto semestral de Ingeniería de Software en la Universidad de Tarapacá (Sede Arica). 
-
-El sistema digitaliza y optimiza el flujo de atención, inventario y suscripción de planes de alimentación para la comunidad universitaria.
-
-## 📋 Descripción General
-
-La plataforma actúa como un ecosistema dual que atiende tanto a los estudiantes (clientes) como al personal de la cafetería (administradores). Su arquitectura permite una gestión de estado reactiva en tiempo real sin necesidad de recargar la página, ofreciendo una experiencia fluida.
-
-### 🎯 Objetivos del Proyecto (Sprints)
-- Digitalizar el menú y permitir compras ágiles.
-- Gestionar planes residenciales y beneficios de alimentación.
-- Proveer al staff de un panel de control para inventario y usuarios.
-- Implementar seguridad mediante enrutamiento basado en roles (JWT simulado).
+El objetivo principal de este módulo es centralizar los pedidos de la cafetería y los planes alimentarios para estudiantes regulares y residentes, con un estricto control de stock y aplicación de beneficios automáticos.
 
 ---
 
-## 🚀 Tecnologías y Arquitectura
+## 👥 Equipo de Trabajo y Roles (Taller de Aplicaciones Web)
 
-* **Framework Core:** Angular (TypeScript)
-* **Estilos y UI:** Bootstrap 5 (Responsive Design)
-* **Gestión de Estado:** RxJS (`BehaviorSubject` y Observables para sincronización en tiempo real entre componentes).
-* **Seguridad:** Angular Route Guards (`AuthGuard`, `RoleGuard`) e Interceptors.
-* **Mocking:** Servicios inyectables con bases de datos en memoria para el desarrollo del Frontend previo a la integración con la API RESTful.
+*   **Líder de Equipo (QA y Merge):** [Nombre del Líder]
+*   **Subequipo Frontend (Angular):** [Nombre(s) Frontend]
+*   **Subequipo Backend (NestJS):** [Nombre(s) Backend]
 
----
-
-## ⚙️ Características Principales (Módulos)
-
-### 🧑‍🎓 Módulo Estudiante / Residente
-* **Autenticación:** Registro e inicio de sesión inteligente.
-* **Mi Perfil:** Visualización de credenciales y estado del beneficio universitario.
-* **Gestión de Plan:** Panel de control ("Mi Plan") para visualizar comidas restantes, renovaciones automáticas y definición de preferencias alimentarias (Vegano, Celiaco, etc.).
-* **Catálogo Interactivo:** Menú reactivo que refleja la disponibilidad de productos en tiempo real.
-
-### 🛡️ Módulo Administrador / Staff
-* **Gestión de Usuarios:** Tabla dinámica con persistencia para suspender/activar cuentas de estudiantes o ver sus planes asociados.
-* **Control de Stock Vivo:** Panel de inventario que calcula automáticamente el estado del producto ("Agotado", "Poco Stock", "Disponible") basado en umbrales mínimos, bloqueando las ventas en el catálogo del cliente si el stock llega a 0.
+*Metodología de desarrollo:* [Ej. Scrum / Kanban]
 
 ---
 
-## 📁 Estructura del Proyecto
+## 🎯 Requisitos Funcionales Implementados (Problema 4)
 
-El código fuente sigue las mejores prácticas de modularidad de Angular:
+Se han implementado con éxito los siguientes requerimientos obligatorios:
 
-```text
-src/
-├── app/
-│   ├── core/           # Servicios (Auth, Menu, Users), Modelos, Guards e Interceptors.
-│   ├── features/       # Módulos principales (Auth, Admin, Student).
-│   ├── shared/         # Componentes reutilizables (Navbar, Footer, Loaders).
-│   ├── layouts/        # Estructuras de página (ClientLayout vs AuthLayout).
-│   └── app.module.ts   # Módulo raíz.
-├── assets/             # Imágenes y recursos estáticos.
-└── styles.css          # Estilos globales y variables de color (Paleta Corporativa).
+1. **Gestión de menú por día/categoría:** Panel de administrador para crear y categorizar productos. Interfaz de estudiante con filtrado por categoría en tiempo real.
+2. **Registro de stock y bloqueo:** Control de inventario dinámico. Si un producto llega a stock 0, se bloquea automáticamente ("Agotado") impidiendo nuevas compras.
+3. **Pedidos individuales con retiro:** Carrito de compras (`CartService`) y pasarela de Checkout donde el estudiante selecciona la hora de retiro programado.
+4. **Planes alimentarios para residentes:** Suscripción a planes mensuales dinámicos traídos desde la base de datos, exclusivos para residentes de NYU.
+5. **Historial de consumos:** Panel de historial de transacciones para que el estudiante revise sus pedidos y consumos anteriores.
+6. **Gestión de promociones:** Aplicación de beneficios y descuentos según el perfil de usuario (ej. Estudiante Activo, Residente).
+
+### Reglas de Negocio Clave
+*   🚫 *No se confirma pedido sin pago aprobado* (Simulado en la integración del checkout).
+*   🏠 *Plan residencial aplica solo a estudiantes con residencia activa* (Validado mediante Guards y Servicios de Integración).
+*   🎓 *Descuento universitario aplica solo a estudiantes activos* (Validado mediante el Auth Service).
+
+---
+
+## 🔌 Integraciones del Ecosistema (APIs)
+
+Esta aplicación forma parte del ecosistema NYU y está diseñada para comunicarse e interoperar con los demás sistemas de la universidad:
+
+*   **Integración Eq. 5 (Sistema de Pagos):** El sistema emite la orden de cobro a la pasarela central y espera la confirmación (estado aprobado) para registrar el pedido o la activación del plan.
+*   **Integración Eq. 2 (Sistema de Alojamiento):** Se consume el estado del residente. Si un usuario tiene residencia activa (check-in), se le habilita la suscripción al Plan de Alimentación.
+*   **Integración Eq. 1 (Sistema de Matrícula):** Se valida el estado académico (estudiante activo) para aplicar descuentos universitarios y permitir compras en el catálogo.
+*   **Integración Eq. 3 (Sistema de Biblioteca):** Se recibe la demanda proyectada desde las reservas de la biblioteca para anticipar horarios punta o críticos en el *Dashboard del Administrador*.
+
+---
+
+## 🚀 Guía de Instalación y Ejecución Local
+
+Para ejecutar y evaluar este proyecto en un entorno local, se requiere **Node.js** y **Angular CLI**.
+
+### 1. Clonar el repositorio
+```bash
+git clone https://github.com/Kendyzinho/nyu-cafeteria-system.git
+cd nyu-cafeteria-system
+```
+
+### 2. Levantar el Servidor Backend (NestJS)
+Abre una terminal y dirígete a la carpeta del backend:
+```bash
+cd backend
+npm install
+# Ejecutar el servidor en modo desarrollo
+npm run start:dev
+```
+*El backend estará corriendo en `http://localhost:3000`. La documentación de la API (Swagger) se encuentra en `http://localhost:3000/docs`.*
+
+### 3. Levantar el Cliente Frontend (Angular)
+Abre una segunda terminal y dirígete a la carpeta del frontend:
+```bash
+cd frontend
+npm install
+# Ejecutar la aplicación web
+ng serve
+```
+
+### 4. Accesos de Prueba al Sistema
+Una vez levantados ambos entornos, ingresa a `http://localhost:4200` y utiliza las siguientes credenciales para probar los roles y flujos del sistema:
+
+*   **Perfil Administrador (Gestión, Stock, Planes):**
+    *   Correo: `admin@nyu.edu`
+    *   Clave: `admin123`
+*   **Perfil Estudiante (Menú, Checkout, Plan Residente):**
+    *   Correo: `student@nyu.edu`
+    *   Clave: `student123`
+
+---
+
+## 🛡️ Estándares Técnicos Aplicados
+
+*   **Frontend (Angular):** Arquitectura basada en Componentes, Directivas estructurales (`*ngIf`, `*ngFor`), Data Binding bidireccional, Observables (RxJS), consumo de API HTTP, e interceptores JWT. Estilizado con Bootstrap 5.
+*   **Backend (NestJS):** Patrón Repository con TypeORM, validación estricta con class-validator (DTOs), Guards para control de rutas por Rol, y autenticación JWT.

@@ -10,7 +10,7 @@ export class ResidentGuard  {
 
   canActivate(): boolean {
     const user = this.authService.getCurrentUser();
-    if (user && user.isResident) {
+    if (user && user.role === 'Cliente') {
       return true;
     }
     // Si no es residente, lo mandamos al home

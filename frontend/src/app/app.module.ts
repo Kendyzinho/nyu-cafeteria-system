@@ -3,6 +3,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'; // Añadido HTTP_INTERCEPTORS
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
+import { LOCALE_ID } from '@angular/core';
+import localeEs from '@angular/common/locales/es-CL';
+import { registerLocaleData } from '@angular/common';
+
+registerLocaleData(localeEs, 'es-CL');
 
 // Componentes
 import { AppComponent } from './app.component';
@@ -23,10 +28,11 @@ import { PromotionsAdminComponent } from './features/admin/promotions-admin/prom
 import { AdminLayoutComponent } from './features/layout/admin-layout/admin-layout.component';
 import { NavbarAdminComponent } from './shared/components/navbar-admin/navbar-admin.component';
 import { UsersListComponent } from './features/admin/pages/users-list/users-list.component';
-import { RegisterComponent } from './features/auth/register/register.component';
 import { ProfilePageComponent } from './features/profile/pages/profile-page/profile-page.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
 import { MenuItemComponent } from './features/student/menu/menu-item/menu-item.component';
+import { ProductsAdminComponent } from './features/admin/products-admin/products-admin.component';
+import { ToastComponent } from './shared/components/toast/toast.component';
 
 // Interceptores
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
@@ -44,7 +50,6 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor';
         HistoryComponent,
         HelpComponent,
         UsersListComponent,
-        RegisterComponent,
         ProfilePageComponent,
         FooterComponent,
         MenuItemComponent,
@@ -54,12 +59,15 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor';
         AdminDashboardComponent,
         StockAdminComponent,
         PlansAdminComponent,
-        PromotionsAdminComponent
+        PromotionsAdminComponent,
+        ProductsAdminComponent,
+        ToastComponent
     ],
     bootstrap: [AppComponent], imports: [BrowserModule,
         AppRoutingModule,
         ReactiveFormsModule,
         FormsModule], providers: [
+        { provide: LOCALE_ID, useValue: 'es-CL' },
         { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
         provideHttpClient(withInterceptorsFromDi())
     ] })

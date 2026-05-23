@@ -1,81 +1,118 @@
-<div class="container py-4">
+<div class="container-fluid py-5 admin-users-wrapper">
   
-  <div class="row align-items-center mb-4 g-3">
+  <div class="row align-items-center mb-4 g-4 header-section">
     <div class="col-md-6">
-      <h2 class="fw-bold mb-0" style="color: var(--nyu-dark);">Gestión de Usuarios</h2>
-      <p class="text-muted mb-0">Administración integral de cuentas de estudiantes y staff.</p>
+      <h2 class="fw-bolder mb-1 page-title">Gestión de Usuarios</h2>
+      <p class="text-muted mb-0 subtitle">Administración integral de cuentas de estudiantes y staff del campus.</p>
     </div>
     
-    <div class="col-md-6 text-md-end">
-      <div class="input-group shadow-sm ms-auto" style="max-width: 350px;">
-        <span class="input-group-text bg-white border-end-0">🔍</span>
-        <input type="text" class="form-control border-start-0" 
+    <div class="col-md-6 text-md-end d-flex gap-3 justify-content-md-end flex-wrap">
+      <div class="input-group search-bar shadow-sm">
+        <span class="input-group-text bg-white border-0 ps-3 pe-2 text-muted">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+          </svg>
+        </span>
+        <input type="text" class="form-control border-0 ps-1 bg-white" 
                placeholder="Buscar por nombre o correo..." 
                [(ngModel)]="searchTerm" (ngModelChange)="filterUsers()">
       </div>
+      <button class="btn btn-create-user fw-bold shadow-sm px-4 d-flex align-items-center gap-2" (click)="openCreateModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M8 7a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0"/>
+        </svg>
+        Nuevo Usuario
+      </button>
     </div>
   </div>
 
-  <div *ngIf="isLoading" class="text-center py-5">
-    <div class="spinner-border" style="color: var(--nyu-brown);" role="status"></div>
-    <p class="text-muted mt-3 fw-bold">Sincronizando base de datos...</p>
+  <div *ngIf="successMessage" class="alert custom-alert-success shadow-sm mb-4 fw-bold d-flex align-items-center gap-2 slide-in">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+    </svg>
+    {{ successMessage }}
   </div>
 
-  <div class="card border-0 shadow-sm rounded-4 overflow-hidden" *ngIf="!isLoading">
+  <div *ngIf="isLoading" class="text-center py-5 loading-state">
+    <div class="spinner-grow text-primary mb-3" role="status"></div>
+    <p class="text-muted fw-bold tracking-wide">Sincronizando base de datos...</p>
+  </div>
+
+  <div class="card data-card border-0 shadow-lg rounded-4 overflow-hidden fade-in" *ngIf="!isLoading">
     <div class="table-responsive">
-      <table class="table table-hover mb-0 align-middle">
-        <thead style="background-color: var(--nyu-dark); color: white;">
+      <table class="table table-hover mb-0 align-middle custom-table">
+        <thead>
           <tr>
-            <th class="py-3 px-4 fw-normal text-uppercase small">Usuario</th>
-            <th class="py-3 px-4 fw-normal text-uppercase small">Tipo de Plan</th>
-            <th class="py-3 px-4 fw-normal text-uppercase small text-center">Estado</th>
-            <th class="py-3 px-4 fw-normal text-uppercase small text-end">Acciones</th>
+            <th class="py-4 px-4 fw-bold text-uppercase tracking-wider">Usuario</th>
+            <th class="py-4 px-4 fw-bold text-uppercase tracking-wider">Rol</th>
+            <th class="py-4 px-4 fw-bold text-uppercase tracking-wider">Tipo de Plan</th>
+            <th class="py-4 px-4 fw-bold text-uppercase tracking-wider text-center">Estado</th>
+            <th class="py-4 px-4 fw-bold text-uppercase tracking-wider text-end">Acciones</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngIf="filteredUsers.length === 0">
-            <td colspan="4" class="text-center py-5 text-muted">
-              <span class="fs-1 d-block mb-2">🕵️‍♂️</span>
-              No se encontraron usuarios que coincidan con "<strong>{{ searchTerm }}</strong>".
+            <td colspan="5" class="text-center py-5 empty-state">
+              <div class="empty-icon mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="text-muted opacity-50" viewBox="0 0 16 16">
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                </svg>
+              </div>
+              <h5 class="fw-bold text-dark">No se encontraron resultados</h5>
+              <p class="text-muted">No hay coincidencias para "<strong>{{ searchTerm }}</strong>".</p>
             </td>
           </tr>
 
-          <tr *ngFor="let user of filteredUsers">
+          <tr *ngFor="let user of filteredUsers" class="user-row">
             
             <td class="py-3 px-4">
-              <div class="d-flex align-items-center">
-                <div class="rounded-circle d-flex justify-content-center align-items-center me-3 shadow-sm text-white fw-bold" 
-                     style="width: 45px; height: 45px; background-color: var(--nyu-sand); font-size: 1.2rem;">
+              <div class="d-flex align-items-center gap-3">
+                <div class="avatar-circle shadow-sm">
                   {{ user.firstName.charAt(0) }}
                 </div>
                 <div>
-                  <div class="fw-bold text-dark">{{ user.firstName }}</div>
-                  <div class="small text-muted">{{ user.email }}</div>
+                  <div class="fw-bolder text-dark user-name">{{ user.firstName }} {{ user.lastName }}</div>
+                  <div class="small text-muted user-email">{{ user.email }}</div>
                 </div>
               </div>
             </td>
             
-            <td class="py-3 px-4 fw-bold" style="color: var(--nyu-brown);">
+            <td class="py-3 px-4">
+              <span class="role-badge" [ngClass]="{'admin-role': user.role === 'Administrador'}">
+                {{ user.role }}
+              </span>
+            </td>
+
+            <td class="py-3 px-4 fw-bold plan-text">
               {{ user.planType }}
             </td>
             
             <td class="py-3 px-4 text-center">
-              <span class="badge rounded-pill px-3 py-2" 
-                    [ngClass]="user.isActive ? 'bg-success-pastel text-success' : 'bg-danger text-white'">
+              <span class="status-badge" [ngClass]="user.isActive ? 'active' : 'suspended'">
+                <span class="status-dot"></span>
                 {{ user.isActive ? 'Activo' : 'Suspendido' }}
               </span>
             </td>
             
             <td class="py-3 px-4 text-end">
-              <button class="btn btn-sm btn-light border shadow-sm me-2" title="Ver Detalles">
-                👁️
-              </button>
-              <button class="btn btn-sm fw-bold text-white shadow-sm" 
-                      style="width: 100px;"
-                      [ngClass]="user.isActive ? 'btn-danger' : 'btn-success'"
-                      (click)="toggleStatus(user)">
-                {{ user.isActive ? 'Suspender' : 'Activar' }}
-              </button>
+              <div class="action-buttons d-inline-flex gap-2 justify-content-end">
+                <button class="btn btn-icon btn-view" title="Ver Detalles" (click)="openDetailsModal(user)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/><path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/></svg>
+                </button>
+                <button class="btn btn-icon btn-edit" title="Editar Usuario" (click)="openEditModal(user)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/></svg>
+                </button>
+                <button class="btn btn-icon btn-delete" title="Eliminar Usuario" (click)="openDeleteModal(user)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16"><path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/></svg>
+                </button>
+                <div class="ms-2 border-start ps-3 d-flex align-items-center">
+                  <button class="btn btn-toggle-status shadow-sm fw-bold" 
+                          [ngClass]="user.isActive ? 'btn-toggle-suspend' : 'btn-toggle-activate'"
+                          (click)="toggleStatus(user)">
+                    {{ user.isActive ? 'Suspender' : 'Activar' }}
+                  </button>
+                </div>
+              </div>
             </td>
 
           </tr>
@@ -83,14 +120,197 @@
       </table>
     </div>
     
-    <div class="card-footer bg-light border-0 py-3 px-4 d-flex justify-content-between align-items-center">
-      <small class="text-muted fw-bold">
-        Mostrando {{ filteredUsers.length }} usuarios
-      </small>
-      <small class="text-success fw-bold">
+    <div class="card-footer footer-bar border-0 py-3 px-4 d-flex justify-content-between align-items-center">
+      <span class="text-muted fw-bold small">
+        Mostrando <span class="text-dark">{{ filteredUsers.length }}</span> resultados
+      </span>
+      <span class="badge active-count-badge">
         Cuentas Activas: {{ getActiveCount() }}
-      </small>
+      </span>
     </div>
   </div>
 
 </div>
+
+<!-- Modal Formulario (Crear / Editar) -->
+<div class="modal fade custom-modal glass-modal" [ngClass]="{'show d-block': showFormModal}" tabindex="-1" *ngIf="showFormModal">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow-2xl rounded-4 overflow-hidden">
+      <div class="modal-header custom-modal-header border-bottom-0 pb-3 pt-4 px-4">
+        <h4 class="modal-title fw-bolder text-dark mb-0 d-flex align-items-center gap-2">
+          <div class="icon-box">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+              <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+            </svg>
+          </div>
+          {{ isEditing ? 'Modificar Usuario' : 'Nuevo Estudiante/Staff' }}
+        </h4>
+        <button type="button" class="btn-close-custom" (click)="closeFormModal()">✕</button>
+      </div>
+      <div class="modal-body px-4 pb-4">
+        <form [formGroup]="userForm" (ngSubmit)="onSubmitForm()" class="modern-form">
+          <div class="row g-4">
+            <div class="col-md-6">
+              <div class="form-floating-custom">
+                <label class="fw-bold small text-muted mb-2">Nombre</label>
+                <input type="text" class="form-control form-control-lg bg-light-subtle" formControlName="firstName" 
+                       [ngClass]="{'is-invalid': userForm.get('firstName')?.invalid && userForm.get('firstName')?.touched}"
+                       placeholder="Ingresa el nombre">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-floating-custom">
+                <label class="fw-bold small text-muted mb-2">Apellido</label>
+                <input type="text" class="form-control form-control-lg bg-light-subtle" formControlName="lastName" 
+                       [ngClass]="{'is-invalid': userForm.get('lastName')?.invalid && userForm.get('lastName')?.touched}"
+                       placeholder="Ingresa el apellido">
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-floating-custom">
+                <label class="fw-bold small text-muted mb-2">Correo Institucional</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light-subtle border-end-0 text-muted">&#64;</span>
+                  <input type="email" class="form-control form-control-lg bg-light-subtle border-start-0 ps-0" formControlName="email" 
+                         [ngClass]="{'is-invalid': userForm.get('email')?.invalid && userForm.get('email')?.touched}"
+                         placeholder="correo@nyu.edu">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-floating-custom">
+                <label class="fw-bold small text-muted mb-2">Rol del Sistema</label>
+                <select class="form-select form-select-lg bg-light-subtle" formControlName="role">
+                  <option value="Cliente">Cliente Estándar</option>
+                  <option value="Administrador">Administrador</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-floating-custom">
+                <label class="fw-bold small text-muted mb-2">Plan Alimenticio</label>
+                <select class="form-select form-select-lg bg-light-subtle" formControlName="planType">
+                  <option value="No asignado">Ninguno (No asignado)</option>
+                  <option value="Plan Completo">Plan Completo (Ilimitado)</option>
+                  <option value="Plan Medio">Plan Medio (2 Comidas)</option>
+                  <option value="Plan Básico">Plan Básico (1 Comida)</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-12 mt-4 pt-3 border-top">
+              <div class="form-check form-switch custom-switch d-flex align-items-center">
+                <input class="form-check-input mt-0 me-3" type="checkbox" role="switch" id="residentSwitch" formControlName="isResident">
+                <label class="form-check-label fw-bold text-dark mb-0 user-select-none" for="residentSwitch">
+                  Marcar como Residente del Campus
+                  <small class="d-block text-muted fw-normal mt-1">Habilita beneficios exclusivos para alojamiento.</small>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="mt-5 d-flex justify-content-end gap-3">
+            <button type="button" class="btn btn-light btn-lg px-4 fw-bold" (click)="closeFormModal()">Cancelar</button>
+            <button type="submit" class="btn btn-primary btn-lg px-5 fw-bold shadow-sm d-flex align-items-center gap-2" 
+                    [disabled]="userForm.invalid">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" *ngIf="!userForm.invalid">
+                <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z"/>
+              </svg>
+              {{ isEditing ? 'Guardar Cambios' : 'Registrar Cuenta' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Detalles de Usuario -->
+<div class="modal fade custom-modal glass-modal" [ngClass]="{'show d-block': showDetailsModal}" tabindex="-1" *ngIf="showDetailsModal && selectedUser">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-2xl rounded-4 overflow-hidden">
+      <div class="modal-body p-0">
+        <div class="profile-header text-center pt-5 pb-4 px-4 position-relative">
+          <button type="button" class="btn-close-custom position-absolute top-0 end-0 m-3" (click)="closeDetailsModal()" style="color: white; border-color: rgba(255,255,255,0.3);">✕</button>
+          
+          <div class="avatar-circle-lg shadow-lg mb-3 mx-auto">
+            {{ selectedUser.firstName.charAt(0) }}
+          </div>
+          <h3 class="fw-bolder text-white mb-1">{{ selectedUser.firstName }} {{ selectedUser.lastName }}</h3>
+          <p class="text-white-50 mb-0 d-flex align-items-center justify-content-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/></svg>
+            {{ selectedUser.email }}
+          </p>
+        </div>
+        
+        <div class="profile-body p-4 bg-white">
+          <div class="row g-3">
+            <div class="col-6">
+              <div class="info-card">
+                <div class="info-label">Rol del Sistema</div>
+                <div class="info-value text-dark fw-bold d-flex align-items-center gap-2">
+                  <span class="role-dot" [ngClass]="selectedUser.role === 'Administrador' ? 'bg-danger' : 'bg-primary'"></span>
+                  {{ selectedUser.role }}
+                </div>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="info-card">
+                <div class="info-label">Estado de Cuenta</div>
+                <div class="info-value">
+                  <span class="status-badge mt-1 d-inline-flex" [ngClass]="selectedUser.isActive ? 'active' : 'suspended'">
+                    {{ selectedUser.isActive ? 'Cuenta Activa' : 'Suspendida' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="info-card">
+                <div class="info-label">Plan Asignado</div>
+                <div class="info-value fw-bolder text-primary">
+                  {{ selectedUser.planType || 'No asignado' }}
+                </div>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="info-card">
+                <div class="info-label">Categoría Residente</div>
+                <div class="info-value fw-bold text-dark">
+                  {{ selectedUser.isResident ? 'Sí, Residente' : 'No Residente' }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer bg-light border-0 p-3">
+        <button type="button" class="btn btn-secondary w-100 fw-bold py-2 rounded-3" (click)="closeDetailsModal()">Cerrar Perfil</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Confirmación Eliminar -->
+<div class="modal fade custom-modal glass-modal" [ngClass]="{'show d-block': showDeleteModal}" tabindex="-1" *ngIf="showDeleteModal && selectedUser">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content border-0 shadow-2xl rounded-4 text-center overflow-hidden">
+      <div class="bg-danger py-4">
+        <div class="delete-icon-wrapper bg-white text-danger mx-auto rounded-circle d-flex align-items-center justify-content-center shadow" style="width: 60px; height: 60px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" viewBox="0 0 16 16"><path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/></svg>
+        </div>
+      </div>
+      <div class="p-4 bg-white">
+        <h5 class="fw-bolder mb-2 text-dark">Confirmar Acción</h5>
+        <p class="text-muted small mb-4 lh-lg">
+          Se eliminará permanentemente la cuenta de <br><strong class="text-dark fs-6">{{ selectedUser.firstName }} {{ selectedUser.lastName }}</strong>.<br>Esta acción no puede deshacerse.
+        </p>
+        <div class="d-flex flex-column gap-2">
+          <button type="button" class="btn btn-danger fw-bold py-2 shadow-sm" (click)="confirmDelete()">Sí, Eliminar Cuenta</button>
+          <button type="button" class="btn btn-light fw-bold py-2" (click)="closeDeleteModal()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Fondo oscuro difuminado para modales -->
+<div class="modal-backdrop-custom" [ngClass]="{'show': showFormModal || showDetailsModal || showDeleteModal}" *ngIf="showFormModal || showDetailsModal || showDeleteModal"></div>

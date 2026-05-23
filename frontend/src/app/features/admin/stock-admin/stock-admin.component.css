@@ -1,0 +1,17 @@
+.badge-success-custom {
+  background-color: #d4edda;
+  color: #155724;
+}
+.badge-warning-custom {
+  background-color: #fff3cd;
+  color: #856404;
+}
+.badge-danger-custom {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+.badge {
+  padding: 0.5em 0.8em;
+  border-radius: 4px;
+  font-weight: 600;
+}

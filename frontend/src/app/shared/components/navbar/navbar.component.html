@@ -1,10 +1,11 @@
 <header>
-  <div style="background-color: var(--nyu-dark); padding: 15px 0;">
+  <div style="background-color: var(--nyu-primary-dark); padding: 15px 0;">
     <div class="container d-flex justify-content-between align-items-center">
-      
+
       <a routerLink="/home" class="text-white text-decoration-none d-flex align-items-center">
         <h1 class="fw-bold mb-0 me-3" style="letter-spacing: 1px; border-bottom: 3px solid white;">CAFETERIA NYU</h1>
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
           <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
           <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
           <line x1="6" y1="1" x2="6" y2="4"></line>
@@ -14,42 +15,115 @@
       </a>
 
       <div class="d-flex align-items-center text-white" *ngIf="currentUser">
-        <div class="bg-white text-dark fw-bold d-flex justify-content-center align-items-center me-3" 
-             style="width: 45px; height: 45px; border-radius: 8px; font-size: 1.2rem; cursor: pointer;"
-             data-bs-toggle="dropdown">
-          {{ initials }}
+
+        <!-- Contenedor Dropdown -->
+        <div class="dropdown me-3">
+          <div class="bg-white fw-bold d-flex justify-content-center align-items-center"
+            style="color: var(--nyu-primary); width: 45px; height: 45px; border-radius: 8px; font-size: 1.2rem; cursor: pointer;"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            {{ initials }}
+          </div>
+          <ul class="dropdown-menu dropdown-menu-end shadow">
+            <li><a class="dropdown-item" routerLink="/profile">Mi Perfil</a></li>
+            <li *ngIf="currentUser.role === 'Administrador'"><a class="dropdown-item" routerLink="/admin/users">Gestión
+                de Usuarios</a></li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li><button class="dropdown-item text-danger fw-bold" (click)="logout()">Cerrar Sesión</button></li>
+          </ul>
         </div>
+
         <div class="lh-sm">
           <div class="fw-bold">{{ currentUser.firstName }} {{ currentUser.lastName }}</div>
-          <small class="text-light opacity-75">(Estudiante Activo, {{ currentUser.isResident ? 'Residente' : 'Regular' }})</small>
+          <small class="text-light opacity-75">(Estudiante Activo, {{ currentUser.isResident ? 'Residente' : 'Regular'
+            }})</small>
         </div>
         <div class="ms-3 rounded-circle bg-success" style="width: 15px; height: 15px;"></div>
-
-        <ul class="dropdown-menu dropdown-menu-end shadow">
-          <li><a class="dropdown-item" routerLink="/profile">Mi Perfil</a></li>
-          <li *ngIf="currentUser.role === 'Administrador'"><a class="dropdown-item" routerLink="/admin/users">Gestión de Usuarios</a></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><button class="dropdown-item text-danger fw-bold" (click)="logout()">Cerrar Sesión</button></li>
-        </ul>
       </div>
 
     </div>
   </div>
 
-  <div style="background-color: var(--nyu-brown); padding: 15px 0;">
+  <div style="background-color: var(--nyu-primary); padding: 15px 0;">
     <div class="container d-flex justify-content-between align-items-center">
-      
+
       <div class="d-flex gap-3">
-        <a routerLink="/home" routerLinkActive="bg-white text-dark" class="btn btn-outline-light bg-white text-dark fw-bold border-0" style="border-radius: 4px;">Inicio</a>
-        <a routerLink="/menu" routerLinkActive="bg-white text-dark" class="btn btn-outline-light fw-bold border-0" style="border-radius: 4px;">Menu del dia</a>
-        <a routerLink="/resident-plan" routerLinkActive="bg-white text-dark" class="btn btn-outline-light fw-bold border-0" style="border-radius: 4px;">Mi Plan</a>
-        <a routerLink="/history" routerLinkActive="bg-white text-dark" class="btn btn-outline-light fw-bold border-0" style="border-radius: 4px;">Historial de Consumo</a>
-        <a routerLink="/help" routerLinkActive="bg-white text-dark" class="btn btn-outline-light fw-bold border-0" style="border-radius: 4px;">Ayuda</a>
+        <a routerLink="/home" routerLinkActive="active-nav-link" class="btn text-white fw-bold border-0 px-3"
+          style="border-radius: 8px; transition: all 0.2s;">Inicio</a>
+        <a routerLink="/menu" routerLinkActive="active-nav-link" class="btn text-white fw-bold border-0 px-3"
+          style="border-radius: 8px; transition: all 0.2s;">Menú del día</a>
+        <a routerLink="/resident-plan" routerLinkActive="active-nav-link" class="btn text-white fw-bold border-0 px-3" style="border-radius: 8px; transition: all 0.2s;">Mi Plan</a>
+        <a routerLink="/history" routerLinkActive="active-nav-link" class="btn text-white fw-bold border-0 px-3"
+          style="border-radius: 8px; transition: all 0.2s;">Historial de Consumo</a>
       </div>
 
-      <a routerLink="/checkout" class="btn bg-dark text-white fw-bold d-flex align-items-center gap-2" style="border-radius: 4px;">
-        <span class="fs-5">🛒</span> (3) Articulos
-      </a>
+      <div class="dropdown">
+        <button class="btn bg-white fw-bold d-flex align-items-center gap-2 shadow-sm"
+          style="border-radius: 8px; color: var(--nyu-primary);"
+          data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+          <span class="fs-5 d-flex align-items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-cart3 me-2"
+              viewBox="0 0 16 16">
+              <path
+                d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+            </svg>
+          </span> ({{ cartCount }}) Artículos
+        </button>
+
+        <!-- Viñeta del carrito -->
+        <div class="dropdown-menu dropdown-menu-end p-3 shadow-lg border-0" style="width: 320px; border-radius: 12px; margin-top: 10px;">
+          <h6 class="fw-bold mb-3" style="color: var(--nyu-dark); border-bottom: 2px solid var(--nyu-primary); padding-bottom: 8px;">
+            Tu Carrito
+          </h6>
+          
+          <div *ngIf="cartItems.length === 0" class="text-center text-muted py-4">
+            Aún no has agregado productos.
+          </div>
+
+          <div style="max-height: 250px; overflow-y: auto;" class="mb-2 pe-1">
+            <div *ngFor="let item of cartItems" class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+              
+              <div class="d-flex flex-column" style="font-size: 0.9rem; width: 45%;">
+                <span class="fw-bold text-truncate" [title]="item.product.nombre || item.product.nombre">
+                  {{ item.product.nombre || item.product.nombre }}
+                </span>
+                <span class="text-muted small">${{ (item.product.precio_estudiante || item.product.precio) | number }} c/u</span>
+              </div>
+
+              <!-- Controles de cantidad -->
+              <div class="d-flex align-items-center border rounded" style="padding: 2px;">
+                <button class="btn btn-sm btn-light py-0 px-2 fw-bold" (click)="$event.stopPropagation(); updateCartItem(item, -1)">-</button>
+                <span class="px-2 small fw-bold" style="min-width: 20px; text-align: center;">{{ item.quantity }}</span>
+                <button class="btn btn-sm btn-light py-0 px-2 fw-bold" (click)="$event.stopPropagation(); updateCartItem(item, 1)">+</button>
+              </div>
+              
+              <!-- Subtotal y Eliminar -->
+              <div class="d-flex align-items-center justify-content-end gap-2" style="width: 25%;">
+                <span class="fw-bold" style="color: var(--nyu-dark); font-size: 0.9rem;">
+                  ${{ ((item.product.precio_estudiante || item.product.precio) * item.quantity) | number }}
+                </span>
+                <button class="btn btn-sm text-danger p-0" (click)="$event.stopPropagation(); removeCartItem(item)" title="Eliminar producto">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                    <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-1.002a.58.58 0 0 0-.01 0H11Zm1.292 1.528-.8 10A1 1 0 0 1 10.5 15h-5a1 1 0 0 1-.992-.92l-.8-10h8.584ZM4.5 5.5A.5.5 0 0 1 5 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
+                  </svg>
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          <div *ngIf="cartItems.length > 0" class="border-top pt-3 mt-2">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="fw-bold text-muted">Total:</span>
+              <span class="fw-bold fs-5" style="color: var(--nyu-dark);">${{ cartTotal | number }}</span>
+            </div>
+            <a routerLink="/checkout" class="btn text-white w-100 fw-bold" style="background-color: var(--nyu-dark); border-radius: 8px;">
+              Ir a Pagar
+            </a>
+          </div>
+        </div>
+      </div>
 
     </div>
   </div>

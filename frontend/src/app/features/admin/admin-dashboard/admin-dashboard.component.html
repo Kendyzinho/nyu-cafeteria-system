@@ -2,6 +2,40 @@
   <h2>Panel Administrador</h2>
   <p class="text-muted">Gestión de stock, planes alimentarios y promociones</p>
 
+  <!-- HU24: Integración Biblioteca -->
+  <div class="row mt-4 mb-4">
+    <div class="col-12">
+      <div class="card shadow-sm border-0" style="background-color: #f7f1eb;">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0" style="color: #4E342E;">
+              📚 Integración Biblioteca NYU (Demanda Proyectada)
+            </h5>
+            <span class="badge bg-primary">En vivo</span>
+          </div>
+          <p class="text-muted">Análisis predictivo de flujo de estudiantes hacia la cafetería basado en la ocupación actual de la biblioteca central.</p>
+          
+          <div class="row text-center mt-3">
+            <div class="col-md-4 border-end">
+              <h6 class="text-muted">Ocupación Biblioteca</h6>
+              <h3 class="fw-bold">{{ libraryOccupancy }}%</h3>
+            </div>
+            <div class="col-md-4 border-end">
+              <h6 class="text-muted">Horario Crítico Proyectado</h6>
+              <h3 class="fw-bold text-danger">{{ projectedPeakHour }}</h3>
+            </div>
+            <div class="col-md-4">
+              <h6 class="text-muted">Nivel de Demanda</h6>
+              <h3 class="fw-bold" [ngClass]="{'text-danger': demandLevel.includes('Crítica'), 'text-warning': demandLevel === 'Moderada'}">
+                {{ demandLevel }}
+              </h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="row mt-4">
 
     <div class="col-md-4">

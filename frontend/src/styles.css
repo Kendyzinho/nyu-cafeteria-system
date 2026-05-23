@@ -1,44 +1,104 @@
-/* Paleta de Colores NYU Cafetería */
+/* NYU Cafeteria Modern Brown Palette */
 :root {
-  --nyu-light-brown: #6F4E37;
-  --nyu-sand: #A98467;
-  --nyu-pastel: #FFFBF7;
-  --nyu-dark: #31211D; /* Color del header superior */
-  --nyu-brown: #4A3A36; /* Color de la franja de botones */
-  --nyu-beige: #CBB9A8; /* Color de fondo general de la app */
-  --nyu-text: #FFFFFF;
+  --nyu-primary: #6F4E37; /* Original Brown */
+  --nyu-primary-light: #A98467; /* Sand / Light Brown */
+  --nyu-primary-dark: #4A3A36; /* Dark Brown */
+  --nyu-dark: #31211D; /* Very Dark Brown */
+  
+  --nyu-pastel: #FFFBF7; /* Pastel Cream */
+  --nyu-beige: #CBB9A8; /* Beige Background */
+  
+  --nyu-bg: #fdfbf9; /* Soft cream gray for app backgrounds */
+  --nyu-surface: #ffffff; /* Pure white for cards */
+  
+  --nyu-text-main: #31211D; /* Dark brown for text */
+  --nyu-text-muted: #8D6E63; /* Muted brown */
+  
+  --nyu-border: #eaddd7;
 }
 
 body {
-  background-color: var(--nyu-beige);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--nyu-bg);
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--nyu-text-main);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  -webkit-font-smoothing: antialiased;
 }
 
-.text-pastel { color: var(--nyu-pastel) !important; }
-.bg-cafeteria { background-color: var(--nyu-brown) !important; }
+/* Global Typography & Elements */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Global Buttons overriding bootstrap defaults */
+.btn-primary {
+  background: linear-gradient(135deg, #795238 0%, var(--nyu-primary) 100%);
+  border: none;
+  color: white;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px rgba(111, 78, 55, 0.15);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--nyu-primary) 0%, var(--nyu-primary-dark) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(111, 78, 55, 0.3);
+  color: white;
+}
+
+.btn-primary:focus {
+  box-shadow: 0 0 0 4px rgba(111, 78, 55, 0.2);
+}
+
+/* Cafeteria custom buttons mapped to new palette */
+.bg-cafeteria { background-color: var(--nyu-primary) !important; color: white !important; }
+
 .btn-cafeteria {
-  background-color: var(--nyu-light-brown);
+  background-color: var(--nyu-primary);
   color: white;
   border: none;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
-.btn-cafeteria:hover {
-  background-color: var(--nyu-brown);
+
+.btn-cafeteria:hover:not(:disabled) {
+  background-color: var(--nyu-primary-dark);
   color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(111, 78, 55, 0.2);
 }
+
 .btn-outline-cafeteria {
-  color: var(--nyu-light-brown);
-  border-color: var(--nyu-light-brown);
+  color: var(--nyu-primary);
+  border: 1px solid var(--nyu-primary);
+  background-color: transparent;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
+
 .btn-outline-cafeteria:hover {
-  background-color: var(--nyu-light-brown);
+  background-color: var(--nyu-primary);
   color: white;
 }
-.card-pastel { background-color: var(--nyu-pastel); }
-.bg-success-pastel { background-color: #d4edda; color: #155724; }
-.bg-cafe-light { background-color: #eaddd7; color: var(--nyu-brown); }
+
+/* Cards & Layout */
+.card {
+  border: 1px solid var(--nyu-border);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card-pastel { 
+  background-color: var(--nyu-surface); 
+}
 
 /* Efecto de cinta (ribbon) para productos agotados */
 .ribbon-wrapper {
@@ -53,7 +113,7 @@ body {
 
 .ribbon {
   font-size: 0.75rem;
-  font-weight: bold;
+  font-weight: 800;
   color: #FFF;
   text-align: center;
   transform: rotate(45deg);
@@ -62,6 +122,40 @@ body {
   left: 15px;
   top: 15px;
   width: 120px;
-  background-color: #dc3545; /* Rojo de error/agotado */
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  background-color: #dc3545; /* Rojo clásico */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  letter-spacing: 1px;
+}
+
+/* Custom Modern Badges */
+.bg-success-pastel { background-color: #eaf6ec; color: #278643; border: 1px solid #c3e6cb; }
+.bg-cafe-light { background-color: var(--nyu-pastel); color: var(--nyu-primary-dark); }
+
+/* Forms override */
+.form-control:focus, .form-select:focus {
+  border-color: var(--nyu-primary-light);
+  box-shadow: 0 0 0 0.25rem rgba(169, 132, 103, 0.15);
+}
+
+/* Custom Navigation Active State */
+.active-nav-link {
+  background-color: var(--nyu-surface) !important;
+  color: var(--nyu-primary) !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+  transform: translateY(-1px);
+}
+
+.btn-coffee {
+  background-color: #4E342E;
+  color: white;
+  border: none;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-coffee:hover {
+  background-color: #3E2723;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }

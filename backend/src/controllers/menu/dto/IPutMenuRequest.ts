@@ -3,7 +3,7 @@ export interface IPutMenuRequest {
   descripcion?: string;
   precio?: number;
   categoria?: string;
+  imagen_url?: string;
+  stock_actual?: number;
   disponible?: boolean;
-  stockActual?: number;
-  fechaDisponible?: Date;
 }
