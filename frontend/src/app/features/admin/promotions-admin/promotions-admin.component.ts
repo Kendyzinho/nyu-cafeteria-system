@@ -1,6 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { PromotionService } from '../../../core/services/promotion.service';
-import { IntegrationService } from '../../../core/services/integration.service';
+
+export interface Promocion {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  descuento: number;
+  horaInicio: string;
+  horaFin: string;
+  activa: boolean;
+  comidasIds?: number[] | null;
+}
 
 @Component({
   selector: 'app-promotions-admin',
@@ -8,11 +18,10 @@ import { IntegrationService } from '../../../core/services/integration.service';
   styleUrls: ['./promotions-admin.component.css']
 })
 export class PromotionsAdminComponent implements OnInit {
-  promociones: any[] = [];
+  promociones: Promocion[] = [];
 
   constructor(
-    private promotionService: PromotionService,
-    private integrationService: IntegrationService
+    private promotionService: PromotionService
   ) {}
 
   ngOnInit() {
@@ -21,35 +30,21 @@ export class PromotionsAdminComponent implements OnInit {
 
   loadPromociones() {
     this.promotionService.getPromociones().subscribe({
-      next: (data: any[]) => this.promociones = data,
+      next: (data: Promocion[]) => this.promociones = data,
       error: (err: any) => console.error('Error fetching promotions', err)
     });
   }
 
-  aplicarPromocion(promo: any) {
-    this.integrationService.validarEstudianteActivo(promo).subscribe(estudianteValido => {
-      if (!estudianteValido) {
-        alert('No se puede aplicar: estudiante inactivo');
-        return;
+  aplicarPromocion(promo: Promocion) {
+    this.promotionService.aplicarPromocion(promo.id, { ...promo, activa: !promo.activa }).subscribe({
+      next: () => {
+        alert(`Promoción "${promo.nombre || 'descuento'}" ${!promo.activa ? 'activada' : 'desactivada'} correctamente`);
+        this.loadPromociones();
+      },
+      error: (err: any) => {
+        console.error('Error al actualizar promoción', err);
+        alert('Error al actualizar la promoción.');
       }
-
-      this.integrationService.validarPagoAprobado(promo).subscribe(pagoValido => {
-        if (!pagoValido) {
-          alert('No se puede aplicar: pago no aprobado');
-          return;
-        }
-
-        this.promotionService.aplicarPromocion(promo.id, { ...promo, activa: true }).subscribe({
-          next: () => {
-            alert(`Promoción "${promo.nombre || 'descuento'}" aplicada correctamente`);
-            this.loadPromociones();
-          },
-          error: (err: any) => {
-            console.error('Error al aplicar promocion', err);
-            alert('Error al aplicar la promoción.');
-          }
-        });
-      });
     });
   }
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MenuService } from '../../../core/services/menu.service';
+import { Product } from '../../../core/models/product';
 
 @Component({
   selector: 'app-products-admin',
@@ -8,7 +9,7 @@ import { MenuService } from '../../../core/services/menu.service';
   styleUrls: ['./products-admin.component.css']
 })
 export class ProductsAdminComponent implements OnInit {
-  products: any[] = [];
+  products: Product[] = [];
   showFormModal: boolean = false;
   productForm: FormGroup;
   isEditing: boolean = false;
@@ -19,13 +20,11 @@ export class ProductsAdminComponent implements OnInit {
     private fb: FormBuilder
   ) {
     this.productForm = this.fb.group({
-      name: ['', Validators.required],
-      description: ['', Validators.required],
-      price: [0, [Validators.required, Validators.min(0)]],
-      precio_estudiante: [0, [Validators.required, Validators.min(0)]],
-      category: ['almuerzos', Validators.required],
-      stock: [0, [Validators.required, Validators.min(0)]],
-      isDailyMenu: [false]
+      nombre: ['', Validators.required],
+      descripcion: ['', Validators.required],
+      precio: [0, [Validators.required, Validators.min(0)]],
+      categoria: ['almuerzos', Validators.required],
+      stock_actual: [0, [Validators.required, Validators.min(0)]]
     });
   }
 
@@ -35,7 +34,7 @@ export class ProductsAdminComponent implements OnInit {
 
   loadProducts() {
     this.menuService.getAll().subscribe({
-      next: (data: any[]) => {
+      next: (data: Product[]) => {
         this.products = data;
       },
       error: (err: any) => console.error('Error fetching products', err)
@@ -46,26 +45,22 @@ export class ProductsAdminComponent implements OnInit {
     this.isEditing = false;
     this.selectedProductId = null;
     this.productForm.reset({
-      price: 0,
-      precio_estudiante: 0,
-      category: 'almuerzos',
-      stock: 0,
-      isDailyMenu: false
+      precio: 0,
+      categoria: 'almuerzos',
+      stock_actual: 0
     });
     this.showFormModal = true;
   }
 
-  openEditModal(product: any) {
+  openEditModal(product: Product) {
     this.isEditing = true;
     this.selectedProductId = product.id;
     this.productForm.patchValue({
-      name: product.nombre,
-      description: product.description,
-      price: product.precio,
-      precio_estudiante: product.precio_estudiante,
-      category: product.category,
-      stock: product.stock_actual,
-      isDailyMenu: product.isDailyMenu || false
+      nombre: product.nombre,
+      descripcion: product.descripcion,
+      precio: product.precio,
+      categoria: product.categoria,
+      stock_actual: product.stock_actual
     });
     this.showFormModal = true;
   }
@@ -83,13 +78,12 @@ export class ProductsAdminComponent implements OnInit {
     const formValues = this.productForm.value;
 
     const backendPayload = {
-      nombre: formValues.name,
-      descripcion: formValues.description,
-      precio: formValues.price,
-      categoria: formValues.category,
-      stockActual: formValues.stock,
-      disponible: formValues.stock > 0,
-      fechaDisponible: new Date().toISOString()
+      nombre: formValues.nombre,
+      descripcion: formValues.descripcion,
+      precio: formValues.precio,
+      categoria: formValues.categoria,
+      stock_actual: formValues.stock_actual,
+      disponible: formValues.stock_actual > 0
     };
 
     if (this.isEditing && this.selectedProductId) {
@@ -119,7 +113,7 @@ export class ProductsAdminComponent implements OnInit {
     }
   }
 
-  confirmDelete(product: any) {
+  confirmDelete(product: Product) {
     if (confirm(`¿Estás seguro que deseas eliminar "${product.nombre}"?`)) {
       this.menuService.delete(product.id).subscribe({
         next: () => {

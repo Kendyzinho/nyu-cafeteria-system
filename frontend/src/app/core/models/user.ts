@@ -1,11 +1,10 @@
 export interface User {
   id: number;
   email: string;
-  firstName: string;
-  lastName: string;
-  role: 'Administrador' | 'Cliente';
-  isActive: boolean;
-  isResident: boolean; // Vital para el equipo de Alojamiento
+  firstName: string;   // Mapeado desde mock_usuario.nombre
+  role: 'Administrador' | 'Cliente';  // Mapeado desde mock_usuario.tipo
+  isActive: boolean;   // Mapeado desde mock_usuario.activo
+  isResident: boolean; // Mapeado desde mock_usuario.es_residente
 }
 
 export interface LoginResponse {

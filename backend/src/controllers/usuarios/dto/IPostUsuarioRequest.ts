@@ -1,13 +1,9 @@
-import { IsString, IsEmail, IsNotEmpty } from 'class-validator';
+import { IsString, IsEmail, IsNotEmpty, IsOptional, IsBoolean } from 'class-validator';
 
 export class IPostUsuarioRequest {
   @IsString()
   @IsNotEmpty()
   nombre: string;
-
-  @IsString()
-  @IsNotEmpty()
-  apellido: string;
 
   @IsEmail()
   email: string;
@@ -19,4 +15,12 @@ export class IPostUsuarioRequest {
   @IsString()
   @IsNotEmpty()
   tipo: string;
+
+  @IsOptional()
+  @IsBoolean()
+  activo?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  es_residente?: boolean;
 }
