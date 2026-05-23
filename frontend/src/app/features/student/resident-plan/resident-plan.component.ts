@@ -54,29 +54,55 @@ export class ResidentPlanComponent implements OnInit {
   }
 
   loadPlans(): void {
-    this.loading = true;
-
-this.planService.getPlanes().subscribe({
-  next: (data: any) => {
-    
-    this.mealsConsumed++;
-    alert(`¡Éxito! Ticket generado para las ${this.selectedTime}. Presenta tu TUI en la cafetería.`);
-    this.selectedTime = ''; 
+    this.planService.getPlanes().subscribe({
+      next: (data) => {
+        this.availablePlans = data.map(plan => ({
+          id: plan.id,
+          nombre: plan.nombre || `Plan ${plan.tipo || 'Mensual'}`,
+          precio_mensual: plan.precio_mensual || plan.precio || 0,
+          descripcion: plan.descripcion || 'Plan alimentario de cafetería.',
+          image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80'
+        }));
+      },
+      error: (err) => console.error('Error fetching plans', err)
+    });
   }
 
   selectPlan(planId: number) {
     const user = this.authService.getCurrentUser();
     
-    this.planService.activarPlan(planId, { estudiante: user ? user.firstName : 'Estudiante', planActivo: true }).subscribe({
+    this.planService.activarPlan(planId, {
+      estudiante: user ? user.firstName : 'Estudiante',
+      planActivo: true
+    }).subscribe({
       next: () => {
         this.currentPlanId = planId;
         alert('Te has suscrito exitosamente al plan. El cobro ha sido derivado al Sistema Central de Pagos (Integración).');
       },
       error: () => {
-        // En caso de que el backend no tenga el endpoint exacto para suscripción en este momento
         this.currentPlanId = planId;
         alert('Suscripción local simulada completada exitosamente.');
       }
     });
+  }
+
+  cancelPlan() {
+    this.currentPlanId = null;
+    alert('Plan cancelado correctamente.');
+  }
+
+  generateTicket() {
+    if (!this.selectedTime) {
+      alert('Selecciona una hora antes de generar el ticket.');
+      return;
+    }
+
+    this.mealsConsumed++;
+    alert(`¡Éxito! Ticket generado para las ${this.selectedTime}. Presenta tu TUI en la cafetería.`);
+    this.selectedTime = '';
+  }
+
+  get currentPlan() {
+    return this.currentPlanId;
   }
 }
