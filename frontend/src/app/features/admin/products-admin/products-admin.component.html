@@ -13,6 +13,7 @@
               <th class="border-0">Nombre</th>
               <th class="border-0">Categoría</th>
               <th class="border-0">Precio Gral.</th>
+              <th class="border-0">Precio Estudiante</th>
               <th class="border-0">Stock</th>
               <th class="border-0 text-end">Acciones</th>
             </tr>
@@ -24,6 +25,7 @@
               </td>
               <td><span class="badge bg-cafe-light">{{ product.categoria }}</span></td>
               <td>${{ product.precio }}</td>
+              <td><span class="text-success fw-bold">${{ product.precio * 0.75 | number:'1.2-2' }}</span></td>
               <td>
                 <span class="badge" [ngClass]="product.stock_actual > 0 ? 'bg-success' : 'bg-danger'">
                   {{ product.stock_actual }}
@@ -35,7 +37,7 @@
               </td>
             </tr>
             <tr *ngIf="products.length === 0">
-              <td colspan="5" class="text-center py-4 text-muted">No hay productos registrados.</td>
+              <td colspan="6" class="text-center py-4 text-muted">No hay productos registrados.</td>
             </tr>
           </tbody>
         </table>
@@ -84,6 +86,11 @@
               <label class="form-label">Precio General ($)</label>
               <input type="number" class="form-control" formControlName="precio">
             </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">URL de la Imagen (Opcional)</label>
+            <input type="text" class="form-control" formControlName="imagen_url" placeholder="https://ejemplo.com/imagen.jpg">
           </div>
 
           <div class="d-flex justify-content-end gap-2">

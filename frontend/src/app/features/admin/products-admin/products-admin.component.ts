@@ -24,7 +24,8 @@ export class ProductsAdminComponent implements OnInit {
       descripcion: ['', Validators.required],
       precio: [0, [Validators.required, Validators.min(0)]],
       categoria: ['almuerzos', Validators.required],
-      stock_actual: [0, [Validators.required, Validators.min(0)]]
+      stock_actual: [0, [Validators.required, Validators.min(0)]],
+      imagen_url: ['']
     });
   }
 
@@ -47,7 +48,8 @@ export class ProductsAdminComponent implements OnInit {
     this.productForm.reset({
       precio: 0,
       categoria: 'almuerzos',
-      stock_actual: 0
+      stock_actual: 0,
+      imagen_url: ''
     });
     this.showFormModal = true;
   }
@@ -60,7 +62,8 @@ export class ProductsAdminComponent implements OnInit {
       descripcion: product.descripcion,
       precio: product.precio,
       categoria: product.categoria,
-      stock_actual: product.stock_actual
+      stock_actual: product.stock_actual,
+      imagen_url: product.imagen_url || ''
     });
     this.showFormModal = true;
   }
@@ -83,7 +86,8 @@ export class ProductsAdminComponent implements OnInit {
       precio: formValues.precio,
       categoria: formValues.categoria,
       stock_actual: formValues.stock_actual,
-      disponible: formValues.stock_actual > 0
+      disponible: formValues.stock_actual > 0,
+      imagen_url: formValues.imagen_url || null
     };
 
     if (this.isEditing && this.selectedProductId) {
