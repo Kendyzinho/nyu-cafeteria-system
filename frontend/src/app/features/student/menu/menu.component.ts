@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MenuService } from '../../../core/services/menu.service';
 import { CartService } from '../../../core/services/cart.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { Product } from '../../../core/models/product';
 
 @Component({
   selector: 'app-menu',
@@ -12,8 +13,8 @@ export class MenuComponent implements OnInit {
 
   @ViewChild('filtroCategoria') filtroSelect!: ElementRef;
 
-  menuItems: any[] = [];
-  filteredMenuItems: any[] = [];
+  menuItems: Product[] = [];
+  filteredMenuItems: Product[] = [];
 
   constructor(
     private menuService: MenuService,
@@ -28,9 +29,9 @@ export class MenuComponent implements OnInit {
     });
   }
 
-  handleAddToCart(itemRecibido: any) {
+  handleAddToCart(itemRecibido: Product) {
     this.cartService.addItem(itemRecibido);
-    this.toastService.show(`${itemRecibido.name || itemRecibido.nombre} agregado al carrito`, 'success');
+    this.toastService.show(`${itemRecibido.nombre} agregado al carrito`, 'success');
   }
 
   onFilterChange(event: any) {

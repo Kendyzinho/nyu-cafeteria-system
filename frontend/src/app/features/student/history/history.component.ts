@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { OrderService } from '../../../core/services/order.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { Order } from '../../../core/models/order';
 
 interface Transaction {
   id: string;
@@ -8,7 +9,7 @@ interface Transaction {
   item: string;
   amount: number;
   method: 'Tarjeta' | 'Plan Residente' | 'Efectivo';
-  status: 'Completado' | 'Pendiente' | 'Cancelado';
+  status: 'Completado' | 'Pendiente' | 'Cancelado' | string;
   horarioRetiro: string | null;
 }
 
@@ -30,14 +31,14 @@ export class HistoryComponent implements OnInit {
     const user = this.authService.getCurrentUser();
     if (user) {
       this.orderService.getOrdersByUser(user.id).subscribe({
-        next: (orders) => {
+        next: (orders: Order[]) => {
           this.transactions = orders.map(o => ({
             id: `TRX-${o.id.toString().padStart(3, '0')}`,
             date: o.fechaCreacion,
-            item: this.getItemsSummary(o.items),
+            item: this.getItemsSummary(o.items || []),
             amount: Number(o.total),
             method: 'Tarjeta',
-            status: this.capitalize(o.estado) as any,
+            status: this.capitalize(o.estado),
             horarioRetiro: o.horarioRetiro ?? null,
           }));
           this.calculateTotal();
@@ -50,8 +51,8 @@ export class HistoryComponent implements OnInit {
   getItemsSummary(items: any[]): string {
     if (!items || items.length === 0) return 'Sin items';
     return items.map(i => {
-      const name = i.product?.name || i.nombre || `Producto #${i.productId || i.id}`;
-      const qty = i.quantity || i.cantidad || 1;
+      const name = i.nombre || `Producto #${i.comidaId || i.id}`;
+      const qty = i.cantidad || i.quantity || 1;
       return `${qty}x ${name}`;
     }).join(', ');
   }

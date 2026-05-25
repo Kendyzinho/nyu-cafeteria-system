@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Product } from '../../../../core/models/product';
 
 @Component({
   selector: 'app-menu-item',
@@ -7,10 +8,10 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 })
 export class MenuItemComponent {
   // 1. RÚBRICA: @Input() permite recibir un objeto desde el componente Padre
-  @Input() item: any; 
+  @Input() item!: Product; 
   
   // 2. RÚBRICA: @Output() permite enviar un evento (como un clic) hacia el Padre
-  @Output() add = new EventEmitter<any>();
+  @Output() add = new EventEmitter<Product>();
 
   onAddToCart() {
     // Cuando el usuario hace clic, disparamos el evento enviando el producto

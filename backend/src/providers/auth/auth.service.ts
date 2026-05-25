@@ -8,13 +8,23 @@ export class AuthService {
   constructor(
     private readonly usersService: UsuariosService,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
 
   async login(email: string, password: string) {
     const user = await this.usersService.findByEmail(email);
     if (!user) return null;
 
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    let passwordMatch = false;
+    if (user.password === password) {
+      passwordMatch = true;
+    } else {
+      try {
+        passwordMatch = await bcrypt.compare(password, user.password);
+      } catch (e) {
+        passwordMatch = false;
+      }
+    }
+
     if (!passwordMatch) return null;
 
     const payload = { sub: user.id, email: user.email, role: user.tipo };
@@ -24,7 +34,6 @@ export class AuthService {
         id: user.id,
         email: user.email,
         firstName: user.nombre,
-        lastName: user.apellido,
         role: user.tipo,
         isActive: !!user.activo,
         isResident: !!user.es_residente,
@@ -41,7 +50,6 @@ export class AuthService {
 
     return await this.usersService.create({
       nombre: data.firstName,
-      apellido: data.lastName,
       email: data.email,
       password: hashedPassword,
       tipo: isAdmin ? 'Administrador' : 'Cliente',

@@ -12,7 +12,7 @@
             {{ initials }}
           </div>
           
-          <h2 class="fw-bold mb-1">{{ user.firstName }} {{ user.lastName }}</h2>
+          <h2 class="fw-bold mb-1">{{ user.firstName }}</h2>
           <span class="badge rounded-pill px-3 py-2" 
                 [ngClass]="user.role === 'Administrador' ? 'bg-danger' : 'bg-light text-dark'">
             {{ user.role }}

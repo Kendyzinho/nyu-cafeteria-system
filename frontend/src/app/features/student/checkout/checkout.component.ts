@@ -114,9 +114,9 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     const payload = {
       usuarioId: user ? user.id : 1, 
       items: this.cartItems.map(i => ({
-        productId: i.product.id,
-        quantity: i.quantity,
-        price: i.product.precio_estudiante || i.product.precio || 0
+        comidaId: i.product.id,
+        cantidad: i.quantity,
+        precioUnitario: i.product.precio || 0
       })),
       horarioRetiro: this.horarioSeleccionadoIso
     };
