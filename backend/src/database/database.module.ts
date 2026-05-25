@@ -29,9 +29,9 @@ import * as fs from 'fs';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        ssl: {
-          ca: fs.readFileSync(configService.get<string>('DB_SSL_CA')),
-        },
+        ssl: configService.get<string>('DB_SSL_CA')
+          ? { ca: fs.readFileSync(configService.get<string>('DB_SSL_CA')!) }
+          : undefined,
         entities: [
           MockUsuarioEntity,
           ComidaEntity,
