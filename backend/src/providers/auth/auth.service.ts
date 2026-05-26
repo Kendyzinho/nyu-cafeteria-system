@@ -41,6 +41,19 @@ export class AuthService {
     };
   }
 
+  async getMe(id: number) {
+    const user = await this.usersService.getOne(id);
+    if (!user) return null;
+    return {
+      id: user.id,
+      email: user.email,
+      firstName: user.nombre,
+      role: user.tipo,
+      isActive: !!user.activo,
+      isResident: !!user.es_residente,
+    };
+  }
+
   async register(data: { firstName: string; lastName: string; email: string; password: string }) {
     const existing = await this.usersService.findByEmail(data.email);
     if (existing) return null;
