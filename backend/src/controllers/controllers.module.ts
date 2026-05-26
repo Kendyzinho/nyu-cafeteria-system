@@ -26,6 +26,7 @@ import { UsuariosService } from 'src/providers/usuarios/usuarios.service';
 import { AuthService } from 'src/providers/auth/auth.service';
 import { JwtStrategy } from 'src/common/strategies/jwt.strategy';
 import { AdminGuard } from 'src/common/guards/admin.guard';
+import { SuscripcionAlumnoEntity } from 'src/database/entities/suscripcion-alumno.entity';
 
 @Module({
   imports: [
