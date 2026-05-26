@@ -38,26 +38,25 @@
         
         <div class="d-flex justify-content-between align-items-center mb-3">
           <h6 class="text-uppercase fw-bold small mb-0">Recomendado para hoy</h6>
-          <span class="badge bg-success-pastel px-3 py-2">Disponible</span>
+          <span *ngIf="recommendedProduct?.stock_actual" class="badge bg-success-pastel px-3 py-2">Disponible</span>
+          <span *ngIf="recommendedProduct && !recommendedProduct.stock_actual" class="badge bg-danger-pastel px-3 py-2">Agotado</span>
         </div>
         
-        <div class="row align-items-center">
+        <div class="row align-items-center" *ngIf="recommendedProduct; else loadingTemplate">
           <div class="col-sm-5 col-md-4">
-            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=500&q=80" 
+            <img [src]="recommendedProduct.imagen_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=500&q=80'" 
                  class="img-fluid rounded-3 shadow-sm" 
-                 alt="Plato recomendado">
+                 [alt]="recommendedProduct.nombre">
           </div>
           
           <div class="col-sm-7 col-md-8">
-            <h4 class="fw-bold mb-2" style="color: #4E342E;">Bowl de Quinoa y Pollo Grill</h4>
+            <h4 class="fw-bold mb-2" style="color: #4E342E;">{{ recommendedProduct.nombre }}</h4>
             <p class="text-muted small mb-3">
-              Nuestra opción más saludable: Proteína premium, vegetales de temporada al vapor y nuestro aderezo artesanal de la casa.
+              {{ recommendedProduct.descripcion }}
             </p>
             
             <div class="d-flex align-items-baseline gap-2 mb-3">
-              <span class="fs-3 fw-bold" style="color: #6F4E37;">$5.625</span>
-              <span class="text-decoration-line-through text-muted small">$7.500</span>
-              <span class="ms-2 badge bg-cafe-light">25% DCTO Estudiante</span>
+              <span class="fs-3 fw-bold" style="color: #6F4E37;">${{ recommendedProduct.precio }}</span>
             </div>
             
             <button class="btn btn-cafeteria px-4 fw-bold" routerLink="/menu">
@@ -65,6 +64,13 @@
             </button>
           </div>
         </div>
+        
+        <ng-template #loadingTemplate>
+          <div class="text-center py-4 text-muted">
+            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+            Cargando recomendación...
+          </div>
+        </ng-template>
 
       </div>
     </div>

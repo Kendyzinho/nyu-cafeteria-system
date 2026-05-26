@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { Product } from '../models/product';
 
 export interface CartItem {
-  product: any;
+  product: Product;
   quantity: number;
 }
 
@@ -29,7 +30,7 @@ export class CartService {
     this.cartItems.next(items);
   }
 
-  addItem(product: any) {
+  addItem(product: Product) {
     if (product.stock_actual <= 0) return; // Prevent adding out of stock
     
     const items = this.cartItems.getValue();
@@ -71,6 +72,6 @@ export class CartService {
   }
 
   getTotalAmount(): number {
-    return this.cartItems.getValue().reduce((total, item) => total + (item.product.precio_estudiante || item.product.precio || 0) * item.quantity, 0);
+    return this.cartItems.getValue().reduce((total, item) => total + (item.product.precio || 0) * item.quantity, 0);
   }
 }

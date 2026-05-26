@@ -6,12 +6,10 @@ import { map } from 'rxjs/operators';
 export interface UserAdminView {
   id: number;
   email: string;
-  firstName: string;
-  lastName: string;
-  role: string;
-  isActive: boolean;
-  isResident: boolean;
-  planType?: string;
+  firstName: string;  // mock_usuario.nombre
+  role: string;       // mock_usuario.tipo
+  isActive: boolean;  // mock_usuario.activo
+  isResident: boolean; // mock_usuario.es_residente
 }
 
 @Injectable({
@@ -28,16 +26,26 @@ export class UsersService {
         id: u.id,
         email: u.email,
         firstName: u.nombre,
-        lastName: u.apellido,
         role: u.tipo,
-        isActive: true,
-        isResident: u.tipo === 'residente',
-        planType: undefined
+        isActive: !!u.activo,
+        isResident: !!u.es_residente
       })))
     );
   }
 
-  toggleUserStatus(userId: number): void {
-    // pendiente conectar al backend
+  toggleUserStatus(userId: number, currentStatus: boolean): Observable<any> {
+    return this.http.put(`${this.API_URL}/${userId}`, { activo: !currentStatus });
+  }
+
+  createUser(userData: any): Observable<any> {
+    return this.http.post(this.API_URL, userData);
+  }
+
+  updateUser(id: number, userData: any): Observable<any> {
+    return this.http.put(`${this.API_URL}/${id}`, userData);
+  }
+
+  deleteUser(id: number): Observable<any> {
+    return this.http.delete(`${this.API_URL}/${id}`);
   }
 }

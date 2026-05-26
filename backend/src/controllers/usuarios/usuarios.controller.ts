@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Res } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, Res, UseGuards } from '@nestjs/common';
 import type { Response } from 'express';
-import type { IPostUsuarioRequest } from './dto/IPostUsuarioRequest';
-import type { IPostUsuarioResponse } from './dto/IPostUsuarioResponse';
-import type { IPutUsuarioRequest } from './dto/IPutUsuarioRequest';
+import { IPostUsuarioRequest } from './dto/IPostUsuarioRequest';
+import { IPostUsuarioResponse } from './dto/IPostUsuarioResponse';
+import { IPutUsuarioRequest } from './dto/IPutUsuarioRequest';
 import { UsuariosService } from 'src/providers/usuarios/usuarios.service';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { AdminGuard } from 'src/common/guards/admin.guard';
 
 @ApiTags('Usuarios')
 @Controller('users')
@@ -13,12 +14,16 @@ export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) {}
 
   @ApiOperation({ summary: 'Obtener todos los usuarios' })
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
   @Get()
   public async getUsuarios() {
     return await this.usuariosService.getAll();
   }
 
   @ApiOperation({ summary: 'Obtener un usuario por id' })
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
   @Get(':id')
   public async getUsuario(@Param('id') id: number) {
     return await this.usuariosService.getOne(id);
@@ -44,6 +49,8 @@ export class UsuariosController {
   }
 
   @ApiOperation({ summary: 'Actualizar un usuario' })
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
   @Put(':id')
   async putUsuario(
     @Param('id') id: number,
@@ -57,6 +64,8 @@ export class UsuariosController {
   }
 
   @ApiOperation({ summary: 'Eliminar un usuario' })
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
   @Delete(':id')
   async deleteUsuario(
     @Param('id') id: number,

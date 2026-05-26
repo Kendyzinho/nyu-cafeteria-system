@@ -2,14 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { User } from '../models/user';
-
-// Extendemos la interfaz User INTERNAMENTE para simular la base de datos con contraseñas y planes.
-// Esto evita que la contraseña se filtre a otros componentes por seguridad.
-export interface MockUser extends User {
-  password?: string;
-  planType?: string;
-}
+import { User, LoginResponse } from '../models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -35,15 +28,19 @@ export class AuthService {
   /**
    * LOGIN: Valida que exista el correo en la BD Maestra y que LA CONTRASEÑA COINCIDA.
    */
-  login(email: string, password: string): Observable<any> {
-  return this.http.post<any>(`${this.apiUrl}/auth/login`, { email, password }).pipe(
-    tap(response => {
-      localStorage.setItem('jwt_token', response.access_token);
-      localStorage.setItem('current_user', JSON.stringify(response.user));
-      this.currentUserSubject.next(response.user as User);
-    })
-  );
-}
+  login(email: string, password: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, { email, password }).pipe(
+      tap(response => {
+        localStorage.setItem('jwt_token', response.access_token);
+        localStorage.setItem('current_user', JSON.stringify(response.user));
+        this.currentUserSubject.next(response.user);
+      })
+    );
+  }
+
+  register(userData: { firstName: string, lastName: string, email: string, password: string }): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/auth/register`, userData);
+  }
 
 
   logout(): void {
@@ -57,11 +54,29 @@ export class AuthService {
     return this.currentUserSubject.value;
   }
 
+  updateCurrentUser(user: User): void {
+    localStorage.setItem('current_user', JSON.stringify(user));
+    this.currentUserSubject.next(user);
+  }
+
+  checkUserStatus(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/auth/me`);
+  }
+
   getToken(): string | null {
     return localStorage.getItem('jwt_token');
   }
 
   isAuthenticated(): boolean {
-    return !!this.getToken();
+    const token = this.getToken();
+    if (!token) return false;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const now = Math.floor(Date.now() / 1000);
+      return payload.exp > now;
+    } catch (e) {
+      return false;
+    }
   }
 }

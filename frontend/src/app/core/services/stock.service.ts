@@ -4,9 +4,9 @@ import { Observable } from 'rxjs';
 
 export interface StockProducto {
   id: number;
-  menuItemId: number;
   nombre: string;
-  categoria: string;
+  unidad_medida: string;
+  categoria?: string;
   cantidad: number;
   umbralMinimo: number;
   ultimaActualizacion: string;

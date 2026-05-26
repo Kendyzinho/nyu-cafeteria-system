@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 import { MockUsuarioEntity } from 'src/database/entities/mock-usuario.entity';
-import type { IPostUsuarioRequest } from 'src/controllers/usuarios/dto/IPostUsuarioRequest';
-import type { IPutUsuarioRequest } from 'src/controllers/usuarios/dto/IPutUsuarioRequest';
+import { IPostUsuarioRequest } from 'src/controllers/usuarios/dto/IPostUsuarioRequest';
+import { IPutUsuarioRequest } from 'src/controllers/usuarios/dto/IPutUsuarioRequest';
 
 @Injectable()
 export class UsuariosService {
@@ -28,7 +29,8 @@ export class UsuariosService {
   }
 
   public async create(data: IPostUsuarioRequest): Promise<MockUsuarioEntity> {
-    const item = this.usuarioRepository.create(data);
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const item = this.usuarioRepository.create({ ...data, password: hashedPassword });
     return await this.usuarioRepository.save(item);
   }
 
