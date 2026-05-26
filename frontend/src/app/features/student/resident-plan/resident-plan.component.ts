@@ -27,6 +27,7 @@ export class ResidentPlanComponent implements OnInit {
     halal: false
   };
 
+  
 
   constructor(
     private planService: PlanService,
