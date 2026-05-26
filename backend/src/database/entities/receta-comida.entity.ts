@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { ComidaEntity } from './comida.entity';
-import { InsumosEntity } from './insumos.entity';
+import { InsumoEntity } from './insumo.entity';
 
 @Entity({ name: 'receta_comida' })
 export class RecetaComidaEntity {
@@ -23,7 +23,7 @@ export class RecetaComidaEntity {
   @JoinColumn({ name: 'comida_id' })
   comida!: ComidaEntity;
 
-  @ManyToOne(() => InsumosEntity, { onDelete: 'CASCADE' })
+  @ManyToOne(() => InsumoEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'insumo_id' })
-  insumo!: InsumosEntity;
+  insumo!: InsumoEntity;
 }

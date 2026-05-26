@@ -9,7 +9,7 @@ import { PromocionEntity } from './entities/promocion.entity';
 import { SuscripcionAlumnoEntity } from './entities/suscripcion-alumno.entity';
 import { DetallePedidoEntity } from './entities/detalle-pedido.entity';
 import { MockPagoEntity } from './entities/mock-pago.entity';
-import { InsumosEntity } from './entities/insumos.entity';
+import { InsumoEntity } from './entities/insumo.entity';
 import { RecetaComidaEntity } from './entities/receta-comida.entity';
 import { MockReservaBibliotecaEntity } from './entities/mock-reserva-biblioteca.entity';
 import * as fs from 'fs';
@@ -41,7 +41,7 @@ import * as fs from 'fs';
           SuscripcionAlumnoEntity,
           DetallePedidoEntity,
           MockPagoEntity,
-          InsumosEntity,
+          InsumoEntity,
           RecetaComidaEntity,
           MockReservaBibliotecaEntity,
         ],

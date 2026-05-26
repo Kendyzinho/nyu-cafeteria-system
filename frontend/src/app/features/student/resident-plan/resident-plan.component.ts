@@ -27,8 +27,6 @@ export class ResidentPlanComponent implements OnInit {
     halal: false
   };
 
-  selectedTime: string = '';
-  availablePlans: (Plan & { image?: string })[] = [];
 
   constructor(
     private planService: PlanService,

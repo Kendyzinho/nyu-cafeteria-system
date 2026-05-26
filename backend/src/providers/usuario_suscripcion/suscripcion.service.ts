@@ -71,15 +71,4 @@ export class SubscriptionsService {
   const precioFinal = Number(plan.precio_mensual);
   return { suscripcion: saved, plan, precioFinal };
 }
-  // HU18 — Ver estado del plan activo de un usuario residente
-public async getEstadoPlan(userId: number): Promise<{
-  suscripcion: SuscripcionAlumnoEntity;
-  plan: PlanesCatalogoEntity;
-} | null> {
-
-  const precioFinal = Number(plan.precio_mensual);
-  return { suscripcion: saved, plan, precioFinal };
-}
-
-
 }
