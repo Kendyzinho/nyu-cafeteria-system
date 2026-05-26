@@ -28,17 +28,8 @@
 
         <div class="card-footer bg-white text-center py-3">
           <hr style="border-top: 2px solid var(--nyu-dark); opacity: 1; margin-top: 0; margin-bottom: 15px;">
-
-          <h6 *ngIf="currentPlan" class="fw-bold mb-3" style="color: var(--nyu-dark);">
-            Tu plan se renovará automáticamente el {{ renewalDate }}
-          </h6>
-
-          <button 
-            *ngIf="currentPlan"
-            class="btn btn-outline-danger fw-bold"
-            (click)="cancelPlan()">
-            Cancelar Plan Activo
-          </button>
+          <h6 class="fw-bold mb-0" style="color: var(--nyu-dark);">Tu plan se renovará automáticamente el {{ renewalDate }}</h6>
+          <small class="text-muted mt-2 d-block">* Datos de uso simulados hasta conexión con API de Suscripciones</small>
         </div>
       </div>
 
@@ -55,10 +46,7 @@
                 {{ plan.nombre.includes('(') ? '(' + plan.nombre.split('(')[1] : '' }}
               </h6>
               
-              <img 
-                [src]="plan.image" 
-                class="img-fluid mb-3 shadow-sm" 
-                style="border-radius: 4px; height: 100px; object-fit: cover;">
+              <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80" class="img-fluid mb-3 shadow-sm" style="border-radius: 4px; height: 100px; object-fit: cover;">
               
               <h5 class="fw-bold" style="color: var(--nyu-dark);">${{ plan.precio_mensual | number }}</h5>
               <p class="small text-muted flex-grow-1">{{ plan.descripcion }}</p>

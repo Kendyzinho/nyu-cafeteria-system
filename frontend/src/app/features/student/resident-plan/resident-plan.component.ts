@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PlanService } from '../../../core/services/plan.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { Plan } from '../../../core/models/plan';
 
 @Component({
   selector: 'app-resident-plan',
@@ -26,6 +27,9 @@ export class ResidentPlanComponent implements OnInit {
     halal: false
   };
 
+  selectedTime: string = '';
+  availablePlans: (Plan & { image?: string })[] = [];
+
   constructor(
     private planService: PlanService,
     private authService: AuthService
@@ -39,12 +43,9 @@ export class ResidentPlanComponent implements OnInit {
   // ── Carga el catálogo de planes desde GET /meal-plans ──
   private cargarPlanesDisponibles(): void {
     this.planService.getPlanes().subscribe({
-      next: (data) => {
+      next: (data: Plan[]) => {
         this.availablePlans = data.map(plan => ({
-          id: plan.id,
-          nombre: plan.nombre,
-          precio_mensual: plan.precio_mensual || 0,
-          descripcion: plan.descripcion || '',
+          ...plan,
           image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80'
         }));
       },

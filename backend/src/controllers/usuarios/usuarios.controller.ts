@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, Res } from '@nestjs/common';
 import type { Response } from 'express';
-import type { IPostUsuarioRequest } from './dto/IPostUsuarioRequest';
-import type { IPostUsuarioResponse } from './dto/IPostUsuarioResponse';
-import type { IPutUsuarioRequest } from './dto/IPutUsuarioRequest';
+import { IPostUsuarioRequest } from './dto/IPostUsuarioRequest';
+import { IPostUsuarioResponse } from './dto/IPostUsuarioResponse';
+import { IPutUsuarioRequest } from './dto/IPutUsuarioRequest';
 import { UsuariosService } from 'src/providers/usuarios/usuarios.service';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 

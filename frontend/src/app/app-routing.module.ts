@@ -49,6 +49,7 @@ const routes: Routes = [
     path: 'admin',
     component: AdminLayoutComponent,
     canActivate: [AuthGuard, RoleGuard], // <-- PROTEGIDO: Solo administradores
+    canActivateChild: [AuthGuard, RoleGuard], // <-- PROTECCIÓN INDIVIDUAL DE RUTAS HIJAS
     children: [
       { path: '', component: AdminDashboardComponent },
       { path: 'stock', component: StockAdminComponent },

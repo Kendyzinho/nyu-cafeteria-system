@@ -12,8 +12,7 @@
         <thead style="background-color: #f8f9fa;">
           <tr>
             <th class="py-4 px-4 fw-bold text-uppercase text-muted" style="font-size: 0.85rem;">Campaña / Descuento</th>
-            <th class="py-4 px-4 fw-bold text-uppercase text-muted text-center" style="font-size: 0.85rem;">Requisitos (Sistemas)</th>
-            <th class="py-4 px-4 fw-bold text-uppercase text-muted text-center" style="font-size: 0.85rem;">Aprobación Eq. Externo</th>
+            <th class="py-4 px-4 fw-bold text-uppercase text-muted text-center" style="font-size: 0.85rem;">Horario Habilitado</th>
             <th class="py-4 px-4 fw-bold text-uppercase text-muted text-center" style="font-size: 0.85rem;">Estado de Campaña</th>
             <th class="py-4 px-4 fw-bold text-uppercase text-muted text-end" style="font-size: 0.85rem;">Acción</th>
           </tr>
@@ -28,26 +27,9 @@
             </td>
 
             <td class="py-3 px-4 text-center">
-              <div class="d-flex flex-wrap gap-1 justify-content-center">
-                <span class="badge bg-light text-dark border">
-                  <i class="bi bi-mortarboard-fill text-primary me-1"></i>Matrícula
-                </span>
-                <span class="badge bg-light text-dark border">
-                  <i class="bi bi-credit-card-fill text-success me-1"></i>Pagos
-                </span>
-                <span class="badge bg-light text-dark border" *ngIf="promo.residenciaRequerida">
-                  <i class="bi bi-house-fill text-warning me-1"></i>Residencia
-                </span>
-              </div>
-            </td>
-
-            <td class="py-3 px-4 text-center">
               <div class="d-flex flex-column align-items-center gap-1" style="font-size: 0.8rem;">
-                <span [ngClass]="promo.estudianteActivo ? 'text-success fw-bold' : 'text-danger fw-bold'">
-                  <i class="bi" [ngClass]="promo.estudianteActivo ? 'bi-check-circle-fill' : 'bi-x-circle-fill'"></i> Estudiante
-                </span>
-                <span [ngClass]="promo.pagoAprobado ? 'text-success fw-bold' : 'text-danger fw-bold'">
-                  <i class="bi" [ngClass]="promo.pagoAprobado ? 'bi-check-circle-fill' : 'bi-x-circle-fill'"></i> Pago
+                <span class="text-dark fw-bold">
+                  <i class="bi bi-clock"></i> {{ promo.horaInicio }} - {{ promo.horaFin }}
                 </span>
               </div>
             </td>
