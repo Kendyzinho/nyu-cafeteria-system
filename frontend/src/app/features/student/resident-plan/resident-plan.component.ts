@@ -8,11 +8,17 @@ import { AuthService } from '../../../core/services/auth.service';
   styleUrls: ['./resident-plan.component.css']
 })
 export class ResidentPlanComponent implements OnInit {
-  mealsConsumed = 15;
-  totalMeals = 30;
-  renewalDate = '1 de mayo';
-  currentPlanId: number | null = 2; // Default mock selection
 
+  // ── Estado del plan activo (viene de HU18) ──
+  currentPlan: any = null;       // objeto con { plan, estado, mesVigencia, ... }
+  currentPlanId: number | null = null;
+
+  // ── Lista de planes disponibles (viene de GET /meal-plans) ──
+  availablePlans: any[] = [];
+
+  // ── UI ──
+  loading = false;
+  selectedTime: string = '';
   preferences = {
     vegano: false,
     vegetariano: false,
@@ -20,89 +26,107 @@ export class ResidentPlanComponent implements OnInit {
     halal: false
   };
 
-  selectedTime: string = '';
-  availablePlans: any[] = [];
-
   constructor(
     private planService: PlanService,
     private authService: AuthService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
+    this.cargarPlanesDisponibles();  // siempre carga el catálogo
+    this.cargarEstadoPlanActivo();   // HU18: carga el plan activo del usuario
+  }
+
+  // ── Carga el catálogo de planes desde GET /meal-plans ──
+  private cargarPlanesDisponibles(): void {
     this.planService.getPlanes().subscribe({
       next: (data) => {
         this.availablePlans = data.map(plan => ({
           id: plan.id,
-          nombre: plan.nombre || `Plan ${plan.tipo || 'Mensual'}`,
-          precio_mensual: plan.precio_mensual || plan.precio || 0,
-          descripcion: plan.descripcion || 'Plan alimentario de cafetería.',
+          nombre: plan.nombre,
+          precio_mensual: plan.precio_mensual || 0,
+          descripcion: plan.descripcion || '',
           image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80'
         }));
       },
-      error: (err) => console.error('Error fetching plans', err)
+      error: (err) => console.error('Error cargando planes', err)
     });
   }
 
-  getCurrentPlanName(): string {
-    if (!this.currentPlanId || !this.availablePlans.length) return 'Plan Estándar';
-    const plan = this.availablePlans.find(p => p.id === this.currentPlanId);
-    return plan ? plan.nombre : 'Plan Estándar';
-  }
-
-  savePreferences() {
-    alert('Tus preferencias alimentarias han sido guardadas en el sistema.');
-  }
-
-  loadPlans(): void {
-    this.planService.getPlanes().subscribe({
-      next: (data) => {
-        this.availablePlans = data.map(plan => ({
-          id: plan.id,
-          nombre: plan.nombre || `Plan ${plan.tipo || 'Mensual'}`,
-          precio_mensual: plan.precio_mensual || plan.precio || 0,
-          descripcion: plan.descripcion || 'Plan alimentario de cafetería.',
-          image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80'
-        }));
-      },
-      error: (err) => console.error('Error fetching plans', err)
-    });
-  }
-
-  selectPlan(planId: number) {
+  // ── HU18: Carga el plan activo del usuario logueado ──
+  private cargarEstadoPlanActivo(): void {
     const user = this.authService.getCurrentUser();
-    
-    this.planService.activarPlan(planId, {
-      estudiante: user ? user.firstName : 'Estudiante',
-      planActivo: true
-    }).subscribe({
-      next: () => {
-        this.currentPlanId = planId;
-        alert('Te has suscrito exitosamente al plan. El cobro ha sido derivado al Sistema Central de Pagos (Integración).');
+    if (!user) return;
+
+    this.planService.getEstadoPlan(user.id).subscribe({
+      next: (data) => {
+        this.currentPlan = data;          // guarda toda la respuesta del backend
+        this.currentPlanId = data.planId; // marca cuál plan está activo en la UI
       },
       error: () => {
-        this.currentPlanId = planId;
-        alert('Suscripción local simulada completada exitosamente.');
+        // 404 = no tiene plan activo todavía, es normal
+        this.currentPlan = null;
+        this.currentPlanId = null;
       }
     });
   }
 
-  cancelPlan() {
-    this.currentPlanId = null;
-    alert('Plan cancelado correctamente.');
+  // ── HU17: Suscribir al usuario al plan elegido ──
+  selectPlan(planId: number): void {
+    const user = this.authService.getCurrentUser();
+    if (!user) return;
+
+    this.loading = true;
+    this.planService.suscribir(user.id, planId).subscribe({
+      next: (response) => {
+        this.loading = false;
+        this.currentPlanId = planId;
+        // Recarga el estado del plan para mostrar datos actualizados (HU18)
+        this.cargarEstadoPlanActivo();
+        alert('¡Suscripción exitosa! Tu plan ha sido activado.');
+      },
+      error: (err) => {
+        this.loading = false;
+        alert('No se pudo completar la suscripción. Verifica que tu cuenta es de tipo residente.');
+        console.error(err);
+      }
+    });
   }
 
-  generateTicket() {
+  getCurrentPlanName(): string {
+    if (!this.currentPlan) return 'Sin plan activo';
+    return this.currentPlan.plan?.nombre ?? 'Plan activo';
+  }
+
+  savePreferences(): void {
+    alert('Preferencias guardadas.');
+  }
+
+  cancelPlan(): void {
+    alert('Funcionalidad de cancelación próximamente.');
+  }
+
+  generateTicket(): void {
     if (!this.selectedTime) {
-      alert('Selecciona una hora antes de generar el ticket.');
+      alert('Selecciona un horario primero.');
       return;
     }
-
-    this.mealsConsumed++;
-    alert(`¡Éxito! Ticket generado para las ${this.selectedTime}. Presenta tu TUI en la cafetería.`);
+    alert(`Ticket generado para las ${this.selectedTime}. Presenta tu TUI en la cafetería.`);
     this.selectedTime = '';
   }
+  get totalMeals(): number {
+  if (!this.currentPlan?.plan?.nombre) return 0;
+  const match = this.currentPlan.plan.nombre.match(/(\d+)\s*[Cc]omidas?/);
+  return match ? parseInt(match[1]) : 0;
+}
 
-  get currentPlan() {
-    return this.currentPlanId;
-  }
+get mealsConsumed(): number {
+  return 0;
+}
+
+get renewalDate(): string {
+  if (!this.currentPlan?.mesVigencia) return '';
+  const date = new Date(this.currentPlan.mesVigencia);
+  date.setMonth(date.getMonth() + 1);
+  return date.toLocaleDateString('es-AR', { day: 'numeric', month: 'long' });
+}
 }

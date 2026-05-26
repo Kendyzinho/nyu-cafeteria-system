@@ -24,29 +24,29 @@ export class SubscriptionsService {
   ) {}
 
   // HU17 — Suscribir residente a un plan mensual
-  public async suscribir(data: IPostSubscriptionRequest): Promise<{
-    suscripcion: SuscripcionAlumnoEntity;
-    plan: PlanesCatalogoEntity;
-    precioFinal: number;
-  } | null> {
+ public async suscribir(data: IPostSubscriptionRequest): Promise<{
+  suscripcion: SuscripcionAlumnoEntity;
+  plan: PlanesCatalogoEntity;
+  precioFinal: number;
+} | null> {
 
-  // 1. Verificar que el usuario existe y es residente activo
+  // 1. Verificar usuario residente activo
   const usuario = await this.usuarioRepository.findOne({
     where: { id: data.userId },
   });
   if (!usuario || !usuario.es_residente || !usuario.activo) return null;
 
-  // 2. Verificar que el plan existe y está activo
+  // 2. Verificar plan activo
   const plan = await this.planRepository.findOne({
     where: { id: data.planId },
   });
   if (!plan || !plan.activo) return null;
 
-  // 3. Calcular primer día del mes actual como mes de vigencia
+  // 3. Primer día del mes actual
   const now = new Date();
   const mesVigencia = new Date(now.getFullYear(), now.getMonth(), 1);
 
-  // 4. UPSERT — buscar si ya tiene una fila en suscripcion_alumno
+  // 4. UPSERT — actualizar si existe, crear si no existe
   const suscripcionExistente = await this.suscripcionRepository.findOne({
     where: { usuarioId: data.userId },
   });
@@ -54,13 +54,11 @@ export class SubscriptionsService {
   let saved: SuscripcionAlumnoEntity;
 
   if (suscripcionExistente) {
-    // Ya tiene fila → solo actualizar con el nuevo plan
     suscripcionExistente.planActivoId = data.planId;
     suscripcionExistente.mesVigencia = mesVigencia;
     suscripcionExistente.estado = 'activo';
     saved = await this.suscripcionRepository.save(suscripcionExistente);
   } else {
-    // No tiene fila → crear nueva
     const nueva = this.suscripcionRepository.create({
       usuarioId: data.userId,
       planActivoId: data.planId,
@@ -69,6 +67,15 @@ export class SubscriptionsService {
     });
     saved = await this.suscripcionRepository.save(nueva);
   }
+
+  const precioFinal = Number(plan.precio_mensual);
+  return { suscripcion: saved, plan, precioFinal };
+}
+  // HU18 — Ver estado del plan activo de un usuario residente
+public async getEstadoPlan(userId: number): Promise<{
+  suscripcion: SuscripcionAlumnoEntity;
+  plan: PlanesCatalogoEntity;
+} | null> {
 
   const precioFinal = Number(plan.precio_mensual);
   return { suscripcion: saved, plan, precioFinal };
