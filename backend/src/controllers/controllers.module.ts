@@ -10,6 +10,7 @@ import { StockController } from './stock/stock.controller';
 import { PromocionesController } from './promociones/promociones.controller';
 import { UsuariosController } from './usuarios/usuarios.controller';
 import { AuthController } from './auth/auth.controller';
+import { CategoriasController } from './categorias/categorias.controller';
 import { ComidaEntity } from 'src/database/entities/comida.entity';
 import { PedidoEntity } from 'src/database/entities/pedido.entity';
 import { PlanesCatalogoEntity } from 'src/database/entities/planes-catalogo.entity';
@@ -24,10 +25,7 @@ import { PromocionesService } from 'src/providers/promociones/promociones.servic
 import { UsuariosService } from 'src/providers/usuarios/usuarios.service';
 import { AuthService } from 'src/providers/auth/auth.service';
 import { JwtStrategy } from 'src/common/strategies/jwt.strategy';
-import { SubscriptionsController } from './usuario_suscripcion/suscripcion.controller';
-import { SubscriptionsService } from 'src/providers/usuario_suscripcion/suscripcion.service';
-import { SuscripcionAlumnoEntity } from 'src/database/entities/suscripcion-alumno.entity'
-
+import { AdminGuard } from 'src/common/guards/admin.guard';
 
 @Module({
   imports: [
@@ -59,8 +57,7 @@ import { SuscripcionAlumnoEntity } from 'src/database/entities/suscripcion-alumn
     PromocionesController,
     UsuariosController,
     AuthController,
-    SubscriptionsController,
-
+    CategoriasController,
   ],
   providers: [
     MenuService,
@@ -71,7 +68,7 @@ import { SuscripcionAlumnoEntity } from 'src/database/entities/suscripcion-alumn
     UsuariosService,
     AuthService,
     JwtStrategy,
-    SubscriptionsService
+    AdminGuard,
   ],
 })
 export class ControllersModule {}

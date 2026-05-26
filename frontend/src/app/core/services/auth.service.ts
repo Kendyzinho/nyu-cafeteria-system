@@ -59,8 +59,8 @@ export class AuthService {
     this.currentUserSubject.next(user);
   }
 
-  checkUserStatus(id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/users/${id}`);
+  checkUserStatus(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/auth/me`);
   }
 
   getToken(): string | null {

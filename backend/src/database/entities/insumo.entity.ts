@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity({ name: 'insumos' })
+@Entity({ name: 'insumo' })
 export class InsumoEntity {
   constructor(data?: Partial<InsumoEntity>) {
     if (data) Object.assign(this, data);
