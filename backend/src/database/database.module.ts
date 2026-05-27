@@ -45,7 +45,7 @@ import * as fs from 'fs';
           RecetaComidaEntity,
           MockReservaBibliotecaEntity,
         ],
-        synchronize: true,
+        synchronize: false,
         autoLoadEntities: true,
       }),
       inject: [ConfigService],
