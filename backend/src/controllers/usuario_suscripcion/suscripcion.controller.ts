@@ -1,4 +1,6 @@
-import { Controller, Post, Body,Get, Res, UsePipes, ValidationPipe,Param,ParseIntPipe} from '@nestjs/common';
+import { Controller, Post, Body, Get, Res, Req,
+         UsePipes, ValidationPipe, Param, ParseIntPipe,
+         UseGuards } from '@nestjs/common';
 import type { Response } from 'express';
 import {
   ApiTags,
@@ -10,6 +12,10 @@ import { SubscriptionsService } from '../../providers/usuario_suscripcion/suscri
 import { IPostSubscriptionRequest } from './dto/IPostSubscriptionRequest';
 import type { IPostSubscriptionResponse } from './dto/IPostSubscriptionResponse';
 import type { IGetSubscriptionStatusResponse } from './dto/IGetSubscriptionStatusResponse';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import type { Request } from 'express';
+
+
 
 
 @ApiTags('Subscriptions')
@@ -58,40 +64,23 @@ export class SubscriptionsController {
       },
     },
   })
-  @Post()
-  @UsePipes(new ValidationPipe())
-  async postSubscription(
-    @Body() request: IPostSubscriptionRequest,
-    @Res() response: Response,
-  ): Promise<Response> {
-    const result = await this.subscriptionsService.suscribir(request);
-
-    if (!result) {
-      const body: IPostSubscriptionResponse = {
-        data: null,
-        statusCode: 404,
-        statusDescription: 'Usuario no encontrado, no es residente, o plan inactivo',
-        errors: 'No se pudo crear la suscripción',
-      };
-      return response.status(404).json(body);
-    }
-
-    const { suscripcion, plan, precioFinal } = result;
-    const body: IPostSubscriptionResponse = {
-      data: {
-        subscriptionId: suscripcion.id,
-        userId: suscripcion.usuarioId,
-        planId: suscripcion.planActivoId!,
-        nombrePlan: plan.nombre,
-        mesVigencia: suscripcion.mesVigencia.toISOString().split('T')[0],
-        estado: suscripcion.estado,
-        precioFinal,
-      },
-      statusCode: 201,
-      statusDescription: 'Suscripción creada exitosamente',
-      errors: null,
-    };
-
-    return response.status(201).json(body);
-  }
+  @UseGuards(JwtAuthGuard)        // ← valida el token
+@Post()
+@UsePipes(new ValidationPipe())
+async postSubscription(
+  @Req() req: Request,          // ← extrae el usuario del token
+  @Body() body: { planId: number },
+  @Res() response: Response,
+): Promise<Response> {
+  const userId = (req.user as any).id;  // viene del JwtStrategy
+  const result = await this.subscriptionsService.suscribir({
+    userId,
+    planId: body.planId,
+  });
+  return response.status(201).json({
+    message: 'Suscripción creada con éxito',
+    data: result
+  });
+  // ... resto igual
+}
 }

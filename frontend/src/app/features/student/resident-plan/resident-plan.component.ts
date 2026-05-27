@@ -72,11 +72,11 @@ export class ResidentPlanComponent implements OnInit {
 
   // ── HU17: Suscribir al usuario al plan elegido ──
   selectPlan(planId: number): void {
-    const user = this.authService.getCurrentUser();
-    if (!user) return;
+  const user = this.authService.getCurrentUser();
+  if (!user) return;
 
     this.loading = true;
-    this.planService.suscribir(user.id, planId).subscribe({
+     this.planService.suscribir(user.id, planId).subscribe({
       next: (response) => {
         this.loading = false;
         this.currentPlanId = planId;

@@ -27,6 +27,8 @@ import { AuthService } from 'src/providers/auth/auth.service';
 import { JwtStrategy } from 'src/common/strategies/jwt.strategy';
 import { AdminGuard } from 'src/common/guards/admin.guard';
 import { SuscripcionAlumnoEntity } from 'src/database/entities/suscripcion-alumno.entity';
+import { SubscriptionsService } from 'src/providers/usuario_suscripcion/suscripcion.service';
+import { SubscriptionsController } from './usuario_suscripcion/suscripcion.controller';
 
 @Module({
   imports: [
@@ -59,6 +61,7 @@ import { SuscripcionAlumnoEntity } from 'src/database/entities/suscripcion-alumn
     UsuariosController,
     AuthController,
     CategoriasController,
+    SubscriptionsController
   ],
   providers: [
     MenuService,
@@ -70,6 +73,7 @@ import { SuscripcionAlumnoEntity } from 'src/database/entities/suscripcion-alumn
     AuthService,
     JwtStrategy,
     AdminGuard,
+    SubscriptionsService
   ],
 })
 export class ControllersModule {}
