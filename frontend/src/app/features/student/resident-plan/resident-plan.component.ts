@@ -60,7 +60,8 @@ export class ResidentPlanComponent implements OnInit {
     this.planService.getEstadoPlan(user.id).subscribe({
       next: (data) => {
         this.currentPlan = data;          // guarda toda la respuesta del backend
-        this.currentPlanId = data.planId; // marca cuál plan está activo en la UI
+        this.currentPlanId = data.plan?.id ?? null;
+ // marca cuál plan está activo en la UI
       },
       error: () => {
         // 404 = no tiene plan activo todavía, es normal
