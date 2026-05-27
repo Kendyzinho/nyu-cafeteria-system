@@ -102,5 +102,4 @@ return response.status(201).json({
   errors: null,
 });
 }
-
 }
