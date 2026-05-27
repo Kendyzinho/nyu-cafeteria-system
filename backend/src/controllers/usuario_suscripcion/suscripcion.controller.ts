@@ -129,6 +129,7 @@ return response.status(201).json({
   status: 404,
   description: 'No hay suscripción activa para este usuario',
 })
+@UseGuards(JwtAuthGuard)
 @Get('user/:userId/status')
 async getSubscriptionStatus(
   @Param('userId', ParseIntPipe) userId: number,
