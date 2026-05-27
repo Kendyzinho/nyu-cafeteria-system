@@ -72,24 +72,5 @@ if (plan.reqResidencia && !usuario.es_residente) return null;
 
   const precioFinal = Number(plan.precio_mensual);
   return { suscripcion: saved, plan, precioFinal };
-}// HU18 — Ver estado del plan activo
-public async getEstadoPlan(userId: number): Promise<{
-  suscripcion: SuscripcionAlumnoEntity;
-  plan: PlanesCatalogoEntity;
-} | null> {
-
-  const suscripcion = await this.suscripcionRepository.findOne({
-    where: { usuarioId: userId, estado: 'activo' },
-  });
-
-  if (!suscripcion || !suscripcion.planActivoId) return null;
-
-  const plan = await this.planRepository.findOne({
-    where: { id: suscripcion.planActivoId },
-  });
-
-  if (!plan) return null;
-
-  return { suscripcion, plan };
 }
 }
