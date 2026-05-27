@@ -42,6 +42,8 @@ const plan = await this.planRepository.findOne({
 });
 if (!plan || !plan.activo) return null;
 // 2.1 Si el plan es exclusivo para residentes y el usuario no lo es → rechazar
+if (plan.reqResidencia && !usuario.es_residente) return null;
+
   // 3. Primer día del mes actual
   // 3. Primer día del mes actual
   const now = new Date();
