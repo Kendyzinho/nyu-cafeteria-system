@@ -52,11 +52,15 @@
               <p class="small text-muted flex-grow-1">{{ plan.descripcion }}</p>
               
               <button 
-                class="btn w-100 fw-bold text-white mt-3" 
-                [ngStyle]="{'background-color': plan.id === currentPlanId ? '#000000' : 'var(--nyu-dark)'}"
-                (click)="selectPlan(plan.id)">
-                {{ plan.id === currentPlanId ? 'Plan Activo' : 'Suscribirme a este Plan' }}
-              </button>
+              class="btn w-100 fw-bold mt-3"
+              [disabled]="isResidentPlan(plan) && !currentUser?.isResident || plan.id === currentPlanId"
+              [ngClass]="(isResidentPlan(plan) && !currentUser?.isResident) ? 'text-muted' : 'text-white'"
+              [ngStyle]="{'background-color': (isResidentPlan(plan) && !currentUser?.isResident)? '#d6d6d6': (plan.id === currentPlanId ? '#000000' : 'var(--nyu-dark)'),'cursor': (isResidentPlan(plan) && !currentUser?.isResident) ? 'not-allowed' : 'pointer'
+
+              }"
+              (click)="selectPlan(plan)">{{(isResidentPlan(plan) && !currentUser?.isResident)? 'Solo residentes': (plan.id === currentPlanId ? 'Plan Activo' : 'Suscribirme a este Plan')
+            }}
+            </button>
             </div>
           </div>
         </div>
@@ -127,18 +131,14 @@
         <div class="card-body p-4 text-center">
           
           <select class="form-select shadow-sm mb-4" [(ngModel)]="selectedTime">
+
             <option value="" disabled>Seleccionar Horario de Canje</option>
             <option value="12:00 - 12:30">12:00 - 12:30 (hoy)</option>
             <option value="13:00 - 13:30">13:00 - 13:30 (hoy)</option>
             <option value="14:00 - 14:30">14:00 - 14:30 (hoy)</option>
           </select>
 
-          <button 
-            class="btn text-white w-100 fw-bold" 
-            style="background-color: var(--nyu-dark);" 
-            (click)="generateTicket()">
-            Canjear Comida del Plan (1 Uso)
-          </button>
+          <button class="btn text-white w-100 fw-bold" style="background-color: var(--nyu-dark);" (click)="generateTicket()">Canjear Comida del Plan (1 Uso)</button>
           
         </div>
       </div>

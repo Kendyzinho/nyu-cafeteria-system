@@ -13,6 +13,7 @@ export class ResidentPlanComponent implements OnInit {
   // ── Estado del plan activo (viene de HU18) ──
   currentPlan: any = null;       // objeto con { plan, estado, mesVigencia, ... }
   currentPlanId: number | null = null;
+  currentUser: any = null;
 
   // ── Lista de planes disponibles (viene de GET /meal-plans) ──
   availablePlans: any[] = [];
@@ -35,6 +36,7 @@ export class ResidentPlanComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.currentUser = this.authService.getCurrentUser();
     this.cargarPlanesDisponibles();  // siempre carga el catálogo
     this.cargarEstadoPlanActivo();   // HU18: carga el plan activo del usuario
   }
@@ -71,23 +73,33 @@ export class ResidentPlanComponent implements OnInit {
     });
   }
 
+  isResidentPlan(plan: any): boolean {
+    return plan.nombre?.toLowerCase().includes('residente');
+  }
+
+
   // ── HU17: Suscribir al usuario al plan elegido ──
-  selectPlan(planId: number): void {
-  const user = this.authService.getCurrentUser();
-  if (!user) return;
+  selectPlan(plan: any): void {
+    const user = this.authService.getCurrentUser();
+    if (!user) return;
+
+    if (this.isResidentPlan(plan) && !user.isResident) {
+      alert('Este plan está disponible solo para estudiantes residentes.');
+      return;
+    }
 
     this.loading = true;
-     this.planService.suscribir(user.id, planId).subscribe({
+    this.planService.suscribir(user.id, plan.id).subscribe({
       next: (response) => {
         this.loading = false;
-        this.currentPlanId = planId;
+        this.currentPlanId = plan.id;
         // Recarga el estado del plan para mostrar datos actualizados (HU18)
         this.cargarEstadoPlanActivo();
         alert('¡Suscripción exitosa! Tu plan ha sido activado.');
       },
       error: (err) => {
         this.loading = false;
-        alert('No se pudo completar la suscripción. Verifica que tu cuenta es de tipo residente.');
+        alert('No se pudo completar la suscripción.');
         console.error(err);
       }
     });
@@ -107,13 +119,15 @@ export class ResidentPlanComponent implements OnInit {
   }
 
   generateTicket(): void {
-    if (!this.selectedTime) {
-      alert('Selecciona un horario primero.');
-      return;
-    }
-    alert(`Ticket generado para las ${this.selectedTime}. Presenta tu TUI en la cafetería.`);
-    this.selectedTime = '';
+  if (!this.selectedTime) {
+    alert('Selecciona un horario primero.');
+    return;
   }
+  alert(`Ticket generado para las ${this.selectedTime}. Presenta tu TUI en la cafetería.`);
+  this.selectedTime = '';
+}
+
+
   get totalMeals(): number {
   if (!this.currentPlan?.plan?.nombre) return 0;
   const match = this.currentPlan.plan.nombre.match(/(\d+)\s*[Cc]omidas?/);
