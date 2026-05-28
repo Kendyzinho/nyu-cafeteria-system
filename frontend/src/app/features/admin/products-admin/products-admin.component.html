@@ -4,40 +4,86 @@
     <button class="btn btn-cafeteria" (click)="openCreateModal()">+ Añadir Producto</button>
   </div>
 
-  <div class="card border-0 shadow-sm">
+  <!-- Barra de búsqueda interactiva local -->
+  <div class="row mb-4">
+    <div class="col-md-6 col-lg-4">
+      <div class="input-group search-bar shadow-sm rounded-3">
+        <span class="input-group-text bg-white border-end-0 text-muted py-2 px-3">
+          <i class="bi bi-search">🔍</i>
+        </span>
+        <input type="text" 
+               class="form-control border-start-0 py-2 ps-1" 
+               placeholder="Buscar por nombre, categoría o descripción..." 
+               [(ngModel)]="searchTerm">
+      </div>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
     <div class="card-body p-0">
       <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
           <thead class="bg-light">
             <tr>
+              <th class="border-0 ps-4">Imagen</th>
               <th class="border-0">Nombre</th>
               <th class="border-0">Categoría</th>
               <th class="border-0">Precio Gral.</th>
               <th class="border-0">Precio Estudiante</th>
               <th class="border-0">Stock</th>
-              <th class="border-0 text-end">Acciones</th>
+              <th class="border-0 text-end pe-4">Acciones</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let product of products">
+            <tr *ngFor="let product of filteredProducts" class="align-middle">
+              <td class="ps-4">
+                <img [src]="product.imagen_url || 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=100&auto=format&fit=crop&q=60'" 
+                     [alt]="product.nombre" 
+                     class="rounded-circle object-fit-cover shadow-sm border border-2 border-white" 
+                     style="width: 45px; height: 45px; object-fit: cover;"
+                     #tableImg
+                     (error)="tableImg.src = 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=100&auto=format&fit=crop&q=60'">
+              </td>
               <td>
                 <div class="fw-bold text-dark">{{ product.nombre }}</div>
+                <div class="text-muted small text-truncate" style="max-width: 250px;">{{ product.descripcion }}</div>
               </td>
-              <td><span class="badge bg-cafe-light">{{ product.categoria }}</span></td>
-              <td>${{ product.precio }}</td>
-              <td><span class="text-success fw-bold">${{ product.precio * 0.75 | number:'1.2-2' }}</span></td>
               <td>
-                <span class="badge" [ngClass]="product.stock_actual > 0 ? 'bg-success' : 'bg-danger'">
-                  {{ product.stock_actual }}
+                <span class="badge rounded-pill fw-semibold px-3 py-2" [ngClass]="{
+                  'badge-desayuno': product.categoria === 'Desayuno',
+                  'badge-almuerzo': product.categoria === 'Almuerzo',
+                  'badge-cena': product.categoria === 'Cena',
+                  'badge-snack': product.categoria === 'Snack'
+                }">
+                  {{ product.categoria }}
                 </span>
               </td>
-              <td class="text-end">
-                <button class="btn btn-sm btn-outline-primary me-2" (click)="openEditModal(product)">Editar</button>
-                <button class="btn btn-sm btn-outline-danger" (click)="confirmDelete(product)">Eliminar</button>
+              <td class="fw-semibold text-secondary">${{ product.precio | number:'1.2-2' }}</td>
+              <td>
+                <span class="text-success fw-bold">${{ product.precio * 0.75 | number:'1.2-2' }}</span>
+                <span class="badge bg-success-subtle text-success ms-1 small rounded-pill px-2" style="font-size: 0.7rem;">-25% Est.</span>
+              </td>
+              <td>
+                <span class="badge rounded-pill px-3 py-2 fw-semibold" [ngClass]="product.stock_actual > 0 ? 'bg-success-light text-success' : 'bg-danger-light text-danger'">
+                  {{ product.stock_actual > 0 ? product.stock_actual + ' disp.' : 'Agotado' }}
+                </span>
+              </td>
+              <td class="text-end pe-4">
+                <button class="btn btn-sm btn-outline-primary me-2 rounded-pill px-3" (click)="openEditModal(product)">Editar</button>
+                <button class="btn btn-sm btn-outline-danger rounded-pill px-3" (click)="confirmDelete(product)">Eliminar</button>
               </td>
             </tr>
             <tr *ngIf="products.length === 0">
-              <td colspan="6" class="text-center py-4 text-muted">No hay productos registrados.</td>
+              <td colspan="7" class="text-center py-5 text-muted bg-white">
+                <div class="fs-4 mb-2">☕</div>
+                <div>No hay productos registrados en la cafetería.</div>
+              </td>
+            </tr>
+            <tr *ngIf="products.length > 0 && filteredProducts.length === 0">
+              <td colspan="7" class="text-center py-5 text-muted bg-white">
+                <div class="fs-4 mb-2">🔍</div>
+                <div>No se encontraron productos coincidentes con tu búsqueda.</div>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -46,54 +92,96 @@
   </div>
 </div>
 
-<!-- Modal Form -->
-<div class="modal fade show d-block" tabindex="-1" *ngIf="showFormModal" style="background: rgba(0,0,0,0.5);">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header border-0 pb-0">
-        <h5 class="modal-title fw-bold">{{ isEditing ? 'Editar Producto' : 'Añadir Producto' }}</h5>
+<!-- Modal Form con cierre inteligente y validación interactiva -->
+<div class="modal fade show d-block" tabindex="-1" *ngIf="showFormModal" style="background: rgba(0,0,0,0.5); backdrop-filter: blur(3px);" (click)="closeModal()">
+  <div class="modal-dialog modal-dialog-centered" (click)="$event.stopPropagation()">
+    <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+      <div class="modal-header border-0 pb-0 pt-4 px-4 bg-white">
+        <h5 class="modal-title fw-bold text-cafe-dark" style="color: #4E342E;">{{ isEditing ? '📝 Editar Producto' : '☕ Añadir Producto' }}</h5>
         <button type="button" class="btn-close" (click)="closeModal()"></button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body px-4 pb-4 bg-white">
         <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+          
           <div class="mb-3">
-            <label class="form-label">Nombre del Producto</label>
-            <input type="text" class="form-control" formControlName="nombre">
+            <label class="form-label fw-semibold text-secondary">Nombre del Producto</label>
+            <input type="text" 
+                   class="form-control" 
+                   [ngClass]="{'is-invalid': productForm.get('nombre')?.touched && productForm.get('nombre')?.invalid}"
+                   formControlName="nombre"
+                   placeholder="Ej. Capuchino Italiano">
+            <div class="invalid-feedback">El nombre del producto es obligatorio.</div>
           </div>
           
           <div class="mb-3">
-            <label class="form-label">Descripción</label>
-            <textarea class="form-control" rows="2" formControlName="descripcion"></textarea>
+            <label class="form-label fw-semibold text-secondary">Descripción</label>
+            <textarea class="form-control" 
+                      rows="2" 
+                      [ngClass]="{'is-invalid': productForm.get('descripcion')?.touched && productForm.get('descripcion')?.invalid}"
+                      formControlName="descripcion"
+                      placeholder="Ej. Expreso doble con leche espumada y espolvoreado con cacao..."></textarea>
+            <div class="invalid-feedback">La descripción del producto es obligatoria.</div>
           </div>
 
           <div class="row mb-3">
             <div class="col">
-              <label class="form-label">Categoría</label>
-              <select class="form-select" formControlName="categoria">
-                <option *ngFor="let cat of categorias" [value]="cat">{{ cat }}</option>
+              <label class="form-label fw-semibold text-secondary">Categoría</label>
+              <select class="form-select" 
+                      [ngClass]="{'is-invalid': productForm.get('categoria')?.touched && productForm.get('categoria')?.invalid}"
+                      formControlName="categoria">
+                <option value="Desayuno">Desayuno</option>
+                <option value="Almuerzo">Almuerzo</option>
+                <option value="Cena">Cena</option>
+                <option value="Snack">Snack</option>
               </select>
+              <div class="invalid-feedback">Categoría requerida.</div>
             </div>
             <div class="col">
-              <label class="form-label">Stock Inicial</label>
-              <input type="number" class="form-control" formControlName="stock_actual">
+              <label class="form-label fw-semibold text-secondary">Stock Inicial</label>
+              <input type="number" 
+                     class="form-control" 
+                     [ngClass]="{'is-invalid': productForm.get('stock_actual')?.touched && productForm.get('stock_actual')?.invalid}"
+                     formControlName="stock_actual">
+              <div class="invalid-feedback">Debe ser un número mayor o igual a 0.</div>
             </div>
           </div>
 
           <div class="row mb-3">
             <div class="col">
-              <label class="form-label">Precio General ($)</label>
-              <input type="number" class="form-control" formControlName="precio">
+              <label class="form-label fw-semibold text-secondary">Precio General ($)</label>
+              <input type="number" 
+                     class="form-control" 
+                     [ngClass]="{'is-invalid': productForm.get('precio')?.touched && productForm.get('precio')?.invalid}"
+                     formControlName="precio"
+                     placeholder="0.00">
+              <div class="invalid-feedback">El precio debe ser un número mayor o igual a 0.</div>
             </div>
           </div>
 
           <div class="mb-3">
-            <label class="form-label">URL de la Imagen (Opcional)</label>
-            <input type="text" class="form-control" formControlName="imagen_url" placeholder="https://ejemplo.com/imagen.jpg">
+            <label class="form-label fw-semibold text-secondary">URL de imagen (opcional)</label>
+            <input type="text" 
+                   class="form-control" 
+                   formControlName="imagen_url" 
+                   placeholder="https://images.unsplash.com/...">
           </div>
 
-          <div class="d-flex justify-content-end gap-2">
-            <button type="button" class="btn btn-light" (click)="closeModal()">Cancelar</button>
-            <button type="submit" class="btn btn-cafeteria">Guardar</button>
+          <!-- Previsualización en Vivo de la Imagen -->
+          <div class="mb-4 d-flex flex-column align-items-center" *ngIf="productForm.get('imagen_url')?.value">
+            <span class="form-label align-self-start fw-semibold text-secondary">Vista Previa de la Imagen</span>
+            <div class="preview-img-container shadow-sm border rounded-3 p-1 bg-light w-100 text-center">
+              <img [src]="productForm.get('imagen_url')?.value" 
+                   alt="Previsualización" 
+                   class="rounded-2 img-fluid" 
+                   style="max-height: 140px; object-fit: cover;"
+                   #modalPreviewImg
+                   (error)="modalPreviewImg.src = 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=200&auto=format&fit=crop&q=60'">
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 border-top pt-3 mt-3">
+            <button type="button" class="btn btn-light rounded-pill px-4" (click)="closeModal()">Cancelar</button>
+            <button type="submit" class="btn btn-cafeteria rounded-pill px-4">Guardar</button>
           </div>
         </form>
       </div>

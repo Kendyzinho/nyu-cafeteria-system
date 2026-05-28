@@ -15,6 +15,7 @@ export class ProductsAdminComponent implements OnInit {
   productForm: FormGroup;
   isEditing: boolean = false;
   selectedProductId: number | null = null;
+  searchTerm: string = '';
 
   constructor(
     private menuService: MenuService,
@@ -24,7 +25,7 @@ export class ProductsAdminComponent implements OnInit {
       nombre: ['', Validators.required],
       descripcion: ['', Validators.required],
       precio: [0, [Validators.required, Validators.min(0)]],
-      categoria: ['almuerzos', Validators.required],
+      categoria: ['Almuerzo', Validators.required],
       stock_actual: [0, [Validators.required, Validators.min(0)]],
       imagen_url: ['']
     });
@@ -47,12 +48,24 @@ export class ProductsAdminComponent implements OnInit {
     });
   }
 
+  get filteredProducts(): Product[] {
+    if (!this.searchTerm.trim()) {
+      return this.products;
+    }
+    const term = this.searchTerm.toLowerCase().trim();
+    return this.products.filter(product => 
+      product.nombre.toLowerCase().includes(term) || 
+      (product.descripcion && product.descripcion.toLowerCase().includes(term)) ||
+      product.categoria.toLowerCase().includes(term)
+    );
+  }
+
   openCreateModal() {
     this.isEditing = false;
     this.selectedProductId = null;
     this.productForm.reset({
       precio: 0,
-      categoria: 'almuerzos',
+      categoria: 'Almuerzo',
       stock_actual: 0,
       imagen_url: ''
     });

@@ -2,12 +2,108 @@
   background-color: #6F4E37;
   color: white;
   border: none;
+  transition: all 0.2s ease-in-out;
 }
+
 .btn-cafeteria:hover {
-  background-color: #5A3E2B;
+  background-color: #4E342E;
   color: white;
+  transform: translateY(-1px);
 }
+
 .bg-cafe-light {
   background-color: #F5EFEB !important;
   color: #6F4E37 !important;
 }
+
+/* Buscador */
+.search-bar {
+  border: 1px solid #E5DCD8;
+  background-color: white;
+  transition: box-shadow 0.2s ease;
+}
+
+.search-bar:focus-within {
+  box-shadow: 0 4px 12px rgba(111, 78, 55, 0.1) !important;
+  border-color: #D7CCC8;
+}
+
+.search-bar input:focus {
+  box-shadow: none;
+  border-color: transparent;
+}
+
+/* Insignias de Categorías Especiales */
+.badge-desayuno {
+  background-color: #FEF3C7 !important;
+  color: #92400E !important;
+  border: 1px solid #FDE68A;
+}
+
+.badge-almuerzo {
+  background-color: #D1FAE5 !important;
+  color: #065F46 !important;
+  border: 1px solid #A7F3D0;
+}
+
+.badge-cena {
+  background-color: #E0F2FE !important;
+  color: #075985 !important;
+  border: 1px solid #BAE6FD;
+}
+
+.badge-snack {
+  background-color: #F3E8FF !important;
+  color: #6B21A8 !important;
+  border: 1px solid #E9D5FF;
+}
+
+/* Stock status badges */
+.bg-success-light {
+  background-color: #ECFDF5;
+  color: #059669;
+  border: 1px solid #A7F3D0;
+}
+
+.bg-danger-light {
+  background-color: #FEF2F2;
+  color: #DC2626;
+  border: 1px solid #FCA5A5;
+}
+
+/* Modal y Animación */
+.modal {
+  transition: opacity 0.15s linear;
+}
+
+.modal-content {
+  background-color: #FFFBF7;
+  border: 1px solid rgba(111, 78, 55, 0.1);
+}
+
+.preview-img-container {
+  border: 2px dashed #D7CCC8 !important;
+  max-width: 100%;
+  display: inline-block;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.preview-img-container:hover {
+  transform: scale(1.02);
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #A1887F;
+  box-shadow: 0 0 0 0.2rem rgba(161, 136, 127, 0.25);
+}
+
+/* Hover de filas */
+table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+table tbody tr:hover {
+  background-color: #FCF9F6 !important;
+}
+
