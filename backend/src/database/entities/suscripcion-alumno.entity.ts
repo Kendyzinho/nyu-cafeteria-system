@@ -25,6 +25,11 @@ export class SuscripcionAlumnoEntity {
 
   @Column({ default: 'activo' })
   estado!: string;
+  @Column({ type: 'int', name: 'comidas_usadas', default: 0 })
+comidasUsadas!: number;
+
+@Column({ type: 'int', name: 'total_comidas', default: 0 })
+totalComidas!: number;
 
   @OneToOne(() => MockUsuarioEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'usuario_id' })
@@ -33,6 +38,4 @@ export class SuscripcionAlumnoEntity {
   @ManyToOne(() => PlanesCatalogoEntity, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'plan_id' })
   planActivo?: PlanesCatalogoEntity | null;
-  @Column({ type: 'int', name: 'comidas_usadas', default: 0 })
-  comidasUsadas!: number;
 }

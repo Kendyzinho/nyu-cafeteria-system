@@ -46,6 +46,7 @@ import * as fs from 'fs';
           MockReservaBibliotecaEntity,
         ],
         synchronize: false,
+        synchronize: true,
         autoLoadEntities: true,
       }),
       inject: [ConfigService],

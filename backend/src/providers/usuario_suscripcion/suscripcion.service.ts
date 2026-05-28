@@ -31,6 +31,7 @@ export class SubscriptionsService {
 } | null> {
 
   // 1. Verificar usuario residente activo
+  
   const usuario = await this.usuarioRepository.findOne({
     where: { id: data.userId },
   });
@@ -40,6 +41,7 @@ export class SubscriptionsService {
 const plan = await this.planRepository.findOne({
   where: { id: data.planId },
 });
+
 if (!plan || !plan.activo) return null;
 // 2.1 Si el plan es exclusivo para residentes y el usuario no lo es → rechazar
 if (plan.reqResidencia && !usuario.es_residente) return null;
@@ -74,6 +76,7 @@ if (plan.reqResidencia && !usuario.es_residente) return null;
   return { suscripcion: saved, plan, precioFinal };
   
 }
+
   // HU18 — Ver estado del plan activo
   public async getEstadoPlan(userId: number): Promise<{
     suscripcion: SuscripcionAlumnoEntity;
@@ -81,6 +84,7 @@ if (plan.reqResidencia && !usuario.es_residente) return null;
   } | null> {
     const suscripcion = await this.suscripcionRepository.findOne({
       where: { usuarioId: userId, estado: 'activo' },
+      
     });
 
     if (!suscripcion || !suscripcion.planActivoId) return null;
