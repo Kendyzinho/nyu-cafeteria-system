@@ -17,6 +17,7 @@ export class PlanesCatalogoEntity {
 
   @Column('decimal', { name: 'precio_mensual', precision: 10, scale: 2 })
   precio_mensual!: number;
+  
 
   get precio(): number {
     return this.precio_mensual;
