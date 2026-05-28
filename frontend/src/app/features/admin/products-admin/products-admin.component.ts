@@ -10,6 +10,7 @@ import { Product } from '../../../core/models/product';
 })
 export class ProductsAdminComponent implements OnInit {
   products: Product[] = [];
+  categorias: string[] = [];
   showFormModal: boolean = false;
   productForm: FormGroup;
   isEditing: boolean = false;
@@ -31,6 +32,10 @@ export class ProductsAdminComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProducts();
+    this.menuService.getCategorias().subscribe({
+      next: (data) => this.categorias = data,
+      error: (err) => console.error('Error cargando categorías', err)
+    });
   }
 
   loadProducts() {

@@ -26,4 +26,8 @@ export class MenuService {
   delete(id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/menu/${id}`);
   }
+
+  getCategorias(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.apiUrl}/categorias`);
+  }
 }
