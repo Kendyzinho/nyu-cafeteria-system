@@ -10,6 +10,7 @@ import { StockController } from './stock/stock.controller';
 import { PromocionesController } from './promociones/promociones.controller';
 import { UsuariosController } from './usuarios/usuarios.controller';
 import { AuthController } from './auth/auth.controller';
+import { CategoriasController } from './categorias/categorias.controller';
 import { ComidaEntity } from 'src/database/entities/comida.entity';
 import { PedidoEntity } from 'src/database/entities/pedido.entity';
 import { PlanesCatalogoEntity } from 'src/database/entities/planes-catalogo.entity';
@@ -54,6 +55,7 @@ import { AdminGuard } from 'src/common/guards/admin.guard';
     PromocionesController,
     UsuariosController,
     AuthController,
+    CategoriasController,
   ],
   providers: [
     MenuService,

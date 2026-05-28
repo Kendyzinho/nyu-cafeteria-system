@@ -24,21 +24,21 @@ export class AuthGuard implements CanActivate, CanActivateChild {
       }
 
       // Consulta dinámica al backend para verificar estado y permisos vigentes
-      return this.authService.checkUserStatus(user.id).pipe(
+      return this.authService.checkUserStatus().pipe(
         map(dbUser => {
-          if (!dbUser || !dbUser.activo) {
+          if (!dbUser || !dbUser.isActive) {
             this.authService.logout();
             this.router.navigate(['/login']);
             return false;
           }
-          
+
           // Sincronizar estado local si el administrador le cambió roles o residencia en caliente
           const updatedUser = {
             ...user,
-            role: dbUser.tipo,
-            isActive: !!dbUser.activo,
-            isResident: !!dbUser.es_residente,
-            firstName: dbUser.nombre
+            role: dbUser.role,
+            isActive: dbUser.isActive,
+            isResident: dbUser.isResident,
+            firstName: dbUser.firstName
           };
           this.authService.updateCurrentUser(updatedUser);
           
