@@ -15,6 +15,7 @@ export class RecetaComidaEntity {
   comida_id!: number;
 
   @Column({ name: 'insumo_id' })
+  insumo_id!: number;
 
   @Column({ name: 'cantidad_requerida' })
   cantidadRequerida!: number;
