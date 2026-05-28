@@ -94,6 +94,7 @@ return response.status(201).json({
     planId: suscripcion.planActivoId,
     nombrePlan: plan.nombre,
     mesVigencia: new Date(suscripcion.mesVigencia).toISOString().split('T')[0],
+    comidasUsadas: suscripcion.comidasUsadas,  
     estado: suscripcion.estado,
     precioFinal,
   },
@@ -150,6 +151,7 @@ return response.status(201).json({
       userId: suscripcion.usuarioId,
       estado: suscripcion.estado,
       mesVigencia: new Date(suscripcion.mesVigencia).toISOString().split('T')[0],
+      comidasUsadas: suscripcion.comidasUsadas,
       plan: {
         id: plan.id,
         nombre: plan.nombre,

@@ -133,9 +133,8 @@ export class ResidentPlanComponent implements OnInit {
   const match = this.currentPlan.plan.nombre.match(/(\d+)\s*[Cc]omidas?/);
   return match ? parseInt(match[1]) : 0;
 }
-
 get mealsConsumed(): number {
-  return 0;
+  return this.currentPlan?.comidasUsadas ?? 0; 
 }
 
 get renewalDate(): string {

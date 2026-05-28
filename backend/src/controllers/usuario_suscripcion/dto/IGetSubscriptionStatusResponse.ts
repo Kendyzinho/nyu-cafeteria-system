@@ -3,6 +3,7 @@ export interface IGetSubscriptionStatusResponse {
   userId: number;
   estado: string;
   mesVigencia: string;
+  comidasUsadas: number;  
   plan: {
     id: number;
     nombre: string;

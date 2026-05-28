@@ -33,4 +33,6 @@ export class SuscripcionAlumnoEntity {
   @ManyToOne(() => PlanesCatalogoEntity, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'plan_id' })
   planActivo?: PlanesCatalogoEntity | null;
+  @Column({ type: 'int', name: 'comidas_usadas', default: 0 })
+  comidasUsadas!: number;
 }
