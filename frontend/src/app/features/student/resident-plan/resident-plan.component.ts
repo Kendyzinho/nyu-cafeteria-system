@@ -118,20 +118,36 @@ export class ResidentPlanComponent implements OnInit {
     alert('Funcionalidad de cancelación próximamente.');
   }
 
-  generateTicket(): void {
+generateTicket(): void {
   if (!this.selectedTime) {
     alert('Selecciona un horario primero.');
     return;
   }
-  alert(`Ticket generado para las ${this.selectedTime}. Presenta tu TUI en la cafetería.`);
-  this.selectedTime = '';
+
+  const user = this.authService.getCurrentUser();
+  if (!user) return;
+
+  this.planService.redimirComida(user.id).subscribe({
+    next: (res) => {
+      if (this.currentPlan) {
+        this.currentPlan.comidasUsadas = res.comidasUsadas;
+      }
+      alert(`Ticket generado para las ${this.selectedTime}. Presentá tu TUI en la cafetería.`);
+      this.selectedTime = '';
+    },
+    error: (err) => {
+      if (err.status === 400) {
+        alert('Ya usaste todos tus canjes disponibles por hoy.');
+      } else {
+        alert('No tenés usos disponibles en tu plan este mes.');
+      }
+    },
+  });
 }
+  
 
-
-  get totalMeals(): number {
-  if (!this.currentPlan?.plan?.nombre) return 0;
-  const match = this.currentPlan.plan.nombre.match(/(\d+)\s*[Cc]omidas?/);
-  return match ? parseInt(match[1]) : 0;
+get totalMeals(): number {
+  return this.currentPlan?.plan?.cantidadComidas ?? 0;
 }
 get mealsConsumed(): number {
   return this.currentPlan?.comidasUsadas ?? 0; 

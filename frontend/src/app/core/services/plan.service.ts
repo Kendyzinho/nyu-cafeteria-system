@@ -28,4 +28,7 @@ suscribir(userId: number, planId: number): Observable<any> {
   getEstadoPlan(userId: number): Observable<any> {
     return this.http.get<any>(`${this.subscriptionUrl}/user/${userId}/status`);
   }
+  redimirComida(userId: number): Observable<any> {
+  return this.http.post<any>(`${this.subscriptionUrl}/user/${userId}/redeem`, {});
+  }
 }

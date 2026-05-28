@@ -152,15 +152,35 @@ return response.status(201).json({
       userId: suscripcion.usuarioId,
       estado: suscripcion.estado,
       mesVigencia: new Date(suscripcion.mesVigencia).toISOString().split('T')[0],
-      cantidadComidas: plan.cantidadComidas,
+      comidasUsadas: suscripcion.comidasUsadas,
       plan: {
         id: plan.id,
         nombre: plan.nombre,
         descripcion: plan.descripcion,
         precioMensual: Number(plan.precio_mensual),
+         cantidadComidas: plan.cantidadComidas,
       },
     };
 
     return response.status(200).json(body);
   }
+@ApiOperation({ summary: 'Canjear una comida del plan activo' })
+@ApiResponse({ status: 200, schema: { example: { comidasUsadas: 6, cantidadComidas: 20, restantes: 14 } } })
+@ApiResponse({ status: 400, description: 'Sin usos disponibles o sin plan activo' })
+@UseGuards(JwtAuthGuard)
+@Post('user/:userId/redeem')
+async redimirComida(
+  @Param('userId', ParseIntPipe) userId: number,
+  @Res() response: Response,
+): Promise<Response> {
+  const result = await this.subscriptionsService.redimirComida(userId);
+
+  if (!result) {
+    return response.status(400).json({
+      message: 'No tenés usos disponibles o no tenés plan activo.',
+    });
+  }
+
+  return response.status(200).json(result);
+}
 }

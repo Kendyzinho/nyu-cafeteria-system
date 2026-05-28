@@ -9,5 +9,6 @@ export interface IGetSubscriptionStatusResponse {
     nombre: string;
     descripcion: string;
     precioMensual: number;
+    cantidadComidas: number; 
   };
 }

@@ -27,6 +27,11 @@ export class SuscripcionAlumnoEntity {
   estado!: string;
   @Column({ type: 'int', name: 'comidas_usadas', default: 0 })
   comidasUsadas!: number;
+  @Column({ type: 'int', name: 'canjes_hoy', default: 0 })
+  canjesHoy!: number;
+
+@Column({ type: 'date', name: 'fecha_ultimo_canje', nullable: true })
+fechaUltimoCanje?: Date | null;
 
   @OneToOne(() => MockUsuarioEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'usuario_id' })

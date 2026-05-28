@@ -97,4 +97,53 @@ if (plan.reqResidencia && !usuario.es_residente) return null;
 
     return { suscripcion, plan };
   }
+public async redimirComida(userId: number): Promise<{
+  comidasUsadas: number;
+  cantidadComidas: number;
+  restantes: number;
+  canjesHoy: number;
+  limiteDiario: number;
+} | null> {
+  const suscripcion = await this.suscripcionRepository.findOne({
+    where: { usuarioId: userId, estado: 'activo' },
+  });
+
+  if (!suscripcion || !suscripcion.planActivoId) return null;
+
+  const plan = await this.planRepository.findOne({
+    where: { id: suscripcion.planActivoId },
+  });
+
+  if (!plan) return null;
+
+  // Validar que quedan usos mensuales
+  if (suscripcion.comidasUsadas >= plan.cantidadComidas) return null;
+
+  // Verificar límite diario
+  const hoy = new Date().toISOString().split('T')[0]; // "2026-05-28"
+  const ultimoCanje = suscripcion.fechaUltimoCanje
+    ? new Date(suscripcion.fechaUltimoCanje).toISOString().split('T')[0]
+    : null;
+
+  if (ultimoCanje === hoy) {
+    // Ya canjeó hoy — verificar si llegó al límite
+    if (suscripcion.canjesHoy >= plan.limiteDiario) return null;
+    suscripcion.canjesHoy += 1;
+  } else {
+    // Nuevo día — resetear el contador diario
+    suscripcion.canjesHoy = 1;
+  }
+
+  suscripcion.fechaUltimoCanje = new Date();
+  suscripcion.comidasUsadas += 1;
+  await this.suscripcionRepository.save(suscripcion);
+
+  return {
+    comidasUsadas: suscripcion.comidasUsadas,
+    cantidadComidas: plan.cantidadComidas,
+    restantes: plan.cantidadComidas - suscripcion.comidasUsadas,
+    canjesHoy: suscripcion.canjesHoy,
+    limiteDiario: plan.limiteDiario,
+  };
+}
 }

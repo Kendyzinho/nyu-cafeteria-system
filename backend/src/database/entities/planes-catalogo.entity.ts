@@ -19,6 +19,8 @@ export class PlanesCatalogoEntity {
   precio_mensual!: number;
   @Column({ type: 'int', name: 'cantidad_comidas', default: 0 })
   cantidadComidas!: number;
+  @Column({ type: 'int', name: 'limite_diario', default: 1 })
+  limiteDiario!: number;
 
   get precio(): number {
     return this.precio_mensual;
