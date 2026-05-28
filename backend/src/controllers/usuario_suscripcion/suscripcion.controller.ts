@@ -118,6 +118,7 @@ return response.status(201).json({
         userId: 8,
         estado: 'activo',
         mesVigencia: '2026-05-01',
+        comidasUsadas: 5,
         plan: {
           id: 2,
           nombre: 'Plan Residente Estándar (30 Comidas)',
@@ -151,7 +152,7 @@ return response.status(201).json({
       userId: suscripcion.usuarioId,
       estado: suscripcion.estado,
       mesVigencia: new Date(suscripcion.mesVigencia).toISOString().split('T')[0],
-      comidasUsadas: suscripcion.comidasUsadas,
+      cantidadComidas: plan.cantidadComidas,
       plan: {
         id: plan.id,
         nombre: plan.nombre,
