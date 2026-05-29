@@ -12,7 +12,6 @@ import { MockPagoEntity } from './entities/mock-pago.entity';
 import { InsumoEntity } from './entities/insumo.entity';
 import { RecetaComidaEntity } from './entities/receta-comida.entity';
 import { MockReservaBibliotecaEntity } from './entities/mock-reserva-biblioteca.entity';
-import * as fs from 'fs';
 
 @Module({
   imports: [
@@ -29,9 +28,7 @@ import * as fs from 'fs';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        ssl: configService.get<string>('DB_SSL_CA')
-          ? { ca: fs.readFileSync(configService.get<string>('DB_SSL_CA')!) }
-          : undefined,
+        ssl: { rejectUnauthorized: false,},
         entities: [
           MockUsuarioEntity,
           ComidaEntity,
