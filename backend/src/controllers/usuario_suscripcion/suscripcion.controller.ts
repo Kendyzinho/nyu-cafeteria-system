@@ -28,8 +28,8 @@ export class SubscriptionsController {
     summary: 'HU17 - Suscribir residente a un plan mensual',
     description:
       'Crea una suscripción mensual para un usuario residente. ' +
-      'Cancela automáticamente cualquier suscripción activa previa. ' +
-      'El usuario debe tener es_residente = true y el plan debe estar activo.',
+      'cancela automáticamente cualquier suscripción activa previa. ' +
+      'el usuario debe tener es_residente = true y el plan debe estar activo.',
   })
   @ApiBody({ type: IPostSubscriptionRequest })
   @ApiResponse({

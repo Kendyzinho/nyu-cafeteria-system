@@ -45,8 +45,6 @@ const plan = await this.planRepository.findOne({
 if (!plan || !plan.activo) return null;
 // 2.1 Si el plan es exclusivo para residentes y el usuario no lo es → rechazar
 if (plan.reqResidencia && !usuario.es_residente) return null;
-
-  // 3. Primer día del mes actual
   // 3. Primer día del mes actual
   const now = new Date();
   const mesVigencia = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -57,12 +55,15 @@ if (plan.reqResidencia && !usuario.es_residente) return null;
 
   let saved: SuscripcionAlumnoEntity;
 
-  if (suscripcionExistente) {
-    suscripcionExistente.planActivoId = data.planId;
-    suscripcionExistente.mesVigencia = mesVigencia;
-    suscripcionExistente.estado = 'activo';
-    saved = await this.suscripcionRepository.save(suscripcionExistente);
-  } else {
+if (suscripcionExistente) {
+  suscripcionExistente.planActivoId = data.planId;
+  suscripcionExistente.mesVigencia = mesVigencia;
+  suscripcionExistente.estado = 'activo';
+  suscripcionExistente.comidasUsadas = 0;
+  suscripcionExistente.canjesHoy = 0;
+  suscripcionExistente.fechaUltimoCanje = null;
+  saved = await this.suscripcionRepository.save(suscripcionExistente);
+} else {
     const nueva = this.suscripcionRepository.create({
       usuarioId: data.userId,
       planActivoId: data.planId,
