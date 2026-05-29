@@ -16,4 +16,10 @@ export class IPostPlanComidaRequest {
   @IsOptional()
   @IsBoolean()
   activo?: boolean;
+  @IsNumber()
+  @Min(0)
+  cantidadComidas: number; 
+  @IsNumber()
+  @Min(1)
+  limiteDiario: number;       
 }
