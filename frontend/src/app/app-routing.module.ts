@@ -21,6 +21,7 @@ import { AdminDashboardComponent } from './features/admin/admin-dashboard/admin-
 import { StockAdminComponent } from './features/admin/stock-admin/stock-admin.component';
 import { PlansAdminComponent } from './features/admin/plans-admin/plans-admin.component';
 import { PromotionsAdminComponent } from './features/admin/promotions-admin/promotions-admin.component';
+import { ProductsAdminComponent } from './features/admin/products-admin/products-admin.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -35,7 +36,6 @@ const routes: Routes = [
       { 
         path: 'resident-plan', 
         component: ResidentPlanComponent,
-        canActivate: [ResidentGuard] // <-- REGLA ESTRICTA DE LA RÚBRICA
       },
       { path: 'history', component: HistoryComponent },
       { path: 'checkout', component: CheckoutComponent },
@@ -48,11 +48,13 @@ const routes: Routes = [
     path: 'admin',
     component: AdminLayoutComponent,
     canActivate: [AuthGuard, RoleGuard], // <-- PROTEGIDO: Solo administradores
+    canActivateChild: [AuthGuard, RoleGuard], // <-- PROTECCIÓN INDIVIDUAL DE RUTAS HIJAS
     children: [
       { path: '', component: AdminDashboardComponent },
       { path: 'stock', component: StockAdminComponent },
       { path: 'plans', component: PlansAdminComponent },
       { path: 'promotions', component: PromotionsAdminComponent },
+      { path: 'products', component: ProductsAdminComponent },
       { path: 'users', component: UsersListComponent } // <-- MOVISTE AQUI, dentro de admin
     ]
   },

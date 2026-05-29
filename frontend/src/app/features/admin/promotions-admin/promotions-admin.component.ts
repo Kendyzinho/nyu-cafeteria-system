@@ -1,37 +1,50 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { PromotionService } from '../../../core/services/promotion.service';
-import { IntegrationService } from '../../../core/services/integration.service';
+
+export interface Promocion {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  descuento: number;
+  horaInicio: string;
+  horaFin: string;
+  activa: boolean;
+  comidasIds?: number[] | null;
+}
 
 @Component({
   selector: 'app-promotions-admin',
   templateUrl: './promotions-admin.component.html',
   styleUrls: ['./promotions-admin.component.css']
 })
-export class PromotionsAdminComponent {
-  promociones: any[] = [];
+export class PromotionsAdminComponent implements OnInit {
+  promociones: Promocion[] = [];
 
-constructor(
-  private promotionService: PromotionService,
-  private integrationService: IntegrationService
-) {
-  this.promociones = this.promotionService.getPromociones();
-}
+  constructor(
+    private promotionService: PromotionService
+  ) {}
 
-  aplicarPromocion(promo: any) {
-  const estudianteValido = this.integrationService.validarEstudianteActivo(promo);
-  const pagoValido = this.integrationService.validarPagoAprobado(promo);
-
-  if (!estudianteValido) {
-    alert('No se puede aplicar: estudiante inactivo');
-    return;
+  ngOnInit() {
+    this.loadPromociones();
   }
 
-  if (!pagoValido) {
-    alert('No se puede aplicar: pago no aprobado');
-    return;
+  loadPromociones() {
+    this.promotionService.getPromociones().subscribe({
+      next: (data: Promocion[]) => this.promociones = data,
+      error: (err: any) => console.error('Error fetching promotions', err)
+    });
   }
 
-  this.promotionService.aplicarPromocion(promo);
-  alert(`Promoción "${promo.nombre}" aplicada correctamente`);
-}
+  aplicarPromocion(promo: Promocion) {
+    this.promotionService.aplicarPromocion(promo.id, { ...promo, activa: !promo.activa }).subscribe({
+      next: () => {
+        alert(`Promoción "${promo.nombre || 'descuento'}" ${!promo.activa ? 'activada' : 'desactivada'} correctamente`);
+        this.loadPromociones();
+      },
+      error: (err: any) => {
+        console.error('Error al actualizar promoción', err);
+        alert('Error al actualizar la promoción.');
+      }
+    });
+  }
 }

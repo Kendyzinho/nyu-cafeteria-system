@@ -141,5 +141,8 @@ vite.config.ts.timestamp-*
 # env
 .env
 
-ca.pem
+# Compiled test files
+test/**/*.js
+test/**/*.js.map
+test/**/*.d.ts
 

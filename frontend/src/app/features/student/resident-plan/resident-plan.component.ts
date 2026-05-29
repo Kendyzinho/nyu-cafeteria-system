@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { PlanService } from '../../../core/services/plan.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { Plan } from '../../../core/models/plan';
 
 @Component({
   selector: 'app-resident-plan',
@@ -6,75 +9,154 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./resident-plan.component.css']
 })
 export class ResidentPlanComponent implements OnInit {
-  // 1. Estado del Plan Actual
-  mealsConsumed = 15;
-  totalMeals = 30;
-  renewalDate = '1 de mayo';
-  currentPlanId = 2; // Suponemos que tiene el Estándar por defecto
 
-  // 2. Modelo para Preferencias (Two-Way Binding)
+  // ── Estado del plan activo (viene de HU18) ──
+  currentPlan: any = null;       // objeto con { plan, estado, mesVigencia, ... }
+  currentPlanId: number | null = null;
+  currentUser: any = null;
+
+  // ── Lista de planes disponibles (viene de GET /meal-plans) ──
+  availablePlans: any[] = [];
+
+  // ── UI ──
+  loading = false;
+  selectedTime: string = '';
   preferences = {
-    vegano: true,
+    vegano: false,
     vegetariano: false,
     sinGluten: false,
     halal: false
   };
 
-  // 3. Modelo para el Ticket
-  selectedTime: string = '';
+  
 
-  // 4. Catálogo Dinámico de Planes
-  availablePlans = [
-    { 
-      id: 1, 
-      name: 'Plan Flex (15 Comidas)', 
-      price: 300000, 
-      description: 'Ahorra en tus comidas y mantén flexibilidad. Ideal para quienes cocinan ocasionalmente.',
-      image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80'
-    },
-    { 
-      id: 2, 
-      name: 'Plan Residente Estándar (30 Comidas)', 
-      price: 500000, 
-      description: 'El plan más popular. Cubre 1 almuerzo al día, de lunes a viernes + algunos fines de semana.',
-      image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80'
-    },
-    { 
-      id: 3, 
-      name: 'Plan Premium Full (60 comidas)', 
-      price: 900000, 
-      description: 'Cobertura total. Almuerzo y cena todos los días. Máxima comodidad.',
-      image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80'
-    }
-  ];
+  constructor(
+    private planService: PlanService,
+    private authService: AuthService
+  ) {}
 
-  constructor() { }
-
-  ngOnInit(): void {}
-
-  // Métodos de interacción
-  savePreferences() {
-    alert('Tus preferencias alimentarias han sido guardadas en el sistema.');
+  ngOnInit(): void {
+    this.currentUser = this.authService.getCurrentUser();
+    this.cargarPlanesDisponibles();  // siempre carga el catálogo
+    this.cargarEstadoPlanActivo();   // HU18: carga el plan activo del usuario
   }
 
-  generateTicket() {
-    if (!this.selectedTime) {
-      alert('Por favor selecciona un horario de canje.');
+  // ── Carga el catálogo de planes desde GET /meal-plans ──
+  private cargarPlanesDisponibles(): void {
+    this.planService.getPlanes().subscribe({
+      next: (data: Plan[]) => {
+        this.availablePlans = data.map(plan => ({
+          ...plan,
+          image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80'
+        }));
+      },
+      error: (err) => console.error('Error cargando planes', err)
+    });
+  }
+
+  // ── HU18: Carga el plan activo del usuario logueado ──
+  private cargarEstadoPlanActivo(): void {
+    const user = this.authService.getCurrentUser();
+    if (!user) return;
+
+    this.planService.getEstadoPlan(user.id).subscribe({
+      next: (data) => {
+        this.currentPlan = data;          // guarda toda la respuesta del backend
+        this.currentPlanId = data.plan?.id ?? null;
+ // marca cuál plan está activo en la UI
+      },
+      error: () => {
+        // 404 = no tiene plan activo todavía, es normal
+        this.currentPlan = null;
+        this.currentPlanId = null;
+      }
+    });
+  }
+
+  isResidentPlan(plan: any): boolean {
+    return plan.nombre?.toLowerCase().includes('residente');
+  }
+
+
+  // ── HU17: Suscribir al usuario al plan elegido ──
+  selectPlan(plan: any): void {
+    const user = this.authService.getCurrentUser();
+    if (!user) return;
+
+    if (this.isResidentPlan(plan) && !user.isResident) {
+      alert('Este plan está disponible solo para estudiantes residentes.');
       return;
     }
-    if (this.mealsConsumed >= this.totalMeals) {
-      alert('No te quedan comidas disponibles este mes.');
-      return;
-    }
-    
-    // Descontamos una comida mágicamente en vivo
-    this.mealsConsumed++;
-    alert(`¡Éxito! Ticket generado para las ${this.selectedTime}. Presenta tu TUI en la cafetería.`);
-    this.selectedTime = ''; // Reiniciamos el select
+
+    this.loading = true;
+    this.planService.suscribir(user.id, plan.id).subscribe({
+      next: (response) => {
+        this.loading = false;
+        this.currentPlanId = plan.id;
+        // Recarga el estado del plan para mostrar datos actualizados (HU18)
+        this.cargarEstadoPlanActivo();
+        alert('¡Suscripción exitosa! Tu plan ha sido activado.');
+      },
+      error: (err) => {
+        this.loading = false;
+        alert('No se pudo completar la suscripción.');
+        console.error(err);
+      }
+    });
   }
 
-  selectPlan(planId: number) {
-    this.currentPlanId = planId;
-    // A futuro aquí se llamaría a la pasarela de pago para el upgrade
+  getCurrentPlanName(): string {
+    if (!this.currentPlan) return 'Sin plan activo';
+    return this.currentPlan.plan?.nombre ?? 'Plan activo';
   }
+
+  savePreferences(): void {
+    alert('Preferencias guardadas.');
+  }
+
+  cancelPlan(): void {
+    alert('Funcionalidad de cancelación próximamente.');
+  }
+
+generateTicket(): void {
+  if (!this.selectedTime) {
+    alert('Selecciona un horario primero.');
+    return;
+  }
+
+  const user = this.authService.getCurrentUser();
+  if (!user) return;
+
+  this.planService.redimirComida(user.id).subscribe({
+    next: (res) => {
+      if (this.currentPlan) {
+        this.currentPlan.comidasUsadas = res.comidasUsadas;
+      }
+      alert(`Ticket generado para las ${this.selectedTime}. Presentá tu TUI en la cafetería.`);
+      this.selectedTime = '';
+    },
+    error: (err) => {
+      if (err.status === 400) {
+        alert('Ya usaste todos tus canjes disponibles por hoy.');
+      } else {
+        alert('No tenés usos disponibles en tu plan este mes.');
+      }
+    },
+  });
+}
+  
+
+get totalMeals(): number {
+  return this.currentPlan?.plan?.cantidadComidas ?? 0;
+}
+get mealsConsumed(): number {
+  return this.currentPlan?.comidasUsadas ?? 0; 
+}
+
+get renewalDate(): string {
+  if (!this.currentPlan?.mesVigencia) return '';
+  const date = new Date(this.currentPlan.mesVigencia);
+  date.setMonth(date.getMonth() + 1);
+  return date.toLocaleDateString('es-AR', { day: 'numeric', month: 'long' });
+}
 }

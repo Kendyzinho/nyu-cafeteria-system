@@ -18,18 +18,19 @@ async function bootstrap() {
     },
   }));
 
-  // todas las rutas quedan bajo el prefijo /api
+  // 1. Definir prefijo global primero
   app.setGlobalPrefix('api');
 
-  // configuración de Swagger
+  // 2. Configurar Swagger después para que detecte el prefijo
   const config = new DocumentBuilder()
     .setTitle('NYU Cafetería API')
     .setDescription('Documentación de los endpoints del sistema de cafetería')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document); // disponible en /docs
+  SwaggerModule.setup('docs', app, document); // disponible en http://localhost:3000/docs
 
   // inicia el servidor en el puerto 3000
   await app.listen(process.env.PORT || 3000);

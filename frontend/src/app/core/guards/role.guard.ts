@@ -1,12 +1,16 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, CanActivate, CanActivateChild } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class RoleGuard  {
+export class RoleGuard implements CanActivate, CanActivateChild {
   constructor(private authService: AuthService, private router: Router) {}
+
+  canActivateChild(): boolean {
+    return this.canActivate();
+  }
 
   canActivate(): boolean {
     const user = this.authService.getCurrentUser();

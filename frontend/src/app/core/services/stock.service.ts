@@ -1,27 +1,40 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+export interface StockProducto {
+  id: number;
+  nombre: string;
+  unidad_medida: string;
+  categoria?: string;
+  cantidad: number;
+  umbralMinimo: number;
+  ultimaActualizacion: string;
+}
+
+export interface ActualizarStockPayload {
+  cantidad?: number;
+  umbralMinimo?: number;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class StockService {
 
-  private productos = [
-    { id: 1, nombre: 'Almuerzo vegetariano', categoria: 'Almuerzo', stock: 10 },
-    { id: 2, nombre: 'Sandwich de pollo', categoria: 'Snack', stock: 5 },
-    { id: 3, nombre: 'Jugo natural', categoria: 'Bebida', stock: 0 }
-  ];
+  private apiUrl = 'http://localhost:3000/api';
 
-  getProductos() {
-    return this.productos;
+  constructor(private http: HttpClient) {}
+
+  getProductos(): Observable<StockProducto[]> {
+    return this.http.get<StockProducto[]>(`${this.apiUrl}/stock`);
   }
 
-  actualizarStock(producto: any) {
-    const index = this.productos.findIndex(p => p.id === producto.id);
-
-    if (index !== -1) {
-      this.productos[index].stock = producto.stock;
-    }
-
-    return this.productos[index];
+  actualizarStock(producto: StockProducto): Observable<void> {
+    const body: ActualizarStockPayload = {
+      cantidad: producto.cantidad,
+      umbralMinimo: producto.umbralMinimo,
+    };
+    return this.http.put<void>(`${this.apiUrl}/stock/${producto.id}`, body);
   }
 }

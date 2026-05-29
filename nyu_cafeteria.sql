@@ -1,0 +1,361 @@
+-- MySQL dump 10.13  Distrib 8.0.46, for Win64 (x86_64)
+--
+-- Host: localhost    Database: nyu_cafeteria
+-- ------------------------------------------------------
+-- Server version	5.5.5-10.4.32-MariaDB
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Current Database: `nyu_cafeteria`
+--
+
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `nyu_cafeteria` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
+
+USE `nyu_cafeteria`;
+
+--
+-- Table structure for table `comida`
+--
+
+DROP TABLE IF EXISTS `comida`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `comida` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(255) NOT NULL,
+  `descripcion` text NOT NULL,
+  `precio` decimal(10,2) NOT NULL,
+  `categoria` varchar(255) NOT NULL,
+  `imagen_url` varchar(255) DEFAULT NULL,
+  `stock_actual` int(11) NOT NULL DEFAULT 0,
+  `disponible` tinyint(4) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `comida`
+--
+
+LOCK TABLES `comida` WRITE;
+/*!40000 ALTER TABLE `comida` DISABLE KEYS */;
+INSERT INTO `comida` VALUES (5,'Bowl de Quinoa y Pollo Grill','Proteína premium, vegetales frescos y aderezo artesanal.',7500.00,'Almuerzos','https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80',48,1),(6,'Wrap Vegetariano','Hummus, espinaca, tomate y falafel en tortilla de maíz.',4000.00,'Opciones Ligeras','https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=300&q=80',0,1),(7,'Café Latte Vainilla','Café de especialidad con leche texturizada y vainilla.',2500.00,'Bebidas','https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=300&q=80',29,1);
+/*!40000 ALTER TABLE `comida` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `detalle_pedido`
+--
+
+DROP TABLE IF EXISTS `detalle_pedido`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `detalle_pedido` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `pedido_id` int(11) NOT NULL,
+  `comida_id` int(11) NOT NULL,
+  `cantidad` int(11) NOT NULL,
+  `precio_unitario` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `pedido_id` (`pedido_id`),
+  KEY `comida_id` (`comida_id`),
+  CONSTRAINT `detalle_pedido_ibfk_1` FOREIGN KEY (`pedido_id`) REFERENCES `pedido` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `detalle_pedido_ibfk_2` FOREIGN KEY (`comida_id`) REFERENCES `comida` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `detalle_pedido`
+--
+
+LOCK TABLES `detalle_pedido` WRITE;
+/*!40000 ALTER TABLE `detalle_pedido` DISABLE KEYS */;
+INSERT INTO `detalle_pedido` VALUES (1,1,5,1,7500.00),(2,2,6,1,3000.00),(3,3,7,1,1875.00),(4,4,5,1,5625.00),(5,5,5,1,5625.00);
+/*!40000 ALTER TABLE `detalle_pedido` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `insumos`
+--
+
+DROP TABLE IF EXISTS `insumos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `insumos` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(255) NOT NULL,
+  `unidad_medida` varchar(255) NOT NULL,
+  `stock_Actual` int(11) NOT NULL DEFAULT 0,
+  `umbral_minimo` int(11) NOT NULL DEFAULT 5,
+  `ultima_actualizacion` date NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `insumos`
+--
+
+LOCK TABLES `insumos` WRITE;
+/*!40000 ALTER TABLE `insumos` DISABLE KEYS */;
+INSERT INTO `insumos` VALUES (1,'Pechuga de Pollo','Kg',15,3,'2026-05-20'),(2,'Quinoa','Kg',20,5,'2026-05-20'),(3,'Café en Grano','Kg',10,2,'2026-05-20');
+/*!40000 ALTER TABLE `insumos` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `mock_pago`
+--
+
+DROP TABLE IF EXISTS `mock_pago`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `mock_pago` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `monto_total` decimal(10,2) NOT NULL,
+  `metodo_pago` varchar(255) NOT NULL,
+  `estado` varchar(255) NOT NULL,
+  `fecha_transaccion` datetime NOT NULL,
+  `referencia_origen` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `mock_pago`
+--
+
+LOCK TABLES `mock_pago` WRITE;
+/*!40000 ALTER TABLE `mock_pago` DISABLE KEYS */;
+/*!40000 ALTER TABLE `mock_pago` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `mock_reserva_biblioteca`
+--
+
+DROP TABLE IF EXISTS `mock_reserva_biblioteca`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `mock_reserva_biblioteca` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `fecha` date NOT NULL,
+  `hora_inicio` time NOT NULL,
+  `hora_fin` time NOT NULL,
+  `cantidad_estudiantes` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `mock_reserva_biblioteca`
+--
+
+LOCK TABLES `mock_reserva_biblioteca` WRITE;
+/*!40000 ALTER TABLE `mock_reserva_biblioteca` DISABLE KEYS */;
+INSERT INTO `mock_reserva_biblioteca` VALUES (1,'2026-05-20','14:00:00','18:00:00',45);
+/*!40000 ALTER TABLE `mock_reserva_biblioteca` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `mock_usuario`
+--
+
+DROP TABLE IF EXISTS `mock_usuario`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `mock_usuario` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(255) NOT NULL,
+  `tipo` varchar(255) NOT NULL DEFAULT 'Cliente',
+  `activo` tinyint(4) NOT NULL DEFAULT 1,
+  `es_residente` tinyint(4) NOT NULL DEFAULT 0,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `mock_usuario`
+--
+
+LOCK TABLES `mock_usuario` WRITE;
+/*!40000 ALTER TABLE `mock_usuario` DISABLE KEYS */;
+INSERT INTO `mock_usuario` VALUES (7,'Cristian Admin','Administrador',1,0,'admin@nyu.edu','admin'),(8,'Juan Pérez','Cliente',1,1,'juan@nyu.edu','password'),(9,'María García','Cliente',1,0,'maria@nyu.edu','password'),(10,'Carlos López','Cliente',0,0,'carlos@nyu.edu','password');
+/*!40000 ALTER TABLE `mock_usuario` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pedido`
+--
+
+DROP TABLE IF EXISTS `pedido`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `pedido` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `usuario_id` int(11) NOT NULL,
+  `total` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `estado` varchar(255) NOT NULL DEFAULT 'pendiente',
+  `orden_pago_id` int(11) DEFAULT NULL,
+  `fecha_creacion` datetime NOT NULL DEFAULT current_timestamp(),
+  `horario_retiro` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `usuario_id` (`usuario_id`),
+  KEY `orden_pago_id` (`orden_pago_id`),
+  CONSTRAINT `pedido_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `mock_usuario` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `pedido_ibfk_2` FOREIGN KEY (`orden_pago_id`) REFERENCES `mock_pago` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pedido`
+--
+
+LOCK TABLES `pedido` WRITE;
+/*!40000 ALTER TABLE `pedido` DISABLE KEYS */;
+INSERT INTO `pedido` VALUES (1,9,7500.00,'completado',NULL,'2026-05-19 12:00:00','2026-05-19 13:00:00'),(2,8,3000.00,'pendiente',NULL,'2026-05-20 17:21:48','2026-05-20 17:30:00'),(3,8,1875.00,'pendiente',NULL,'2026-05-20 17:49:07','2026-05-20 19:45:00'),(4,8,5625.00,'pendiente',NULL,'2026-05-20 17:52:13','2026-05-20 18:45:00'),(5,8,5625.00,'pendiente',NULL,'2026-05-20 18:58:31','2026-05-20 19:45:00');
+/*!40000 ALTER TABLE `pedido` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `planes_catalogo`
+--
+
+DROP TABLE IF EXISTS `planes_catalogo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `planes_catalogo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(255) NOT NULL,
+  `descripcion` text NOT NULL,
+  `precio_mensual` decimal(10,2) NOT NULL,
+  `activo` tinyint(4) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `planes_catalogo`
+--
+
+LOCK TABLES `planes_catalogo` WRITE;
+/*!40000 ALTER TABLE `planes_catalogo` DISABLE KEYS */;
+INSERT INTO `planes_catalogo` VALUES (1,'Plan Flex (15 Comidas)','Ahorra en tus comidas y mantén flexibilidad. Ideal para quienes cocinan ocasionalmente.',300000.00,1),(2,'Plan Residente Estándar (30 Comidas)','El plan más popular. Cubre 1 almuerzo al día, de lunes a viernes + algunos fines de semana.',500000.00,1),(3,'Plan Premium Full (60 comidas)','Cobertura total. Almuerzo y cena todos los días. Máxima comodidad.',900000.00,1);
+/*!40000 ALTER TABLE `planes_catalogo` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `promocion`
+--
+
+DROP TABLE IF EXISTS `promocion`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `promocion` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(255) NOT NULL,
+  `descripcion` text NOT NULL,
+  `porcentaje_descuento` decimal(10,2) NOT NULL,
+  `hora_inicio_activa` time NOT NULL,
+  `hora_fin_activa` time NOT NULL,
+  `activa` tinyint(4) NOT NULL DEFAULT 1,
+  `comidas_ids` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`comidas_ids`)),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `promocion`
+--
+
+LOCK TABLES `promocion` WRITE;
+/*!40000 ALTER TABLE `promocion` DISABLE KEYS */;
+INSERT INTO `promocion` VALUES (1,'Descuento Universitario','Descuento para estudiantes con matrícula activa',15.00,'00:00:00','23:59:59',1,NULL),(2,'Beneficio Residente','Descuento exclusivo para residentes en bebidas',25.00,'00:00:00','23:59:59',1,NULL),(3,'Promo Combo','Descuento en hamburguesa y pizza',20.00,'12:00:00','16:00:00',1,'[5,6]'),(4,'Semana Saludable','Descuento en toda la línea saludable',10.00,'00:00:00','23:59:59',0,NULL);
+/*!40000 ALTER TABLE `promocion` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `receta_comida`
+--
+
+DROP TABLE IF EXISTS `receta_comida`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `receta_comida` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `comida_id` int(11) NOT NULL,
+  `insumo_id` int(11) NOT NULL,
+  `cantidad_requerida` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `comida_id` (`comida_id`),
+  KEY `insumo_id` (`insumo_id`),
+  CONSTRAINT `receta_comida_ibfk_1` FOREIGN KEY (`comida_id`) REFERENCES `comida` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `receta_comida_ibfk_2` FOREIGN KEY (`insumo_id`) REFERENCES `insumos` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `receta_comida`
+--
+
+LOCK TABLES `receta_comida` WRITE;
+/*!40000 ALTER TABLE `receta_comida` DISABLE KEYS */;
+INSERT INTO `receta_comida` VALUES (1,5,1,1),(2,5,2,1),(3,7,3,1);
+/*!40000 ALTER TABLE `receta_comida` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `suscripcion_alumno`
+--
+
+DROP TABLE IF EXISTS `suscripcion_alumno`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `suscripcion_alumno` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `usuario_id` int(11) NOT NULL,
+  `plan_id` int(11) DEFAULT NULL,
+  `orden_pago_id` int(11) DEFAULT NULL,
+  `mes_vigencia` date NOT NULL,
+  `estado` varchar(255) NOT NULL DEFAULT 'activo',
+  PRIMARY KEY (`id`),
+  KEY `usuario_id` (`usuario_id`),
+  KEY `plan_id` (`plan_id`),
+  KEY `orden_pago_id` (`orden_pago_id`),
+  CONSTRAINT `suscripcion_alumno_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `mock_usuario` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `suscripcion_alumno_ibfk_2` FOREIGN KEY (`plan_id`) REFERENCES `planes_catalogo` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `suscripcion_alumno_ibfk_3` FOREIGN KEY (`orden_pago_id`) REFERENCES `mock_pago` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `suscripcion_alumno`
+--
+
+LOCK TABLES `suscripcion_alumno` WRITE;
+/*!40000 ALTER TABLE `suscripcion_alumno` DISABLE KEYS */;
+INSERT INTO `suscripcion_alumno` VALUES (1,8,NULL,NULL,'2026-05-01','activo'),(2,9,NULL,NULL,'2026-05-01','activo'),(3,10,NULL,NULL,'2026-05-01','expirado');
+/*!40000 ALTER TABLE `suscripcion_alumno` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2026-05-20 19:01:25

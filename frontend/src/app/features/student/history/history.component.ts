@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { OrderService } from '../../../core/services/order.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { Order } from '../../../core/models/order';
 
 interface Transaction {
   id: string;
@@ -6,7 +9,9 @@ interface Transaction {
   item: string;
   amount: number;
   method: 'Tarjeta' | 'Plan Residente' | 'Efectivo';
-  status: 'Completado' | 'Pendiente' | 'Cancelado';
+  status: 'Completado' | 'Pendiente' | 'Cancelado' | string;
+  horarioRetiro: string | null;
+  type: 'Compra' | 'Canje Plan';
 }
 
 @Component({
@@ -15,25 +20,99 @@ interface Transaction {
   styleUrls: ['./history.component.css']
 })
 export class HistoryComponent implements OnInit {
-  // Datos simulados para el historial
-  transactions: Transaction[] = [
-    { id: 'TRX-001', date: '2026-04-25', item: 'Menú Ejecutivo - Bowl Quinoa', amount: 0, method: 'Plan Residente', status: 'Completado' },
-    { id: 'TRX-002', date: '2026-04-24', item: 'Café Latte Grande + Muffing', amount: 4500, method: 'Tarjeta', status: 'Completado' },
-    { id: 'TRX-003', date: '2026-04-23', item: 'Sándwich Ave Mayo', amount: 3200, method: 'Tarjeta', status: 'Completado' },
-    { id: 'TRX-004', date: '2026-04-22', item: 'Menú Ejecutivo - Lasaña', amount: 0, method: 'Plan Residente', status: 'Completado' },
-    { id: 'TRX-005', date: '2026-04-21', item: 'Bebida 500ml', amount: 1500, method: 'Efectivo', status: 'Completado' }
-  ];
+  transactions: Transaction[] = [];
+  totalSpentMonth: number = 0;
+  filteredTransactions: Transaction[] = [];
+  filter: 'Todos' | 'Compras' | 'Canjes Plan' = 'Todos';
 
-  totalSpentMonth: number = 9200;
+  constructor(
+    private orderService: OrderService,
+    private authService: AuthService
+  ) { }
 
-  constructor() { }
+  ngOnInit(): void {
+    const user = this.authService.getCurrentUser();
+    if (user) {
+      this.orderService.getOrdersByUser(user.id).subscribe({
 
-  ngOnInit(): void { }
+        next: (orders: Order[]) => {
+          this.transactions = orders.map(o => {
+            const isPlan = Number(o.total) === 0;
+            return {
+              id: `TRX-${o.id.toString().padStart(3, '0')}`,
+              date: o.fechaCreacion,
+              item: this.getItemsSummary(o.items || []),
+              amount: Number(o.total),
+              method: isPlan ? 'Plan Residente' : 'Tarjeta',
+              status: this.capitalize(o.estado),
+              horarioRetiro: o.horarioRetiro ?? null,
+              type: isPlan ? 'Canje Plan' : 'Compra',
+            };
+          });
+          this.applyFilter();
+          this.calculateTotal();
+        },
+        error: (err) => console.error('Error cargando historial', err)
+      });
+    }
+  }
 
-  // Función para asignar color según el método de pago
+  getItemsSummary(items: any[]): string {
+    if (!items || items.length === 0) return 'Sin items';
+    return items.map(i => {
+      const name = i.nombre || `Producto #${i.comidaId || i.id}`;
+      const qty = i.cantidad || i.quantity || 1;
+      return `${qty}x ${name}`;
+    }).join(', ');
+  }
+
+  capitalize(str: string): string {
+    if (!str) return 'Pendiente';
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  calculateTotal() {
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+
+  this.totalSpentMonth = this.transactions
+    .filter(t => {
+      const trxDate = new Date(t.date);
+      return (
+        t.status === 'Completado' &&
+        trxDate.getMonth() === currentMonth &&
+        trxDate.getFullYear() === currentYear
+      );
+    })
+    .reduce((sum, current) => sum + current.amount, 0);
+}
+
   getMethodClass(method: string): string {
     if (method === 'Plan Residente') return 'badge bg-info-pastel text-dark';
     if (method === 'Tarjeta') return 'badge bg-primary-pastel text-dark';
     return 'badge bg-secondary-pastel text-dark';
   }
+
+
+  setFilter(filter: 'Todos' | 'Compras' | 'Canjes Plan') {
+  this.filter = filter;
+  this.applyFilter();
+}
+
+applyFilter() {
+  if (this.filter === 'Todos') {
+    this.filteredTransactions = this.transactions;
+    return;
+  }
+
+  if (this.filter === 'Compras') {
+    this.filteredTransactions = this.transactions.filter(t => t.type === 'Compra');
+    return;
+  }
+
+  if (this.filter === 'Canjes Plan') {
+    this.filteredTransactions = this.transactions.filter(t => t.type === 'Canje Plan');
+  }
+}
 }

@@ -1,51 +1,34 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PlanService {
+  private apiUrl = 'http://localhost:3000/api/meal-plans';
+  private subscriptionUrl = 'http://localhost:3000/api/subscriptions'; // ← nuevo
 
-  private planes = [
-    {
-      id: 1,
-      estudiante: 'Alejandro Ruiz',
-      residenciaActiva: true,
-      nombrePlan: 'Plan mensual residente',
-      planActivo: true,
-      consumos: 12,
-      limiteConsumos: 30
-    },
-    {
-      id: 2,
-      estudiante: 'Camila Torres',
-      residenciaActiva: true,
-      nombrePlan: 'Plan mensual residente',
-      planActivo: false,
-      consumos: 0,
-      limiteConsumos: 30
-    },
-    {
-      id: 3,
-      estudiante: 'Matías Rojas',
-      residenciaActiva: false,
-      nombrePlan: 'Plan mensual residente',
-      planActivo: false,
-      consumos: 0,
-      limiteConsumos: 30
-    }
-  ];
+  constructor(private http: HttpClient) {}
 
-  getPlanes() {
-    return this.planes;
+  getPlanes(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl);
   }
 
-  activarPlan(plan: any) {
-    const index = this.planes.findIndex(p => p.id === plan.id);
+  // HU17 — Suscribir residente a un plan mensual
+suscribir(userId: number, planId: number): Observable<any> {
+  return this.http.post<any>(this.subscriptionUrl, { userId, planId });
+  // el userId lo lee el backend desde el token automáticamente
+}
+  activarPlan(id: number, planData: any): Observable<any> {
+  return this.http.put<any>(`${this.apiUrl}/${id}`, planData);
+}
 
-    if (index !== -1) {
-      this.planes[index].planActivo = true;
-    }
-
-    return this.planes[index];
+  // HU18 — Ver estado del plan activo
+  getEstadoPlan(userId: number): Observable<any> {
+    return this.http.get<any>(`${this.subscriptionUrl}/user/${userId}/status`);
+  }
+  redimirComida(userId: number): Observable<any> {
+  return this.http.post<any>(`${this.subscriptionUrl}/user/${userId}/redeem`, {});
   }
 }

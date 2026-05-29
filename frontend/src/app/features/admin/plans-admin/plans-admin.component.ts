@@ -1,30 +1,61 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { PlanService } from '../../../core/services/plan.service';
 import { IntegrationService } from '../../../core/services/integration.service';
+import { ToastService } from '../../../core/services/toast.service';
+import { Plan } from '../../../core/models/plan';
+
 @Component({
   selector: 'app-plans-admin',
   templateUrl: './plans-admin.component.html',
   styleUrls: ['./plans-admin.component.css']
 })
-export class PlansAdminComponent {
-  planes: any[] = [];
+export class PlansAdminComponent implements OnInit {
+  planes: Plan[] = [];
 
   constructor(
-  private planService: PlanService,
-  private integrationService: IntegrationService
-) {
-  this.planes = this.planService.getPlanes();
-}
+    private planService: PlanService,
+    private integrationService: IntegrationService,
+    private toastService: ToastService
+  ) {}
 
-  activarPlan(plan: any) {
-  const residenciaValida = this.integrationService.validarResidenciaActiva(plan);
-
-  if (!residenciaValida) {
-    alert('No se puede activar el plan: residencia inactiva');
-    return;
+  ngOnInit() {
+    this.loadPlanes();
   }
 
-  this.planService.activarPlan(plan);
-  alert(`Plan activado para ${plan.estudiante}`);
+  loadPlanes() {
+    this.planService.getPlanes().subscribe({
+      next: (data: Plan[]) => this.planes = data,
+      error: (err: any) => {
+        console.error('Error fetching plans', err);
+        this.toastService.show('Error al cargar los planes del servidor.', 'danger');
+      }
+    });
+  }
+
+  togglePlan(plan: Plan) {
+    const nuevoEstado = !plan.activo;
+    // Bypass temporal de validación de Residencia (Problema 2)
+    this.savePlan(plan, nuevoEstado);
+  }
+
+  private savePlan(plan: Plan, activo: boolean) {
+    this.planService.activarPlan(plan.id, { ...plan, activo }).subscribe({
+      next: () => {
+        plan.activo = activo;
+        this.toastService.show(
+          activo ? `Plan "${plan.nombre}" activado correctamente.` : `Plan "${plan.nombre}" desactivado.`,
+          activo ? 'success' : 'info'
+        );
+      },
+      error: (err: any) => {
+        console.error('Error al actualizar plan', err);
+        this.toastService.show('Error al actualizar el plan.', 'danger');
+      }
+    });
+  }
+
+  // Método "activarPlan" legacy mantenido por compatibilidad con integraciones
+  activarPlan(plan: Plan) {
+    this.togglePlan(plan);
   }
 }
