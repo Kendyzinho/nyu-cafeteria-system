@@ -97,7 +97,32 @@
                 <small class="text-muted" style="font-size: 0.75rem;">Procesado por Pasarela NYU</small>
               </div>
             </label>
+            <div *ngIf="paymentMethod === 'Tarjeta'" class="p-3 border border-primary-subtle rounded-3 bg-white shadow-sm mt-2 mb-3" [formGroup]="checkoutForm">
+              <div class="mb-3">
+                <label class="form-label small fw-bold text-muted">Nombre del Titular</label>
+                <input type="text" class="form-control" formControlName="titular" placeholder="Ej: Nelson Frontend" 
+                       [ngClass]="{'is-invalid': checkoutForm.get('titular')?.invalid && checkoutForm.get('titular')?.touched}">
+              </div>
+              
+              <div class="mb-3">
+                <label class="form-label small fw-bold text-muted">Número de Tarjeta</label>
+                <input type="text" class="form-control" formControlName="numeroTarjeta" placeholder="1234567812345678" maxlength="16"
+                       [ngClass]="{'is-invalid': checkoutForm.get('numeroTarjeta')?.invalid && checkoutForm.get('numeroTarjeta')?.touched}">
+              </div>
 
+              <div class="row">
+                <div class="col-6">
+                  <label class="form-label small fw-bold text-muted">Vencimiento</label>
+                  <input type="text" class="form-control" formControlName="fechaVencimiento" placeholder="MM/AA" maxlength="5"
+                         [ngClass]="{'is-invalid': checkoutForm.get('fechaVencimiento')?.invalid && checkoutForm.get('fechaVencimiento')?.touched}">
+                </div>
+                <div class="col-6">
+                  <label class="form-label small fw-bold text-muted">CVV</label>
+                  <input type="password" class="form-control" formControlName="cvv" placeholder="123" maxlength="4"
+                         [ngClass]="{'is-invalid': checkoutForm.get('cvv')?.invalid && checkoutForm.get('cvv')?.touched}">
+                </div>
+              </div>
+            </div>
             <label class="border rounded-3 p-3 d-flex align-items-center gap-3 transition-all"
                    [ngClass]="paymentMethod === 'Plan Residente' ? 'border-primary bg-primary bg-opacity-10 shadow-sm' : 'border-light-subtle bg-white'"
                    style="cursor: pointer;">

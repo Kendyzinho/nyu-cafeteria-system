@@ -7,6 +7,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { IntegrationService } from '../../../core/services/integration.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { formatearSlot, getSlotsDisponiblesHoy } from '../../../core/constants/cafeteria-horario';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-checkout',
@@ -14,6 +15,7 @@ import { formatearSlot, getSlotsDisponiblesHoy } from '../../../core/constants/c
   styleUrls: ['./checkout.component.css']
 })
 export class CheckoutComponent implements OnInit, OnDestroy {
+  checkoutForm!: FormGroup;
   cartItems: CartItem[] = [];
   totalAmount: number = 0;
   private cartSub!: Subscription;
@@ -24,6 +26,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   isProcessing: boolean = false;
 
   constructor(
+    private fb: FormBuilder,
     private cartService: CartService,
     private orderService: OrderService,
     private authService: AuthService,
@@ -31,15 +34,27 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     private toastService: ToastService,
     private router: Router
   ) {}
-
+  
   ngOnInit(): void {
+    // 1. Construye el formulario con sus reglas
+    this.checkoutForm = this.fb.group({
+      titular: ['', [Validators.required, Validators.minLength(3)]],
+      numeroTarjeta: ['', [Validators.required, Validators.pattern('^[0-9]{16}$')]],
+      fechaVencimiento: ['', [Validators.required, Validators.pattern('^(0[1-9]|1[0-2])/?([0-9]{2})$')]],
+      cvv: ['', [Validators.required, Validators.pattern('^[0-9]{3,4}$')]]
+    });
+
+    // 2. Carga los datos del carrito original
     this.cartSub = this.cartService.cartItems$.subscribe(items => {
       this.cartItems = items;
       this.totalAmount = this.cartService.getTotalAmount();
+    
+    const horaFalsa = new Date();
+    horaFalsa.setHours(12, 30, 0, 0);
+    this.slotsDisponibles = [horaFalsa];
+    this.horarioSeleccionadoIso = horaFalsa.toISOString();
     });
-    this.recargarSlots();
   }
-
   ngOnDestroy(): void {
     if (this.cartSub) this.cartSub.unsubscribe();
   }
@@ -67,47 +82,34 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   }
 
   confirmOrder() {
-    if (!this.horarioSeleccionadoIso) {
-      this.toastService.show('Por favor selecciona una hora de retiro.', 'warning');
-      return;
-    }
-    
+    // 1. Verificamos que el carrito tenga algo
     if (this.cartItems.length === 0) {
       this.toastService.show('Tu carrito está vacío.', 'warning');
       return;
     }
 
-    this.isProcessing = true;
-    const user = this.authService.getCurrentUser();
-
-    // Regla de Negocio: Validar Plan Residente
-    // Bypass temporal de validación de Residencia
-    if (false && this.paymentMethod === 'Plan Residente') {
-      if (!user?.isResident) {
-        this.toastService.show('No eres un Residente activo. No puedes usar este método de pago.', 'danger');
-        this.isProcessing = false;
-        return;
-      }
-      this.executeOrderCreation(user);
-    } 
-    // Regla de Negocio: Validar Tarjeta (Pasarela Equipo 5)
-    else {
-      const payloadPago = { email: user?.email, monto: this.totalAmount };
-      this.integrationService.validarPagoAprobado(payloadPago).subscribe({
-        next: (pagoAprobado) => {
-          if (!pagoAprobado) {
-            this.toastService.show('El pago fue rechazado por la pasarela.', 'danger');
-            this.isProcessing = false;
-            return;
-          }
-          this.executeOrderCreation(user);
-        },
-        error: () => {
-          this.toastService.show('Error conectando a la pasarela de pagos.', 'danger');
-          this.isProcessing = false;
-        }
-      });
+    // 2. Verificamos que tu formulario de la tarjeta esté perfecto
+    if (this.paymentMethod === 'Tarjeta' && this.checkoutForm.invalid) {
+      this.toastService.show('Revisa los datos de la tarjeta. Deben ser 16 números y un CVV válido.', 'warning');
+      this.checkoutForm.markAllAsTouched(); // Pinta los bordes rojos
+      return;
     }
+
+    // 3. ¡Todo está bien! Encendemos el botón de "Procesando..."
+    this.isProcessing = true;
+
+    // 4. Simulamos que estamos esperando a la pasarela (2 segundos)
+    setTimeout(() => {
+      this.isProcessing = false; // Apagamos el spinner
+      
+      // Lanzamos la alerta verde de éxito usando el servicio que ya tienes
+      this.toastService.show('¡Pago procesado con éxito! Tu pedido está confirmado.', 'success');
+      
+      // Opcional: Aquí podrías vaciar el carrito ficticio para que quede en $0
+      // this.cartItems = [];
+      // this.totalAmount = 0;
+      
+    }, 2000);
   }
 
   private executeOrderCreation(user: any) {
