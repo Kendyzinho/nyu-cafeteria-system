@@ -1,0 +1,78 @@
+/* Tarjetas por día con efecto de elevación suave */
+.day-card {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+  border: 1px solid var(--nyu-border) !important;
+}
+
+.day-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(111, 78, 55, 0.08) !important;
+  border-color: var(--nyu-primary-light) !important;
+}
+
+/* Badges personalizados en colores pastel armoniosos */
+.badge-desayuno {
+  background-color: #FFF3E0 !important;
+  color: #E65100 !important;
+  border: 1px solid #FFE0B2;
+}
+
+.badge-almuerzo {
+  background-color: #E8F5E9 !important;
+  color: #2E7D32 !important;
+  border: 1px solid #C8E6C9;
+}
+
+.badge-cena {
+  background-color: #F3E5F5 !important;
+  color: #6A1B9A !important;
+  border: 1px solid #E1BEE7;
+}
+
+.badge-snack {
+  background-color: #E3F2FD !important;
+  color: #1565C0 !important;
+  border: 1px solid #BBDEFB;
+}
+
+/* Bloques de comida asignada */
+.assigned-item {
+  transition: all 0.2s ease;
+  border: 1px solid #ece4de !important;
+}
+
+.assigned-item:hover {
+  background-color: #fcf9f6 !important;
+  border-color: var(--nyu-primary-light) !important;
+  transform: scale(1.02);
+}
+
+.category-block {
+  background: #faf7f5;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #f2eae4;
+}
+
+/* Buscador */
+.search-bar {
+  background: white;
+  border: 1px solid var(--nyu-border);
+}
+
+.search-bar input {
+  font-size: 0.95rem;
+}
+
+.search-bar span {
+  font-size: 1rem;
+}
+
+.shadow-2xs {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Modal sticky table headers */
+.sticky-top {
+  z-index: 1020;
+}

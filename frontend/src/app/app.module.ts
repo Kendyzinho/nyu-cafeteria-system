@@ -32,6 +32,7 @@ import { ProfilePageComponent } from './features/profile/pages/profile-page/prof
 import { FooterComponent } from './shared/components/footer/footer.component';
 import { MenuItemComponent } from './features/student/menu/menu-item/menu-item.component';
 import { ProductsAdminComponent } from './features/admin/products-admin/products-admin.component';
+import { MenuSemanalComponent } from './features/admin/menu-semanal/menu-semanal.component';
 import { ToastComponent } from './shared/components/toast/toast.component';
 
 // Interceptores
@@ -61,6 +62,7 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor';
         PlansAdminComponent,
         PromotionsAdminComponent,
         ProductsAdminComponent,
+        MenuSemanalComponent,
         ToastComponent
     ],
     bootstrap: [AppComponent], imports: [BrowserModule,

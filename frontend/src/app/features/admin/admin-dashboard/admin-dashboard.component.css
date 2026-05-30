@@ -1,0 +1,17 @@
+.card-coffee {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+  border: 1px solid var(--nyu-border);
+  border-radius: 14px;
+  background-color: var(--nyu-surface);
+  height: 100%;
+}
+
+.card-coffee:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 25px rgba(111, 78, 55, 0.15) !important;
+  border-color: var(--nyu-primary-light);
+}
+
+.btn-coffee {
+  margin-top: auto;
+}
