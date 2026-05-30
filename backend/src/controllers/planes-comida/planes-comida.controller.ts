@@ -37,7 +37,7 @@ export class PlanesComidaController {
         statusDescription: 'Plan de alimentación creado exitosamente',
         errors: null,
       };
-    } catch (error) {
+    } catch (error: any) {
       return {
         data: null,
         statusCode: 500,

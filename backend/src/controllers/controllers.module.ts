@@ -26,6 +26,9 @@ import { UsuariosService } from 'src/providers/usuarios/usuarios.service';
 import { AuthService } from 'src/providers/auth/auth.service';
 import { JwtStrategy } from 'src/common/strategies/jwt.strategy';
 import { AdminGuard } from 'src/common/guards/admin.guard';
+import { SuscripcionAlumnoEntity } from 'src/database/entities/suscripcion-alumno.entity';
+import { SubscriptionsService } from 'src/providers/usuario_suscripcion/suscripcion.service';
+import { SubscriptionsController } from './usuario_suscripcion/suscripcion.controller';
 
 @Module({
   imports: [
@@ -45,6 +48,8 @@ import { AdminGuard } from 'src/common/guards/admin.guard';
       PlanesCatalogoEntity,
       PromocionEntity,
       MockUsuarioEntity,
+      SuscripcionAlumnoEntity,
+
     ]),
   ],
   controllers: [
@@ -56,6 +61,7 @@ import { AdminGuard } from 'src/common/guards/admin.guard';
     UsuariosController,
     AuthController,
     CategoriasController,
+    SubscriptionsController
   ],
   providers: [
     MenuService,
@@ -67,6 +73,7 @@ import { AdminGuard } from 'src/common/guards/admin.guard';
     AuthService,
     JwtStrategy,
     AdminGuard,
+    SubscriptionsService
   ],
 })
 export class ControllersModule {}

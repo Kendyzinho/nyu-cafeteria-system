@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class PlanService {
   private apiUrl = 'http://localhost:3000/api/meal-plans';
+  private subscriptionUrl = 'http://localhost:3000/api/subscriptions'; // ← nuevo
 
   constructor(private http: HttpClient) {}
 
@@ -14,11 +15,20 @@ export class PlanService {
     return this.http.get<any[]>(this.apiUrl);
   }
 
-  createPlan(plan: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, plan);
-  }
-
+  // HU17 — Suscribir residente a un plan mensual
+suscribir(userId: number, planId: number): Observable<any> {
+  return this.http.post<any>(this.subscriptionUrl, { userId, planId });
+  // el userId lo lee el backend desde el token automáticamente
+}
   activarPlan(id: number, planData: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, planData);
+  return this.http.put<any>(`${this.apiUrl}/${id}`, planData);
+}
+
+  // HU18 — Ver estado del plan activo
+  getEstadoPlan(userId: number): Observable<any> {
+    return this.http.get<any>(`${this.subscriptionUrl}/user/${userId}/status`);
+  }
+  redimirComida(userId: number): Observable<any> {
+  return this.http.post<any>(`${this.subscriptionUrl}/user/${userId}/redeem`, {});
   }
 }

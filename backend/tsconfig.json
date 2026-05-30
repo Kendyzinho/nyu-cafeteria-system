@@ -21,7 +21,7 @@
     "rootDir": "src",
     "noFallthroughCasesInSwitch": false,
     "baseUrl": "./",
-    "ignoreDeprecations": "5.0",
+    "ignoreDeprecations": "6.0",
     "incremental": false,
     "paths": {
       "src/*": ["src/*"]

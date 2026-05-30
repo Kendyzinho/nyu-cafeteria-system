@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, OneToOne, ManyToOne, JoinColumn } from 'typeorm';
 import { MockUsuarioEntity } from './mock-usuario.entity';
 import { PlanesCatalogoEntity } from './planes-catalogo.entity';
 
@@ -25,12 +25,19 @@ export class SuscripcionAlumnoEntity {
 
   @Column({ default: 'activo' })
   estado!: string;
+  @Column({ type: 'int', name: 'comidas_usadas', default: 0 })
+  comidasUsadas!: number;
+  @Column({ type: 'int', name: 'canjes_hoy', default: 0 })
+  canjesHoy!: number;
+
+@Column({ type: 'date', name: 'fecha_ultimo_canje', nullable: true })
+fechaUltimoCanje?: Date | null;
 
   @OneToOne(() => MockUsuarioEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'usuario_id' })
   usuario!: MockUsuarioEntity;
 
-  @OneToOne(() => PlanesCatalogoEntity, { onDelete: 'SET NULL', nullable: true })
+  @ManyToOne(() => PlanesCatalogoEntity, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'plan_id' })
   planActivo?: PlanesCatalogoEntity | null;
 }

@@ -3,5 +3,7 @@ export interface IGetPlanComidaResponse {
   nombre: string;
   descripcion: string;
   precio_mensual: number;
+  cantidadComidas: number;  
+  limiteDiario: number; 
   activo: boolean;
 }

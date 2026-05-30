@@ -36,7 +36,6 @@ const routes: Routes = [
       { 
         path: 'resident-plan', 
         component: ResidentPlanComponent,
-        canActivate: [ResidentGuard] // <-- REGLA ESTRICTA DE LA RÚBRICA
       },
       { path: 'history', component: HistoryComponent },
       { path: 'checkout', component: CheckoutComponent },
