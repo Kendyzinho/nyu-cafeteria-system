@@ -29,7 +29,7 @@ const routes: Routes = [
   { 
     path: '', 
     component: ClientLayoutComponent, 
-    //canActivate: [AuthGuard], // <-- PROTEGER TODO EL LAYOUT CLIENTE
+    canActivate: [AuthGuard], // <-- PROTEGER TODO EL LAYOUT CLIENTE
     children: [
       { path: 'home', component: HomeComponent },
       { path: 'menu', component: MenuComponent },

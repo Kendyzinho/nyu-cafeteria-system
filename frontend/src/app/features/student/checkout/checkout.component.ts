@@ -22,7 +22,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
   slotsDisponibles: Date[] = [];
   horarioSeleccionadoIso: string | null = null;
-  paymentMethod: string = 'Tarjeta';
+  paymentMethod: string = '';
   isProcessing: boolean = false;
 
   constructor(
@@ -48,11 +48,6 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     this.cartSub = this.cartService.cartItems$.subscribe(items => {
       this.cartItems = items;
       this.totalAmount = this.cartService.getTotalAmount();
-    
-    const horaFalsa = new Date();
-    horaFalsa.setHours(12, 30, 0, 0);
-    this.slotsDisponibles = [horaFalsa];
-    this.horarioSeleccionadoIso = horaFalsa.toISOString();
     });
   }
   ngOnDestroy(): void {
@@ -82,34 +77,65 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   }
 
   confirmOrder() {
-    // 1. Verificamos que el carrito tenga algo
+    // 1. Validaciones iniciales
+    if (!this.horarioSeleccionadoIso) {
+      this.toastService.show('Por favor selecciona una hora de retiro.', 'warning');
+      return;
+    }
+    
     if (this.cartItems.length === 0) {
       this.toastService.show('Tu carrito está vacío.', 'warning');
       return;
     }
 
-    // 2. Verificamos que tu formulario de la tarjeta esté perfecto
-    if (this.paymentMethod === 'Tarjeta' && this.checkoutForm.invalid) {
-      this.toastService.show('Revisa los datos de la tarjeta. Deben ser 16 números y un CVV válido.', 'warning');
-      this.checkoutForm.markAllAsTouched(); // Pinta los bordes rojos
+    // NUEVO: Exigir que seleccione un método de pago
+    if (!this.paymentMethod) {
+      this.toastService.show('Por favor selecciona un método de pago.', 'warning');
       return;
     }
 
-    // 3. ¡Todo está bien! Encendemos el botón de "Procesando..."
-    this.isProcessing = true;
+    // Validación de tu formulario de tarjeta
+    if (this.paymentMethod === 'Tarjeta' && this.checkoutForm.invalid) {
+      this.toastService.show('Por favor, ingresa los datos válidos de la tarjeta.', 'warning');
+      this.checkoutForm.markAllAsTouched();
+      return;
+    }
 
-    // 4. Simulamos que estamos esperando a la pasarela (2 segundos)
-    setTimeout(() => {
-      this.isProcessing = false; // Apagamos el spinner
-      
-      // Lanzamos la alerta verde de éxito usando el servicio que ya tienes
-      this.toastService.show('¡Pago procesado con éxito! Tu pedido está confirmado.', 'success');
-      
-      // Opcional: Aquí podrías vaciar el carrito ficticio para que quede en $0
-      // this.cartItems = [];
-      // this.totalAmount = 0;
-      
-    }, 2000);
+    this.isProcessing = true;
+    const user = this.authService.getCurrentUser();
+
+    // 2. Lógica real de conexión
+    if (this.paymentMethod === 'Plan Residente') {
+      if (!user?.isResident) {
+        this.toastService.show('No eres un Residente activo. No puedes usar este método.', 'danger');
+        this.isProcessing = false;
+        return;
+      }
+      this.executeOrderCreation(user);
+    } 
+    else if (this.paymentMethod === 'Tarjeta') {
+      // Le enviamos al backend el monto y todos los datos de tu formulario
+      const payloadPago = { 
+        email: user?.email, 
+        monto: this.totalAmount,
+        datosTarjeta: this.checkoutForm.value 
+      };
+
+      this.integrationService.validarPagoAprobado(payloadPago).subscribe({
+        next: (pagoAprobado) => {
+          if (!pagoAprobado) {
+            this.toastService.show('El pago fue rechazado por la pasarela.', 'danger');
+            this.isProcessing = false;
+            return;
+          }
+          this.executeOrderCreation(user); // Si pasa, se crea el pedido
+        },
+        error: () => {
+          this.toastService.show('Error conectando a la pasarela de pagos.', 'danger');
+          this.isProcessing = false;
+        }
+      });
+    }
   }
 
   private executeOrderCreation(user: any) {
