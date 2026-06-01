@@ -3,13 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { User, LoginResponse } from '../models/user';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private apiUrl = 'http://localhost:3000/api';
+  private apiUrl = environment.apiBackendUrl;
 
 
   // Gestión del usuario logueado actualmente
