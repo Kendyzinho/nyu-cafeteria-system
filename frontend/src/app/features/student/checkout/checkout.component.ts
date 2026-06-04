@@ -44,6 +44,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       cvv: ['', [Validators.required, Validators.pattern('^[0-9]{3,4}$')]]
     });
 
+    this.recargarSlots(); // <-- AGREGAR ESTA LÍNEA
+
     // 2. Carga los datos del carrito original
     this.cartSub = this.cartService.cartItems$.subscribe(items => {
       this.cartItems = items;
@@ -118,17 +120,17 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       const payloadPago = { 
         email: user?.email, 
         monto: this.totalAmount,
-        datosTarjeta: this.checkoutForm.value 
+        datosTarjeta: this.checkoutForm.value
       };
 
       this.integrationService.validarPagoAprobado(payloadPago).subscribe({
-        next: (pagoAprobado) => {
-          if (!pagoAprobado) {
+        next: ({ aprobado, transactionId }) => {
+          if (!aprobado) {
             this.toastService.show('El pago fue rechazado por la pasarela.', 'danger');
             this.isProcessing = false;
             return;
           }
-          this.executeOrderCreation(user); // Si pasa, se crea el pedido
+          this.executeOrderCreation(user, transactionId?.toString() ?? null);
         },
         error: () => {
           this.toastService.show('Error conectando a la pasarela de pagos.', 'danger');
@@ -138,15 +140,16 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     }
   }
 
-  private executeOrderCreation(user: any) {
+  private executeOrderCreation(user: any, ordenPagoId: string | null = null) {
     const payload = {
-      usuarioId: user ? user.id : 1, 
+      usuarioId: user ? user.id : 1,
       items: this.cartItems.map(i => ({
-        comidaId: i.product.id,
+        id: i.product.id,
         cantidad: i.quantity,
-        precioUnitario: i.product.precio || 0
+        precio: i.product.precio || 0
       })),
-      horarioRetiro: this.horarioSeleccionadoIso
+      horarioRetiro: this.horarioSeleccionadoIso,
+      ordenPagoId
     };
 
     this.orderService.createOrder(payload).subscribe({
