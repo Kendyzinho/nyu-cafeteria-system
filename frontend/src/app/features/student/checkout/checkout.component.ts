@@ -25,6 +25,10 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   paymentMethod: string = '';
   isProcessing: boolean = false;
 
+  orderSuccess: boolean = false;
+  orderNumber: number = 0;
+  finalPaidAmount: number = 0;
+
   constructor(
     private fb: FormBuilder,
     private cartService: CartService,
@@ -76,8 +80,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     this.cartService.removeItem(item.product.id);
   }
 
-  confirmOrder() {
-    // 1. Validaciones iniciales
+confirmOrder() {
+    // 1. Validaciones REALES activadas
     if (!this.horarioSeleccionadoIso) {
       this.toastService.show('Por favor selecciona una hora de retiro.', 'warning');
       return;
@@ -88,13 +92,11 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // NUEVO: Exigir que seleccione un método de pago
     if (!this.paymentMethod) {
       this.toastService.show('Por favor selecciona un método de pago.', 'warning');
       return;
     }
 
-    // Validación de tu formulario de tarjeta
     if (this.paymentMethod === 'Tarjeta' && this.checkoutForm.invalid) {
       this.toastService.show('Por favor, ingresa los datos válidos de la tarjeta.', 'warning');
       this.checkoutForm.markAllAsTouched();
@@ -104,7 +106,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     this.isProcessing = true;
     const user = this.authService.getCurrentUser();
 
-    // 2. Lógica real de conexión
+    // 2. Conexión REAL activada
     if (this.paymentMethod === 'Plan Residente') {
       if (!user?.isResident) {
         this.toastService.show('No eres un Residente activo. No puedes usar este método.', 'danger');
@@ -114,7 +116,6 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       this.executeOrderCreation(user);
     } 
     else if (this.paymentMethod === 'Tarjeta') {
-      // Le enviamos al backend el monto y todos los datos de tu formulario
       const payloadPago = { 
         email: user?.email, 
         monto: this.totalAmount,
@@ -128,7 +129,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
             this.isProcessing = false;
             return;
           }
-          this.executeOrderCreation(user); // Si pasa, se crea el pedido
+          this.executeOrderCreation(user); 
         },
         error: () => {
           this.toastService.show('Error conectando a la pasarela de pagos.', 'danger');
@@ -138,7 +139,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     }
   }
 
-  private executeOrderCreation(user: any) {
+ private executeOrderCreation(user: any) {
     const payload = {
       usuarioId: user ? user.id : 1, 
       items: this.cartItems.map(i => ({
@@ -152,10 +153,24 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     this.orderService.createOrder(payload).subscribe({
       next: () => {
         this.isProcessing = false;
-        this.cartService.clearCart();
+
+        // NUEVO: Guardamos una "foto" del total ANTES de vaciar el carrito
+        this.finalPaidAmount = this.totalAmount; 
+
+        this.cartService.clearCart(); // Ahora sí, vaciamos el carrito seguro
+
+        // 1. Generamos el número de orden para la boleta
+        this.orderNumber = Math.floor(Math.random() * 10000) + 1000; 
+
+        // 2. Activamos el switch para mostrar la pantalla de éxito en el HTML
+        this.orderSuccess = true; 
+
+        // 3. Mantenemos tu mensaje verde pequeño (toast) porque es un buen detalle
         const hr = new Date(this.horarioSeleccionadoIso!);
         this.toastService.show(`¡Pedido confirmado! Retira a las ${formatearSlot(hr)}`, 'success');
-        this.router.navigate(['/history']);
+
+        // 4. Mantenemos la redirección comentada para que el usuario pueda leer su boleta
+        // this.router.navigate(['/history']);
       },
       error: (err: any) => {
         console.error('Error al procesar orden', err);

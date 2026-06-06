@@ -28,7 +28,8 @@ export class ResidentPlanComponent implements OnInit {
     halal: false
   };
 
-  
+  ticketGenerated: boolean = false;
+  ticketHora: string = '';
 
   constructor(
     private planService: PlanService,
@@ -43,6 +44,7 @@ export class ResidentPlanComponent implements OnInit {
 
   // ── Carga el catálogo de planes desde GET /meal-plans ──
   private cargarPlanesDisponibles(): void {
+    /*
     this.planService.getPlanes().subscribe({
       next: (data: Plan[]) => {
         this.availablePlans = data.map(plan => ({
@@ -52,10 +54,29 @@ export class ResidentPlanComponent implements OnInit {
       },
       error: (err) => console.error('Error cargando planes', err)
     });
+  }*/
+ // Inyectamos los datos falsos directamente:
+    this.availablePlans = [
+      {
+        id: 1,
+        nombre: 'Plan Básico (Mensual)',
+        descripcion: 'Ideal para estudiantes que asisten 3 días a la semana a la universidad.',
+        precio_mensual: 35000,
+        cantidad_comidas: 12
+      },
+      {
+        id: 2,
+        nombre: 'Plan Residente Full (Premium)',
+        descripcion: 'Almuerzos cubiertos para todo el mes. Tranquilidad total.',
+        precio_mensual: 60000,
+        cantidad_comidas: 20
+      }
+    ];
   }
 
   // ── HU18: Carga el plan activo del usuario logueado ──
   private cargarEstadoPlanActivo(): void {
+    /*
     const user = this.authService.getCurrentUser();
     if (!user) return;
 
@@ -71,6 +92,18 @@ export class ResidentPlanComponent implements OnInit {
         this.currentPlanId = null;
       }
     });
+  }*/
+ this.currentPlanId = 2;
+    this.currentPlan = {
+      plan: { 
+        id: 2, 
+        nombre: 'Plan Residente Full', 
+        cantidadComidas: 20 
+      },
+      estado: 'activo',
+      mesVigencia: '2026-06-01T00:00:00',
+      comidasUsadas: 5
+    };
   }
 
   isResidentPlan(plan: any): boolean {
@@ -119,31 +152,39 @@ export class ResidentPlanComponent implements OnInit {
   }
 
 generateTicket(): void {
-  if (!this.selectedTime) {
-    alert('Selecciona un horario primero.');
-    return;
+    if (!this.selectedTime) {
+      alert('Selecciona un horario primero.');
+      return;
+    }
+
+    const user = this.authService.getCurrentUser();
+    if (!user) return;
+
+    // CÓDIGO REAL ACTIVADO
+    this.planService.redimirComida(user.id).subscribe({
+      next: (res) => {
+        if (this.currentPlan) {
+          this.currentPlan.comidasUsadas = res.comidasUsadas;
+        }
+        
+        // Encendemos el modal del Ticket al recibir éxito de la Base de Datos
+        this.ticketHora = this.selectedTime;
+        this.ticketGenerated = true; 
+        this.selectedTime = '';
+      },
+      error: (err) => {
+        if (err.status === 400) {
+          alert('Ya usaste todos tus canjes disponibles por hoy.');
+        } else {
+          alert('No tenés usos disponibles en tu plan este mes.');
+        }
+      },
+    });
   }
 
-  const user = this.authService.getCurrentUser();
-  if (!user) return;
-
-  this.planService.redimirComida(user.id).subscribe({
-    next: (res) => {
-      if (this.currentPlan) {
-        this.currentPlan.comidasUsadas = res.comidasUsadas;
-      }
-      alert(`Ticket generado para las ${this.selectedTime}. Presentá tu TUI en la cafetería.`);
-      this.selectedTime = '';
-    },
-    error: (err) => {
-      if (err.status === 400) {
-        alert('Ya usaste todos tus canjes disponibles por hoy.');
-      } else {
-        alert('No tenés usos disponibles en tu plan este mes.');
-      }
-    },
-  });
-}
+  cerrarTicket(): void {
+    this.ticketGenerated = false; // Apaga el modal HTML
+  }
   
 
 get totalMeals(): number {
