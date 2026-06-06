@@ -32,15 +32,15 @@ export class IntegrationService {
       })
     );
   }
-
-  validarPagoAprobado(payload: any): Observable<boolean> {
-    // Intenta conectar a la Pasarela de Pagos (Equipo 5)
-    return this.http.post<any>(`${environment.apiPagosUrl}/procesar`, payload).pipe(
-      map(res => res.status === 'APPROVED'),
-      catchError(err => {
-        console.warn('API Eq5 inalcanzable. Usando fallback local para Pago Aprobado.');
-        return of(true); // Fallback mock (simula que todos los pagos pasan por ahora)
-      })
-    );
-  }
-}
+validarPagoAprobado(payload: any): Observable<{ aprobado: boolean; transactionId?: number }> {
+  return this.http.post<any>(`${environment.apiPagosUrl}/procesar`, payload).pipe(
+    map(res => ({
+      aprobado: res.status === 'APPROVED',
+      transactionId: res.transactionId,
+    })),
+    catchError(() => {
+      console.warn('API Pagos inalcanzable. Usando fallback local.');
+      return of({ aprobado: true, transactionId: undefined });
+    })
+  );
+}}
