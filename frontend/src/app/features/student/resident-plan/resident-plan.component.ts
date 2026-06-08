@@ -44,7 +44,7 @@ export class ResidentPlanComponent implements OnInit {
 
   // ── Carga el catálogo de planes desde GET /meal-plans ──
   private cargarPlanesDisponibles(): void {
-    /*
+    
     this.planService.getPlanes().subscribe({
       next: (data: Plan[]) => {
         this.availablePlans = data.map(plan => ({
@@ -54,29 +54,12 @@ export class ResidentPlanComponent implements OnInit {
       },
       error: (err) => console.error('Error cargando planes', err)
     });
-  }*/
- // Inyectamos los datos falsos directamente:
-    this.availablePlans = [
-      {
-        id: 1,
-        nombre: 'Plan Básico (Mensual)',
-        descripcion: 'Ideal para estudiantes que asisten 3 días a la semana a la universidad.',
-        precio_mensual: 35000,
-        cantidad_comidas: 12
-      },
-      {
-        id: 2,
-        nombre: 'Plan Residente Full (Premium)',
-        descripcion: 'Almuerzos cubiertos para todo el mes. Tranquilidad total.',
-        precio_mensual: 60000,
-        cantidad_comidas: 20
-      }
-    ];
   }
+
 
   // ── HU18: Carga el plan activo del usuario logueado ──
   private cargarEstadoPlanActivo(): void {
-    /*
+    
     const user = this.authService.getCurrentUser();
     if (!user) return;
 
@@ -92,19 +75,8 @@ export class ResidentPlanComponent implements OnInit {
         this.currentPlanId = null;
       }
     });
-  }*/
- this.currentPlanId = 2;
-    this.currentPlan = {
-      plan: { 
-        id: 2, 
-        nombre: 'Plan Residente Full', 
-        cantidadComidas: 20 
-      },
-      estado: 'activo',
-      mesVigencia: '2026-06-01T00:00:00',
-      comidasUsadas: 5
-    };
   }
+
 
   isResidentPlan(plan: any): boolean {
     return plan.nombre?.toLowerCase().includes('residente');
