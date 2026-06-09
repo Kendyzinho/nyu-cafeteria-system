@@ -163,9 +163,8 @@ generateTicket(): void {
   cerrarTicket(): void {
     this.ticketGenerated = false; // Apaga el modal HTML
   }
-  // ==========================================
+
   // FUNCIONES DEL MODAL DE PAGO DE PLAN
-  // ==========================================
   openPaymentModal(plan: any): void {
     this.selectedPlanToBuy = plan;
     this.showPaymentModal = true;
@@ -187,9 +186,7 @@ generateTicket(): void {
       
       // Aquí puedes usar tu toastService o un alert
       alert('¡Pago exitoso! Tu plan ha sido actualizado.'); 
-      
-      // NOTA PARA FELIPE: Aquí debes llamar a tu servicio del backend
-      // ej: this.planService.cambiarPlan(usuarioId, this.selectedPlanToBuy.id)...
+
     }, 1500);
   }
   
