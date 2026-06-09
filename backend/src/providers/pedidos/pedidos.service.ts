@@ -7,6 +7,8 @@ import { DetallePedidoEntity } from 'src/database/entities/detalle-pedido.entity
 import type { IPostPedidoRequest } from 'src/controllers/pedidos/dto/IPostPedidoRequest';
 import type { IPutPedidoRequest } from 'src/controllers/pedidos/dto/IPutPedidoRequest';
 import { validarHorarioRetiro } from 'src/common/constants/cafeteria-horario';
+import { MockUsuarioEntity } from 'src/database/entities/mock-usuario.entity';
+import { PromocionEntity } from 'src/database/entities/promocion.entity';
 
 @Injectable()
 export class PedidosService {
@@ -15,7 +17,40 @@ export class PedidosService {
     private readonly pedidoRepository: Repository<PedidoEntity>,
     @InjectRepository(ComidaEntity)
     private readonly comidaRepository: Repository<ComidaEntity>,
+    @InjectRepository(MockUsuarioEntity)
+    private readonly usuarioRepository: Repository<MockUsuarioEntity>,
+    @InjectRepository(PromocionEntity)
+    private readonly promocionRepository: Repository<PromocionEntity>,
   ) {}
+
+  private async calcularDescuento(usuarioId: number, itemIds: number[]): Promise<number> {
+  const usuario = await this.usuarioRepository.findOne({ where: { id: usuarioId } });
+
+  // Solo estudiantes activos califican para descuentos
+  if (!usuario || !usuario.activo) return 0;
+
+  const ahora = new Date();
+  const horaActual = ahora.toTimeString().slice(0, 8); // "HH:MM:SS"
+
+  const promociones = await this.promocionRepository.find({ where: { activa: true } });
+
+  const aplicables = promociones.filter(p => {
+    // Verifica horario activo
+    if (horaActual < p.horaInicio || horaActual > p.horaFin) return false;
+    // Verifica si requiere residencia
+    if (p.reqResidencia && !usuario.es_residente) return false;
+    // Si la promo aplica a comidas específicas, verificar que haya al menos una
+    if (p.comidasIds && p.comidasIds.length > 0) {
+      return itemIds.some(id => p.comidasIds!.includes(id));
+    }
+    return true;
+  });
+
+  if (aplicables.length === 0) return 0;
+
+  // Aplica el mayor descuento disponible
+  return Math.max(...aplicables.map(p => Number(p.descuento)));
+}
 
   private mapPedido(pedido: PedidoEntity) {
     const items = (pedido.detalles || []).map(d => ({
@@ -52,6 +87,8 @@ export class PedidosService {
   }
 
   public async create(data: IPostPedidoRequest): Promise<PedidoEntity> {
+    const itemIds = data.items.map(i => i.id || i.productId).filter(Boolean) as number[];
+    const porcentajeDescuento = await this.calcularDescuento(data.usuarioId, itemIds);
     const horarioRetiro = new Date(data.horarioRetiro);
     const validacion = validarHorarioRetiro(horarioRetiro);
     if (!validacion.ok) {
@@ -59,6 +96,8 @@ export class PedidosService {
     }
 
     let calculatedTotal = 0;
+    const montoDescuento = calculatedTotal * (porcentajeDescuento / 100);
+    calculatedTotal = calculatedTotal - montoDescuento;
 
     if (data.items && data.items.length > 0) {
       for (const item of data.items) {
