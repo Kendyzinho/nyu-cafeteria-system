@@ -55,7 +55,7 @@
                 [ngClass]="(isResidentPlan(plan) && !currentUser?.isResident) ? 'text-muted' : 'text-white'"
                 [style.background-color]="(isResidentPlan(plan) && !currentUser?.isResident) ? '#d6d6d6' : (plan.id === currentPlanId ? '#000000' : 'var(--nyu-dark)')"
                 [style.cursor]="(isResidentPlan(plan) && !currentUser?.isResident) ? 'not-allowed' : 'pointer'"
-                (click)="selectPlan(plan)">
+                (click)="openPaymentModal(plan)">
                 {{ (isResidentPlan(plan) && !currentUser?.isResident) ? 'Solo residentes' : (plan.id === currentPlanId ? 'Plan Activo' : 'Suscribirme a este Plan') }}
               </button>
               
@@ -166,6 +166,72 @@
       <div class="modal-footer justify-content-center bg-light border-top p-3">
         <button type="button" class="btn fw-bold px-5 rounded-pill text-white" style="background-color: var(--nyu-dark);" (click)="cerrarTicket()">
           Entendido
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!-- ========================================== -->
+<!-- MODAL DE PAGO PARA CAMBIO DE PLAN          -->
+<!-- ========================================== -->
+
+<!-- Fondo oscuro -->
+<div *ngIf="showPaymentModal" class="modal-backdrop fade show" style="background-color: rgba(0,0,0,0.6);"></div>
+
+<!-- Ventana de Pago -->
+<div *ngIf="showPaymentModal" class="modal fade show d-block" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
+      
+      <!-- Cabecera -->
+      <div class="modal-header text-white border-0" style="background-color: var(--nyu-dark);">
+        <h5 class="modal-title fw-bold">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-credit-card me-2 mb-1" viewBox="0 0 16 16">
+            <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v1h14V4a1 1 0 0 0-1-1H2zm13 4H1v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7z"/>
+            <path d="M2 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+          </svg>
+          Suscripción a Plan
+        </h5>
+      </div>
+
+      <!-- Cuerpo / Formulario -->
+      <div class="modal-body p-4 bg-white">
+        <h5 class="fw-bold text-center mb-3">Estás por adquirir el <br><span style="color: var(--nyu-dark);">{{ selectedPlanToBuy?.nombre || 'Plan Seleccionado' }}</span></h5>
+        
+        <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded-3 border mb-4">
+          <span class="fw-bold text-muted">Total a pagar:</span>
+          <!-- Nota: Asegúrate de que selectedPlanToBuy.precio exista en tus datos -->
+          <span class="fs-3 fw-bolder text-success">${{ (selectedPlanToBuy?.precio || 0) | number }}</span>
+        </div>
+
+        <form>
+          <div class="mb-3">
+            <label class="form-label fw-bold small text-muted">Número de Tarjeta</label>
+            <input type="text" class="form-control bg-light" placeholder="0000 0000 0000 0000" maxlength="16">
+          </div>
+          <div class="row">
+            <div class="col-6 mb-3">
+              <label class="form-label fw-bold small text-muted">Vencimiento</label>
+              <input type="text" class="form-control bg-light" placeholder="MM/AA" maxlength="5">
+            </div>
+            <div class="col-6 mb-3">
+              <label class="form-label fw-bold small text-muted">CVC</label>
+              <input type="text" class="form-control bg-light" placeholder="123" maxlength="3">
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Botones -->
+      <div class="modal-footer bg-light border-top p-3 d-flex justify-content-between">
+        <button type="button" class="btn btn-outline-secondary fw-bold rounded-pill px-4" (click)="closePaymentModal()" [disabled]="isProcessingPayment">
+          Cancelar
+        </button>
+        <button type="button" class="btn text-white fw-bold rounded-pill px-4" style="background-color: var(--nyu-primary);" (click)="confirmPlanPayment()" [disabled]="isProcessingPayment">
+          <span *ngIf="!isProcessingPayment">Pagar Suscripción</span>
+          <span *ngIf="isProcessingPayment" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          <span *ngIf="isProcessingPayment">Procesando...</span>
         </button>
       </div>
 

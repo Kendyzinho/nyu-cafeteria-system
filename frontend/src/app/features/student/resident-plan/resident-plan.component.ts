@@ -28,8 +28,14 @@ export class ResidentPlanComponent implements OnInit {
     halal: false
   };
 
+  // Variables para el pago del plan
+  showPaymentModal: boolean = false;
+  selectedPlanToBuy: any = null;
+  isProcessingPayment: boolean = false;
+
   ticketGenerated: boolean = false;
   ticketHora: string = '';
+
 
   constructor(
     private planService: PlanService,
@@ -156,6 +162,35 @@ generateTicket(): void {
 
   cerrarTicket(): void {
     this.ticketGenerated = false; // Apaga el modal HTML
+  }
+  // ==========================================
+  // FUNCIONES DEL MODAL DE PAGO DE PLAN
+  // ==========================================
+  openPaymentModal(plan: any): void {
+    this.selectedPlanToBuy = plan;
+    this.showPaymentModal = true;
+  }
+
+  closePaymentModal(): void {
+    this.showPaymentModal = false;
+    this.selectedPlanToBuy = null;
+    this.isProcessingPayment = false;
+  }
+
+  confirmPlanPayment(): void {
+    this.isProcessingPayment = true;
+    
+    // MOCK: Simulamos que el banco procesa el pago por 1.5 segundos
+    setTimeout(() => {
+      this.isProcessingPayment = false;
+      this.closePaymentModal();
+      
+      // Aquí puedes usar tu toastService o un alert
+      alert('¡Pago exitoso! Tu plan ha sido actualizado.'); 
+      
+      // NOTA PARA FELIPE: Aquí debes llamar a tu servicio del backend
+      // ej: this.planService.cambiarPlan(usuarioId, this.selectedPlanToBuy.id)...
+    }, 1500);
   }
   
 
