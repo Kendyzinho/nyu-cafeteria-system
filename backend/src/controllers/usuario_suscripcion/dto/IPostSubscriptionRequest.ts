@@ -1,4 +1,4 @@
-import { IsNumber, IsNotEmpty, Min } from 'class-validator';
+import { IsNumber, IsNotEmpty, Min,IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class IPostSubscriptionRequest {
@@ -13,4 +13,10 @@ export class IPostSubscriptionRequest {
   @IsNotEmpty()
   @Min(1)
   planId: number;
+  @ApiProperty({ example: 7, description: 'ID de la orden de pago aprobada', required: false })
+@IsOptional()
+@IsNumber()
+@Min(1)
+ordenPagoId?: number
+  
 }

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { PlanService } from '../../../core/services/plan.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Plan } from '../../../core/models/plan';
@@ -39,7 +40,8 @@ export class ResidentPlanComponent implements OnInit {
 
   constructor(
     private planService: PlanService,
-    private authService: AuthService
+    private authService: AuthService,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
@@ -175,21 +177,44 @@ generateTicket(): void {
     this.selectedPlanToBuy = null;
     this.isProcessingPayment = false;
   }
+confirmPlanPayment(): void {
+  const user = this.authService.getCurrentUser();
+  if (!user || !this.selectedPlanToBuy) return;
 
-  confirmPlanPayment(): void {
-    this.isProcessingPayment = true;
-    
-    // MOCK: Simulamos que el banco procesa el pago por 1.5 segundos
-    setTimeout(() => {
+  this.isProcessingPayment = true;
+
+  // Paso 1: Procesar el pago
+  this.http.post<any>('http://localhost:3000/api/pagos/procesar', {
+    email: user.email,
+    monto: this.selectedPlanToBuy.precio_mensual,
+  }).subscribe({
+    next: (pagoResult : any) => {
+      if (pagoResult.status !== 'APPROVED') {
+        this.isProcessingPayment = false;
+        alert('El pago fue rechazado. Verifica tus datos.');
+        return;
+      }
+
+      // Paso 2: Crear la suscripción con el ID del pago
+      this.planService.suscribir(user.id, this.selectedPlanToBuy.id, pagoResult.transactionId).subscribe({
+        next: () => {
+          this.isProcessingPayment = false;
+          this.closePaymentModal();
+          this.cargarEstadoPlanActivo();
+          alert('¡Pago exitoso! Tu plan ha sido activado.');
+        },
+        error: () => {
+          this.isProcessingPayment = false;
+          alert('El pago fue aprobado pero no se pudo activar el plan. Contacta soporte.');
+        }
+      });
+    },
+    error: () => {
       this.isProcessingPayment = false;
-      this.closePaymentModal();
-      
-      // Aquí puedes usar tu toastService o un alert
-      alert('¡Pago exitoso! Tu plan ha sido actualizado.'); 
-
-    }, 1500);
-  }
-  
+      alert('Error al procesar el pago. Intenta de nuevo.');
+    }
+  });
+}
 
 get totalMeals(): number {
   return this.currentPlan?.plan?.cantidadComidas ?? 0;

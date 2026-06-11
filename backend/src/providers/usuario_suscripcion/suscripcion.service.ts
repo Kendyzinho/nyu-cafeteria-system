@@ -8,6 +8,7 @@ import { MockUsuarioEntity } from '../../database/entities/mock-usuario.entity';
 interface IPostSubscriptionRequest {
   userId: number;
   planId: number;
+  ordenPagoId?: number;
 }
 
 @Injectable()
@@ -62,6 +63,7 @@ if (suscripcionExistente) {
   suscripcionExistente.comidasUsadas = 0;
   suscripcionExistente.canjesHoy = 0;
   suscripcionExistente.fechaUltimoCanje = null;
+  suscripcionExistente.ordenPagoId = data.ordenPagoId ?? null;
   saved = await this.suscripcionRepository.save(suscripcionExistente);
 } else {
     const nueva = this.suscripcionRepository.create({
@@ -69,6 +71,7 @@ if (suscripcionExistente) {
       planActivoId: data.planId,
       mesVigencia,
       estado: 'activo',
+      ordenPagoId: data.ordenPagoId ?? null,
     });
     saved = await this.suscripcionRepository.save(nueva);
   }

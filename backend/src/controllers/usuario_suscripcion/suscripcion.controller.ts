@@ -64,18 +64,19 @@ export class SubscriptionsController {
       },
     },
   })
-  @UseGuards(JwtAuthGuard)        // ← valida el token
+@UseGuards(JwtAuthGuard)        
 @Post()
 @UsePipes(new ValidationPipe())
 async postSubscription(
-  @Req() req: Request,          // ← extrae el usuario del token
-  @Body() body: { planId: number },
-  @Res() response: Response,
+@Req() req: Request,          // ← extrae el usuario del token
+@Body() body: IPostSubscriptionRequest,
+@Res() response: Response,
 ): Promise<Response> {
   const userId = (req.user as any).id;  // viene del JwtStrategy
   const result = await this.subscriptionsService.suscribir({
     userId,
     planId: body.planId,
+    ordenPagoId: body.ordenPagoId,    
   });
 if (!result) {
   return response.status(404).json({
