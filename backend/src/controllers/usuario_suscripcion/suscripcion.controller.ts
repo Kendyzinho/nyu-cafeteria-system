@@ -23,7 +23,7 @@ import type { Request } from 'express';
 export class SubscriptionsController {
   constructor(private readonly subscriptionsService: SubscriptionsService) {}
 
-  // HU17 — Suscribir residente a un plan mensual
+  //  Suscribir residente a un plan mensual
   @ApiOperation({
     summary: 'HU17 - Suscribir residente a un plan mensual',
     description:
@@ -105,6 +105,7 @@ return response.status(201).json({
 });
 
 }
+<<<<<<< Updated upstream
   // HU18 — Ver estado del plan activo
   @ApiOperation({
     summary: 'HU18 - Ver estado del plan activo de un residente',
@@ -126,6 +127,27 @@ return response.status(201).json({
           descripcion: 'El plan más popular.',
           precioMensual: 500000,
         },
+=======
+//  Ver estado del plan activo
+@ApiOperation({
+  summary: '  Ver estado del plan activo de un residente',
+  description: 'Retorna la suscripción activa del usuario. Retorna 404 si no tiene plan activo.',
+})
+@ApiResponse({
+  status: 200,
+  description: 'Estado del plan activo encontrado',
+  schema: {
+    example: {
+      subscriptionId: 4,
+      userId: 8,
+      estado: 'activo',
+      mesVigencia: '2026-05-01',
+      plan: {
+        id: 2,
+        nombre: 'Plan Residente Estándar (30 Comidas)',
+        descripcion: 'El plan más popular.',
+        precioMensual: 500000,
+>>>>>>> Stashed changes
       },
     },
   })

@@ -11,15 +11,14 @@ import { Plan } from '../../../core/models/plan';
 })
 export class ResidentPlanComponent implements OnInit {
 
-  // ── Estado del plan activo (viene de HU18) ──
-  currentPlan: any = null;       // objeto con { plan, estado, mesVigencia, ... }
+  // ── Estado del plan activo 
+  currentPlan: any = null;       
   currentPlanId: number | null = null;
   currentUser: any = null;
 
-  // ── Lista de planes disponibles (viene de GET /meal-plans) ──
+  // ── Lista de planes disponibles 
   availablePlans: any[] = [];
 
-  // ── UI ──
   loading = false;
   selectedTime: string = '';
   preferences = {
@@ -47,7 +46,7 @@ export class ResidentPlanComponent implements OnInit {
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
     this.cargarPlanesDisponibles();  // siempre carga el catálogo
-    this.cargarEstadoPlanActivo();   // HU18: carga el plan activo del usuario
+    this.cargarEstadoPlanActivo();   // carga el plan activo del usuario
   }
 
   // ── Carga el catálogo de planes desde GET /meal-plans ──
@@ -64,8 +63,12 @@ export class ResidentPlanComponent implements OnInit {
     });
   }
 
+<<<<<<< Updated upstream
 
   // ── HU18: Carga el plan activo del usuario logueado ──
+=======
+  //  Carga el plan activo del usuario logueado ──
+>>>>>>> Stashed changes
   private cargarEstadoPlanActivo(): void {
     
     const user = this.authService.getCurrentUser();

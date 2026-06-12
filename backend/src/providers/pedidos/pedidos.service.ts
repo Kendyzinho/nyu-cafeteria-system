@@ -27,7 +27,7 @@ export class PedidosService {
   const usuario = await this.usuarioRepository.findOne({ where: { id: usuarioId } });
 
   // Solo estudiantes activos califican para descuentos
-  if (!usuario || !usuario.activo) return 0;
+if (!usuario || !usuario.activo || !usuario.es_residente) return 0;
 
   const ahora = new Date();
   const horaActual = ahora.toTimeString().slice(0, 8); // "HH:MM:SS"
@@ -87,8 +87,6 @@ export class PedidosService {
   }
 
   public async create(data: IPostPedidoRequest): Promise<PedidoEntity> {
-    const itemIds = data.items.map(i => i.id || i.productId).filter(Boolean) as number[];
-    const porcentajeDescuento = await this.calcularDescuento(data.usuarioId, itemIds);
     const horarioRetiro = new Date(data.horarioRetiro);
     const validacion = validarHorarioRetiro(horarioRetiro);
     if (!validacion.ok) {
@@ -96,10 +94,8 @@ export class PedidosService {
     }
 
     let calculatedTotal = 0;
-    const montoDescuento = calculatedTotal * (porcentajeDescuento / 100);
-    calculatedTotal = calculatedTotal - montoDescuento;
 
-    if (data.items && data.items.length > 0) {
+       if (data.items && data.items.length > 0) {
       for (const item of data.items) {
         const id = item.productId || item.id;
         const nombre = item.nombre || `Producto #${id}`;
@@ -118,6 +114,12 @@ export class PedidosService {
           }
         }
       }
+    }
+        
+    const itemIds = data.items.map(i => i.id || i.productId).filter(Boolean) as number[];
+    const porcentajeDescuento = await this.calcularDescuento(data.usuarioId, itemIds);
+    if (porcentajeDescuento > 0) {
+      calculatedTotal = calculatedTotal * (1 - porcentajeDescuento / 100);
     }
 
     const nuevoPedido = this.pedidoRepository.create({
@@ -154,4 +156,38 @@ export class PedidosService {
     if (result.affected === 0) return undefined;
     return result;
   }
+public async getDescuentoPerfil(usuarioId: number): Promise<{
+  usuarioActivo: boolean;
+  porcentajeDescuento: number;
+  promocionAplicada: string | null;
+}> {
+  const usuario = await this.usuarioRepository.findOne({ where: { id: usuarioId } });
+
+  if (!usuario || !usuario.activo || !usuario.es_residente) {
+  return { usuarioActivo: false, porcentajeDescuento: 0, promocionAplicada: null };
+}
+
+  const ahora = new Date();
+  const horaActual = ahora.toTimeString().slice(0, 8);
+  const promociones = await this.promocionRepository.find({ where: { activa: true } });
+
+  const aplicables = promociones.filter(p => {
+    if (horaActual < p.horaInicio || horaActual > p.horaFin) return false;
+    if (p.reqResidencia && !usuario.es_residente) return false;
+    return true;
+  });
+
+  if (aplicables.length === 0) {
+    return { usuarioActivo: true, porcentajeDescuento: 0, promocionAplicada: null };
+  }
+
+  const mejor = aplicables.reduce((a, b) => Number(a.descuento) >= Number(b.descuento) ? a : b);
+  return {
+    usuarioActivo: true,
+    porcentajeDescuento: Number(mejor.descuento),
+    promocionAplicada: mejor.nombre,
+  };
+}
+
+
 }

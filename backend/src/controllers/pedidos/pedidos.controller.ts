@@ -17,6 +17,11 @@ export class PedidosController {
   public async getPedidos() {
     return await this.pedidosService.getAll();
   }
+  @ApiOperation({ summary: 'Consultar descuento aplicable para un usuario' })
+  @Get('discount/:usuarioId')
+  async getDescuento(@Param('usuarioId') usuarioId: number) {
+    return await this.pedidosService.getDescuentoPerfil(Number(usuarioId));
+}
 
   @ApiOperation({ summary: 'Obtener un pedido por id' })
   @Get(':id')
