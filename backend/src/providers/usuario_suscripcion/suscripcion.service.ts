@@ -31,12 +31,7 @@ export class SubscriptionsService {
   precioFinal: number;
 } | null> {
 
-<<<<<<< Updated upstream
-  // 1. Verificar usuario residente activo
-  
-=======
   //  Verificar usuario residente activo
->>>>>>> Stashed changes
   const usuario = await this.usuarioRepository.findOne({
     where: { id: data.userId },
   });
@@ -50,12 +45,8 @@ const plan = await this.planRepository.findOne({
 if (!plan || !plan.activo) return null;
 
 if (plan.reqResidencia && !usuario.es_residente) return null;
-<<<<<<< Updated upstream
-  // 3. Primer día del mes actual
-=======
 
 
->>>>>>> Stashed changes
   const now = new Date();
   const mesVigencia = new Date(now.getFullYear(), now.getMonth(), 1);
 
@@ -87,25 +78,15 @@ if (suscripcionExistente) {
 
   const precioFinal = Number(plan.precio_mensual);
   return { suscripcion: saved, plan, precioFinal };
-<<<<<<< Updated upstream
-  
 }
-=======
-}// Ver estado del plan activo
-public async getEstadoPlan(userId: number): Promise<{
-  suscripcion: SuscripcionAlumnoEntity;
-  plan: PlanesCatalogoEntity;
-} | null> {
->>>>>>> Stashed changes
 
-  // HU18 — Ver estado del plan activo
+  //  Ver estado del plan activo
   public async getEstadoPlan(userId: number): Promise<{
     suscripcion: SuscripcionAlumnoEntity;
     plan: PlanesCatalogoEntity;
   } | null> {
     const suscripcion = await this.suscripcionRepository.findOne({
       where: { usuarioId: userId, estado: 'activo' },
-      
     });
 
     if (!suscripcion || !suscripcion.planActivoId) return null;
@@ -118,7 +99,8 @@ public async getEstadoPlan(userId: number): Promise<{
 
     return { suscripcion, plan };
   }
-public async redimirComida(userId: number): Promise<{
+
+  public async redimirComida(userId: number): Promise<{
   comidasUsadas: number;
   cantidadComidas: number;
   restantes: number;

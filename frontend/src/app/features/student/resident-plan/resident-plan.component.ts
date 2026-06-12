@@ -63,12 +63,7 @@ export class ResidentPlanComponent implements OnInit {
     });
   }
 
-<<<<<<< Updated upstream
-
-  // ── HU18: Carga el plan activo del usuario logueado ──
-=======
   //  Carga el plan activo del usuario logueado ──
->>>>>>> Stashed changes
   private cargarEstadoPlanActivo(): void {
     
     const user = this.authService.getCurrentUser();
