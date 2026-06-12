@@ -52,7 +52,7 @@
           style="border-radius: 8px; transition: all 0.2s;">Inicio</a>
         <a routerLink="/menu" routerLinkActive="active-nav-link" class="btn text-white fw-bold border-0 px-3"
           style="border-radius: 8px; transition: all 0.2s;">Menú del día</a>
-        <a *ngIf="currentUser?.isResident" routerLink="/resident-plan" routerLinkActive="active-nav-link" class="btn text-white fw-bold border-0 px-3" style="border-radius: 8px; transition: all 0.2s;">Mi Plan</a>
+        <a *ngIf="currentUser?.role === 'Cliente'" routerLink="/resident-plan"routerLinkActive="active-nav-link"class="btn text-white fw-bold border-0 px-3"style="border-radius: 8px; transition: all 0.2s;">Mi Plan</a>
         <a routerLink="/history" routerLinkActive="active-nav-link" class="btn text-white fw-bold border-0 px-3"
           style="border-radius: 8px; transition: all 0.2s;">Historial de Consumo</a>
       </div>

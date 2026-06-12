@@ -123,7 +123,8 @@ export class PedidosService {
     const nuevoPedido = this.pedidoRepository.create({
       usuarioId: data.usuarioId,
       total: calculatedTotal,
-      estado: 'pendiente',
+      estado: data.ordenPagoId ? 'pagado' : 'pendiente',
+      ordenPagoId: data.ordenPagoId ?? null,
       fechaCreacion: new Date(),
       horarioRetiro,
     });

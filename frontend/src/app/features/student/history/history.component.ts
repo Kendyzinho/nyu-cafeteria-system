@@ -11,6 +11,7 @@ interface Transaction {
   method: 'Tarjeta' | 'Plan Residente' | 'Efectivo';
   status: 'Completado' | 'Pendiente' | 'Cancelado' | string;
   horarioRetiro: string | null;
+  type: 'Compra' | 'Canje Plan';
 }
 
 @Component({
@@ -21,6 +22,8 @@ interface Transaction {
 export class HistoryComponent implements OnInit {
   transactions: Transaction[] = [];
   totalSpentMonth: number = 0;
+  filteredTransactions: Transaction[] = [];
+  filter: 'Todos' | 'Compras' | 'Canjes Plan' = 'Todos';
 
   constructor(
     private orderService: OrderService,
@@ -31,16 +34,22 @@ export class HistoryComponent implements OnInit {
     const user = this.authService.getCurrentUser();
     if (user) {
       this.orderService.getOrdersByUser(user.id).subscribe({
+
         next: (orders: Order[]) => {
-          this.transactions = orders.map(o => ({
-            id: `TRX-${o.id.toString().padStart(3, '0')}`,
-            date: o.fechaCreacion,
-            item: this.getItemsSummary(o.items || []),
-            amount: Number(o.total),
-            method: 'Tarjeta',
-            status: this.capitalize(o.estado),
-            horarioRetiro: o.horarioRetiro ?? null,
-          }));
+          this.transactions = orders.map(o => {
+            const isPlan = Number(o.total) === 0;
+            return {
+              id: `TRX-${o.id.toString().padStart(3, '0')}`,
+              date: o.fechaCreacion,
+              item: this.getItemsSummary(o.items || []),
+              amount: Number(o.total),
+              method: isPlan ? 'Plan Residente' : 'Tarjeta',
+              status: this.capitalize(o.estado),
+              horarioRetiro: o.horarioRetiro ?? null,
+              type: isPlan ? 'Canje Plan' : 'Compra',
+            };
+          });
+          this.applyFilter();
           this.calculateTotal();
         },
         error: (err) => console.error('Error cargando historial', err)
@@ -63,14 +72,47 @@ export class HistoryComponent implements OnInit {
   }
 
   calculateTotal() {
-    this.totalSpentMonth = this.transactions
-      .filter(t => t.status === 'Completado')
-      .reduce((sum, current) => sum + current.amount, 0);
-  }
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+
+  this.totalSpentMonth = this.transactions
+    .filter(t => {
+      const trxDate = new Date(t.date);
+      return (
+        t.status === 'Completado' &&
+        trxDate.getMonth() === currentMonth &&
+        trxDate.getFullYear() === currentYear
+      );
+    })
+    .reduce((sum, current) => sum + current.amount, 0);
+}
 
   getMethodClass(method: string): string {
     if (method === 'Plan Residente') return 'badge bg-info-pastel text-dark';
     if (method === 'Tarjeta') return 'badge bg-primary-pastel text-dark';
     return 'badge bg-secondary-pastel text-dark';
   }
+
+
+  setFilter(filter: 'Todos' | 'Compras' | 'Canjes Plan') {
+  this.filter = filter;
+  this.applyFilter();
+}
+
+applyFilter() {
+  if (this.filter === 'Todos') {
+    this.filteredTransactions = this.transactions;
+    return;
+  }
+
+  if (this.filter === 'Compras') {
+    this.filteredTransactions = this.transactions.filter(t => t.type === 'Compra');
+    return;
+  }
+
+  if (this.filter === 'Canjes Plan') {
+    this.filteredTransactions = this.transactions.filter(t => t.type === 'Canje Plan');
+  }
+}
 }

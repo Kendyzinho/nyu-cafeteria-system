@@ -44,4 +44,7 @@ export class IPostPedidoRequest {
   @IsNotEmpty()
   @IsISO8601()
   horarioRetiro: string;
+  @IsOptional()
+  @IsNumber()
+  ordenPagoId?: number; 
 }

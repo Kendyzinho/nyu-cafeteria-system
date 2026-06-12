@@ -1,0 +1,40 @@
+<div class="checkout-container">
+  <h2>Finalizar Compra</h2>
+  <p>Ingresa los datos de tu método de pago</p>
+
+  <form [formGroup]="checkoutForm" (ngSubmit)="procesarPago()">
+    
+    <div class="form-group">
+      <label>Nombre del Titular</label>
+      <input type="text" formControlName="titular" placeholder="Ej: Nelson Frontend">
+      <span class="error" *ngIf="checkoutForm.get('titular')?.invalid && checkoutForm.get('titular')?.touched">
+        El nombre es obligatorio.
+      </span>
+    </div>
+
+    <div class="form-group">
+      <label>Número de Tarjeta</label>
+      <input type="text" formControlName="numeroTarjeta" placeholder="1234567812345678" maxlength="16">
+      <span class="error" *ngIf="checkoutForm.get('numeroTarjeta')?.invalid && checkoutForm.get('numeroTarjeta')?.touched">
+        Ingresa 16 dígitos válidos.
+      </span>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Vencimiento (MM/AA)</label>
+        <input type="text" formControlName="fechaVencimiento" placeholder="12/26" maxlength="5">
+      </div>
+
+      <div class="form-group">
+        <label>CVV</label>
+        <input type="password" formControlName="cvv" placeholder="123" maxlength="4">
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="checkoutForm.invalid">
+      Confirmar Pago
+    </button>
+
+  </form>
+</div>

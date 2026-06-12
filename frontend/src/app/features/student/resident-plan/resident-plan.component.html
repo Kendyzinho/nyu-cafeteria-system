@@ -35,9 +35,7 @@
 
       <div class="row g-3 mt-2">
         <div class="col-md-4" *ngFor="let plan of availablePlans">
-          <div 
-            class="card h-100 border-0 shadow-sm" 
-            [ngStyle]="{'background-color': plan.id === currentPlanId ? '#FFCDD2' : '#F5F5F5'}">
+          <div class="card h-100 border-0 shadow-sm" [ngStyle]="{'background-color': plan.id === currentPlanId ? '#FFCDD2' : '#F5F5F5'}">
             
             <div class="card-body p-3 d-flex flex-column">
               <h6 class="fw-bold text-center mb-3" style="color: var(--nyu-dark);">
@@ -52,11 +50,15 @@
               <p class="small text-muted flex-grow-1">{{ plan.descripcion }}</p>
               
               <button 
-                class="btn w-100 fw-bold text-white mt-3" 
-                [ngStyle]="{'background-color': plan.id === currentPlanId ? '#000000' : 'var(--nyu-dark)'}"
-                (click)="selectPlan(plan.id)">
-                {{ plan.id === currentPlanId ? 'Plan Activo' : 'Suscribirme a este Plan' }}
+                class="btn w-100 fw-bold mt-3"
+                [disabled]="(isResidentPlan(plan) && !currentUser?.isResident) || plan.id === currentPlanId"
+                [ngClass]="(isResidentPlan(plan) && !currentUser?.isResident) ? 'text-muted' : 'text-white'"
+                [style.background-color]="(isResidentPlan(plan) && !currentUser?.isResident) ? '#d6d6d6' : (plan.id === currentPlanId ? '#000000' : 'var(--nyu-dark)')"
+                [style.cursor]="(isResidentPlan(plan) && !currentUser?.isResident) ? 'not-allowed' : 'pointer'"
+                (click)="openPaymentModal(plan)">
+                {{ (isResidentPlan(plan) && !currentUser?.isResident) ? 'Solo residentes' : (plan.id === currentPlanId ? 'Plan Activo' : 'Suscribirme a este Plan') }}
               </button>
+              
             </div>
           </div>
         </div>
@@ -75,42 +77,29 @@
         </div>
 
         <div class="card-body p-4">
-          <h6 class="fw-bold mb-3" style="color: var(--nyu-dark);">
-            Preferencias:
-          </h6>
+          <h6 class="fw-bold mb-3" style="color: var(--nyu-dark);">Preferencias:</h6>
           
           <div class="form-check mb-2">
             <input class="form-check-input shadow-sm" type="checkbox" id="checkVegano" [(ngModel)]="preferences.vegano">
-            <label class="form-check-label fw-bold" for="checkVegano" style="color: var(--nyu-dark);">
-              Vegano
-            </label>
+            <label class="form-check-label fw-bold" for="checkVegano" style="color: var(--nyu-dark);">Vegano</label>
           </div>
 
           <div class="form-check mb-2">
             <input class="form-check-input shadow-sm" type="checkbox" id="checkVege" [(ngModel)]="preferences.vegetariano">
-            <label class="form-check-label fw-bold" for="checkVege" style="color: var(--nyu-dark);">
-              Vegetariano
-            </label>
+            <label class="form-check-label fw-bold" for="checkVege" style="color: var(--nyu-dark);">Vegetariano</label>
           </div>
 
           <div class="form-check mb-2">
             <input class="form-check-input shadow-sm" type="checkbox" id="checkGluten" [(ngModel)]="preferences.sinGluten">
-            <label class="form-check-label fw-bold" for="checkGluten" style="color: var(--nyu-dark);">
-              Sin Gluten
-            </label>
+            <label class="form-check-label fw-bold" for="checkGluten" style="color: var(--nyu-dark);">Sin Gluten</label>
           </div>
 
           <div class="form-check mb-4">
             <input class="form-check-input shadow-sm" type="checkbox" id="checkHalal" [(ngModel)]="preferences.halal">
-            <label class="form-check-label fw-bold" for="checkHalal" style="color: var(--nyu-dark);">
-              Halal
-            </label>
+            <label class="form-check-label fw-bold" for="checkHalal" style="color: var(--nyu-dark);">Halal</label>
           </div>
 
-          <button 
-            class="btn text-white w-100 fw-bold" 
-            style="background-color: var(--nyu-dark);" 
-            (click)="savePreferences()">
+          <button class="btn text-white w-100 fw-bold" style="background-color: var(--nyu-dark);" (click)="savePreferences()">
             Guardar Preferencias
           </button>
         </div>
@@ -125,7 +114,6 @@
         </div>
 
         <div class="card-body p-4 text-center">
-          
           <select class="form-select shadow-sm mb-4" [(ngModel)]="selectedTime">
             <option value="" disabled>Seleccionar Horario de Canje</option>
             <option value="12:00 - 12:30">12:00 - 12:30 (hoy)</option>
@@ -133,14 +121,114 @@
             <option value="14:00 - 14:30">14:00 - 14:30 (hoy)</option>
           </select>
 
-          <button 
-            class="btn text-white w-100 fw-bold" 
-            style="background-color: var(--nyu-dark);" 
-            (click)="generateTicket()">
+          <button class="btn text-white w-100 fw-bold" style="background-color: var(--nyu-dark);" (click)="generateTicket()">
             Canjear Comida del Plan (1 Uso)
           </button>
-          
         </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div *ngIf="ticketGenerated" class="modal-backdrop fade show" style="background-color: rgba(0,0,0,0.6);"></div>
+
+<div *ngIf="ticketGenerated" class="modal fade show d-block" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 overflow-hidden shadow-lg">
+      
+      <div class="modal-header text-white text-center border-0" style="background-color: var(--nyu-dark);">
+        <h5 class="modal-title fw-bold w-100">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-ticket-perforated mb-1 me-2" viewBox="0 0 16 16">
+            <path d="M4 4.85v.9h1v-.9zm7 0v.9h1v-.9zm-7 1.8v.9h1v-.9zm7 0v.9h1v-.9zm-7 1.8v.9h1v-.9zm7 0v.9h1v-.9zm-7 1.8v.9h1v-.9zm7 0v.9h1v-.9z"/>
+            <path d="M1.5 3A1.5 1.5 0 0 0 0 4.5V6a.5.5 0 0 0 .5.5 1.5 1.5 0 1 1 0 3 .5.5 0 0 0-.5.5v1.5A1.5 1.5 0 0 0 1.5 13h13a1.5 1.5 0 0 0 1.5-1.5V10a.5.5 0 0 0-.5-.5 1.5 1.5 0 0 1 0-3A.5.5 0 0 0 16 6V4.5A1.5 1.5 0 0 0 14.5 3zM1 4.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v1.05a2.5 2.5 0 0 0 0 4.9v1.05a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-1.05a2.5 2.5 0 0 0 0-4.9z"/>
+          </svg>
+          Ticket de Canje
+        </h5>
+      </div>
+
+      <div class="modal-body text-center p-5">
+        <h4 class="fw-bold mb-1" style="color: var(--nyu-dark);">{{ currentUser?.name || 'Nelson' }}</h4>
+        <p class="text-muted mb-4 fw-bold">{{ getCurrentPlanName() }}</p>
+
+        <div class="p-3 border border-secondary-subtle rounded-3 bg-light mb-4 shadow-sm">
+          <h6 class="text-muted text-uppercase small fw-bold mb-2">Horario de Retiro</h6>
+          <h2 class="fw-bolder text-success mb-0">{{ ticketHora }}</h2>
+        </div>
+
+        <div class="mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="220" height="60" fill="currentColor" class="bi bi-upc text-dark" viewBox="0 0 16 16">
+            <path d="M3 4.5a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0zm2 0a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0zm2 0a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0zm2 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0z"/>
+          </svg>
+          <p class="small text-muted mt-2 mb-0 fw-bold">Muestra este código al personal de cocina</p>
+        </div>
+      </div>
+
+      <div class="modal-footer justify-content-center bg-light border-top p-3">
+        <button type="button" class="btn fw-bold px-5 rounded-pill text-white" style="background-color: var(--nyu-dark);" (click)="cerrarTicket()">
+          Entendido
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Fondo oscuro -->
+<div *ngIf="showPaymentModal" class="modal-backdrop fade show" style="background-color: rgba(0,0,0,0.6);"></div>
+
+<!-- Ventana de Pago -->
+<div *ngIf="showPaymentModal" class="modal fade show d-block" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
+      
+      <!-- Cabecera -->
+      <div class="modal-header text-white border-0" style="background-color: var(--nyu-dark);">
+        <h5 class="modal-title fw-bold">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-credit-card me-2 mb-1" viewBox="0 0 16 16">
+            <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v1h14V4a1 1 0 0 0-1-1H2zm13 4H1v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7z"/>
+            <path d="M2 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+          </svg>
+          Suscripción a Plan
+        </h5>
+      </div>
+
+      <!-- Cuerpo / Formulario -->
+      <div class="modal-body p-4 bg-white">
+        <h5 class="fw-bold text-center mb-3">Estás por adquirir el <br><span style="color: var(--nyu-dark);">{{ selectedPlanToBuy?.nombre || 'Plan Seleccionado' }}</span></h5>
+        
+        <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded-3 border mb-4">
+          <span class="fw-bold text-muted">Total a pagar:</span>
+          <span class="fs-3 fw-bolder text-success">${{ (selectedPlanToBuy?.precio_mensual || 0) | number }}</span>
+        </div>
+
+        <form>
+          <div class="mb-3">
+            <label class="form-label fw-bold small text-muted">Número de Tarjeta</label>
+            <input type="text" class="form-control bg-light" placeholder="0000 0000 0000 0000" maxlength="16">
+          </div>
+          <div class="row">
+            <div class="col-6 mb-3">
+              <label class="form-label fw-bold small text-muted">Vencimiento</label>
+              <input type="text" class="form-control bg-light" placeholder="MM/AA" maxlength="5">
+            </div>
+            <div class="col-6 mb-3">
+              <label class="form-label fw-bold small text-muted">CVC</label>
+              <input type="text" class="form-control bg-light" placeholder="123" maxlength="3">
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Botones -->
+      <div class="modal-footer bg-light border-top p-3 d-flex justify-content-between">
+        <button type="button" class="btn btn-outline-secondary fw-bold rounded-pill px-4" (click)="closePaymentModal()" [disabled]="isProcessingPayment">
+          Cancelar
+        </button>
+        <button type="button" class="btn text-white fw-bold rounded-pill px-4" style="background-color: var(--nyu-primary);" (click)="confirmPlanPayment()" [disabled]="isProcessingPayment">
+          <span *ngIf="!isProcessingPayment">Pagar Suscripción</span>
+          <span *ngIf="isProcessingPayment" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          <span *ngIf="isProcessingPayment">Procesando...</span>
+        </button>
       </div>
 
     </div>

@@ -30,7 +30,7 @@ import * as fs from 'fs';
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
         ssl: configService.get<string>('DB_SSL_CA')
-          ? { ca: fs.readFileSync(configService.get<string>('DB_SSL_CA')!) }
+          ? { ca: fs.readFileSync(configService.get<string>('DB_SSL_CA')!),rejectUnauthorized: false }
           : undefined,
         entities: [
           MockUsuarioEntity,

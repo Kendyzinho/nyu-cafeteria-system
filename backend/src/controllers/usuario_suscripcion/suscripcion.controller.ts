@@ -28,8 +28,8 @@ export class SubscriptionsController {
     summary: 'HU17 - Suscribir residente a un plan mensual',
     description:
       'Crea una suscripción mensual para un usuario residente. ' +
-      'Cancela automáticamente cualquier suscripción activa previa. ' +
-      'El usuario debe tener es_residente = true y el plan debe estar activo.',
+      'cancela automáticamente cualquier suscripción activa previa. ' +
+      'el usuario debe tener es_residente = true y el plan debe estar activo.',
   })
   @ApiBody({ type: IPostSubscriptionRequest })
   @ApiResponse({
@@ -64,18 +64,19 @@ export class SubscriptionsController {
       },
     },
   })
-  @UseGuards(JwtAuthGuard)        // ← valida el token
+@UseGuards(JwtAuthGuard)        
 @Post()
 @UsePipes(new ValidationPipe())
 async postSubscription(
-  @Req() req: Request,          // ← extrae el usuario del token
-  @Body() body: { planId: number },
-  @Res() response: Response,
+@Req() req: Request,          // ← extrae el usuario del token
+@Body() body: IPostSubscriptionRequest,
+@Res() response: Response,
 ): Promise<Response> {
   const userId = (req.user as any).id;  // viene del JwtStrategy
   const result = await this.subscriptionsService.suscribir({
     userId,
     planId: body.planId,
+    ordenPagoId: body.ordenPagoId,    
   });
 if (!result) {
   return response.status(404).json({
@@ -94,6 +95,7 @@ return response.status(201).json({
     planId: suscripcion.planActivoId,
     nombrePlan: plan.nombre,
     mesVigencia: new Date(suscripcion.mesVigencia).toISOString().split('T')[0],
+    comidasUsadas: suscripcion.comidasUsadas,  
     estado: suscripcion.estado,
     precioFinal,
   },
@@ -101,63 +103,85 @@ return response.status(201).json({
   statusDescription: 'Suscripción creada exitosamente',
   errors: null,
 });
+
 }
-// HU18 — Ver estado del plan activo
-@ApiOperation({
-  summary: 'HU18 - Ver estado del plan activo de un residente',
-  description: 'Retorna la suscripción activa del usuario. Retorna 404 si no tiene plan activo.',
-})
-@ApiResponse({
-  status: 200,
-  description: 'Estado del plan activo encontrado',
-  schema: {
-    example: {
-      subscriptionId: 4,
-      userId: 8,
-      estado: 'activo',
-      mesVigencia: '2026-05-01',
-      plan: {
-        id: 2,
-        nombre: 'Plan Residente Estándar (30 Comidas)',
-        descripcion: 'El plan más popular.',
-        precioMensual: 500000,
+  // HU18 — Ver estado del plan activo
+  @ApiOperation({
+    summary: 'HU18 - Ver estado del plan activo de un residente',
+    description: 'Retorna la suscripción activa del usuario. Retorna 404 si no tiene plan activo.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Estado del plan activo encontrado',
+    schema: {
+      example: {
+        subscriptionId: 4,
+        userId: 8,
+        estado: 'activo',
+        mesVigencia: '2026-05-01',
+        comidasUsadas: 5,
+        plan: {
+          id: 2,
+          nombre: 'Plan Residente Estándar (30 Comidas)',
+          descripcion: 'El plan más popular.',
+          precioMensual: 500000,
+        },
       },
     },
-  },
-})
-@ApiResponse({
-  status: 404,
-  description: 'No hay suscripción activa para este usuario',
-})
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No hay suscripción activa para este usuario',
+  })
+  @UseGuards(JwtAuthGuard)
+  @Get('user/:userId/status')
+  async getSubscriptionStatus(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Res() response: Response,
+  ): Promise<Response> {
+    const result = await this.subscriptionsService.getEstadoPlan(userId);
+
+    if (!result) {
+      return response.status(404).json({
+        message: 'No hay suscripción activa para este usuario',
+      });
+    }
+
+    const { suscripcion, plan } = result;
+    const body: IGetSubscriptionStatusResponse = {
+      subscriptionId: suscripcion.id,
+      userId: suscripcion.usuarioId,
+      estado: suscripcion.estado,
+      mesVigencia: new Date(suscripcion.mesVigencia).toISOString().split('T')[0],
+      comidasUsadas: suscripcion.comidasUsadas,
+      plan: {
+        id: plan.id,
+        nombre: plan.nombre,
+        descripcion: plan.descripcion,
+        precioMensual: Number(plan.precio_mensual),
+         cantidadComidas: plan.cantidadComidas,
+      },
+    };
+
+    return response.status(200).json(body);
+  }
+@ApiOperation({ summary: 'Canjear una comida del plan activo' })
+@ApiResponse({ status: 200, schema: { example: { comidasUsadas: 6, cantidadComidas: 20, restantes: 14 } } })
+@ApiResponse({ status: 400, description: 'Sin usos disponibles o sin plan activo' })
 @UseGuards(JwtAuthGuard)
-@Get('user/:userId/status')
-async getSubscriptionStatus(
+@Post('user/:userId/redeem')
+async redimirComida(
   @Param('userId', ParseIntPipe) userId: number,
   @Res() response: Response,
 ): Promise<Response> {
-  const result = await this.subscriptionsService.getEstadoPlan(userId);
+  const result = await this.subscriptionsService.redimirComida(userId);
 
   if (!result) {
-    return response.status(404).json({
-      message: 'No hay suscripción activa para este usuario',
+    return response.status(400).json({
+      message: 'No tenés usos disponibles o no tenés plan activo.',
     });
   }
 
-  const { suscripcion, plan } = result;
-  const body: IGetSubscriptionStatusResponse = {
-    subscriptionId: suscripcion.id,
-    userId: suscripcion.usuarioId,
-    estado: suscripcion.estado,
-    mesVigencia: new Date(suscripcion.mesVigencia).toISOString().split('T')[0],
-    plan: {
-      id: plan.id,
-      nombre: plan.nombre,
-      descripcion: plan.descripcion,
-      precioMensual: Number(plan.precio_mensual),
-    },
-  };
-
-  return response.status(200).json(body);
+  return response.status(200).json(result);
 }
-
 }
