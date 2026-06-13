@@ -14,6 +14,8 @@ import { ResidentGuard } from './core/guards/resident.guard';
 import { UsersListComponent } from './features/admin/pages/users-list/users-list.component';
 import { RoleGuard } from './core/guards/role.guard';
 import { ProfilePageComponent } from './features/profile/pages/profile-page/profile-page.component';
+import { OrderSuccessComponent } from './features/student/order-success/order-success.component';
+import { HelpComponent } from './features/student/help/help.component';
 
 import { GuestGuard } from './core/guards/guest.guard';
 
@@ -39,6 +41,8 @@ const routes: Routes = [
       },
       { path: 'history', component: HistoryComponent },
       { path: 'checkout', component: CheckoutComponent },
+      { path: 'order-success', component: OrderSuccessComponent },
+      { path: 'help', component: HelpComponent },
       { path: 'profile', component: ProfilePageComponent }
     ]
   },

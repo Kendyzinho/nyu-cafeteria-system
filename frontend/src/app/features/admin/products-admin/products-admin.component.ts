@@ -23,7 +23,7 @@ export class ProductsAdminComponent implements OnInit {
       nombre: ['', Validators.required],
       descripcion: ['', Validators.required],
       precio: [0, [Validators.required, Validators.min(0)]],
-      categoria: ['almuerzos', Validators.required],
+      categoria: ['Desayuno', Validators.required],
       stock_actual: [0, [Validators.required, Validators.min(0)]]
     });
   }
@@ -46,7 +46,7 @@ export class ProductsAdminComponent implements OnInit {
     this.selectedProductId = null;
     this.productForm.reset({
       precio: 0,
-      categoria: 'almuerzos',
+      categoria: 'Desayuno',
       stock_actual: 0
     });
     this.showFormModal = true;
