@@ -27,7 +27,7 @@ export class PedidosService {
   const usuario = await this.usuarioRepository.findOne({ where: { id: usuarioId } });
 
   // Solo estudiantes activos califican para descuentos
-if (!usuario || !usuario.activo || !usuario.es_residente) return 0;
+  if (!usuario || !usuario.activo) return 0;
 
   const ahora = new Date();
   const horaActual = ahora.toTimeString().slice(0, 8); // "HH:MM:SS"
@@ -37,20 +37,15 @@ if (!usuario || !usuario.activo || !usuario.es_residente) return 0;
   const aplicables = promociones.filter(p => {
     // Verifica horario activo
     if (horaActual < p.horaInicio || horaActual > p.horaFin) return false;
-    // Verifica si requiere residencia
-    if (p.reqResidencia && !usuario.es_residente) return false;
     // Si la promo aplica a comidas específicas, verificar que haya al menos una
     if (p.comidasIds && p.comidasIds.length > 0) {
       return itemIds.some(id => p.comidasIds!.includes(id));
     }
     return true;
   });
-
   if (aplicables.length === 0) return 0;
-
-  // Aplica el mayor descuento disponible
-  return Math.max(...aplicables.map(p => Number(p.descuento)));
-}
+  const total = aplicables.reduce((sum, p) => sum + Number(p.descuento), 0);
+  return Math.min(total, 100);}
 
   private mapPedido(pedido: PedidoEntity) {
     const items = (pedido.detalles || []).map(d => ({
@@ -95,7 +90,7 @@ if (!usuario || !usuario.activo || !usuario.es_residente) return 0;
 
     let calculatedTotal = 0;
 
-       if (data.items && data.items.length > 0) {
+    if (data.items && data.items.length > 0) {
       for (const item of data.items) {
         const id = item.productId || item.id;
         const nombre = item.nombre || `Producto #${id}`;
@@ -163,31 +158,32 @@ public async getDescuentoPerfil(usuarioId: number): Promise<{
 }> {
   const usuario = await this.usuarioRepository.findOne({ where: { id: usuarioId } });
 
-  if (!usuario || !usuario.activo || !usuario.es_residente) {
+if (!usuario || !usuario.activo) {
   return { usuarioActivo: false, porcentajeDescuento: 0, promocionAplicada: null };
 }
-
   const ahora = new Date();
   const horaActual = ahora.toTimeString().slice(0, 8);
   const promociones = await this.promocionRepository.find({ where: { activa: true } });
 
-  const aplicables = promociones.filter(p => {
-    if (horaActual < p.horaInicio || horaActual > p.horaFin) return false;
-    if (p.reqResidencia && !usuario.es_residente) return false;
-    return true;
-  });
+ const aplicables = promociones.filter(p => {
+  if (horaActual < p.horaInicio || horaActual > p.horaFin) return false;
+  return true;
+});
 
   if (aplicables.length === 0) {
     return { usuarioActivo: true, porcentajeDescuento: 0, promocionAplicada: null };
   }
 
-  const mejor = aplicables.reduce((a, b) => Number(a.descuento) >= Number(b.descuento) ? a : b);
-  return {
-    usuarioActivo: true,
-    porcentajeDescuento: Number(mejor.descuento),
-    promocionAplicada: mejor.nombre,
-  };
+  const totalDescuento = Math.min(
+  aplicables.reduce((sum, p) => sum + Number(p.descuento), 0),
+  100
+);
+const nombresAplicados = aplicables.map(p => p.nombre).join(' + ');
+return {
+  usuarioActivo: true,
+  porcentajeDescuento: totalDescuento,
+  promocionAplicada: nombresAplicados || null,
+};
+
 }
-
-
 }

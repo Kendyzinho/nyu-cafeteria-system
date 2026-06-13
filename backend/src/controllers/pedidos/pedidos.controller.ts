@@ -21,8 +21,7 @@ export class PedidosController {
   @Get('discount/:usuarioId')
   async getDescuento(@Param('usuarioId') usuarioId: number) {
     return await this.pedidosService.getDescuentoPerfil(Number(usuarioId));
-}
-
+  }
   @ApiOperation({ summary: 'Obtener un pedido por id' })
   @Get(':id')
   public async getPedido(@Param('id') id: number) {

@@ -21,4 +21,7 @@ export class OrderService {
   createOrder(orderData: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/orders`, orderData);
   }
+  getDescuento(userId: number): Observable<any> {
+  return this.http.get<any>(`${this.apiUrl}/orders/discount/${userId}`);
+}
 }

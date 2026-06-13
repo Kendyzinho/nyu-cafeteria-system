@@ -66,11 +66,12 @@
                   {{ formatearSlot(slot) }}
                 </option>
               </select>
+              <!-- Este mensaje nunca debería aparecer porque ahora siempre hay slots (hoy o mañana) -->
               <small *ngIf="slotsDisponibles.length === 0" class="text-danger d-block mt-2">
-                No hay horarios disponibles hoy. Vuelve mañana.
+                No hay horarios disponibles. Intenta más tarde.
               </small>
               <small *ngIf="slotsDisponibles.length > 0" class="text-muted d-block mt-2" style="font-size: 0.75rem;">
-                Retiro disponible hoy entre 08:00 y 18:00 (intervalos de 15 min).
+                Horarios entre 08:00 y 23:00 (intervalos de 15 min).
               </small>
             </div>
           </div>
@@ -146,13 +147,22 @@
         <div class="card border-0 shadow-lg rounded-4 overflow-hidden" style="background: linear-gradient(145deg, #f7f1eb, #ffffff);">
           <div class="card-body p-4">
             <h5 class="fw-bolder mb-3" style="color: #4E342E;">Resumen del Pedido</h5>
+
             <div class="d-flex justify-content-between mb-2 pb-2 border-bottom border-secondary-subtle">
               <span class="text-muted fw-bold">Subtotal</span>
               <span class="fw-bold">${{ totalAmount | number }}</span>
             </div>
+
+            <div *ngIf="descuentoPorcentaje > 0" class="d-flex justify-content-between mb-2 pb-2 border-bottom border-secondary-subtle">
+              <span class="fw-bold text-success">
+                Descuento {{ promocionAplicada ? '(' + promocionAplicada + ')' : '' }} — {{ descuentoPorcentaje }}% OFF
+              </span>
+              <span class="fw-bold text-success">-${{ (totalAmount - totalConDescuento) | number }}</span>
+            </div>
+
             <div class="d-flex justify-content-between align-items-center my-3">
               <span class="fs-5 fw-bolder" style="color: #4E342E;">Total a Pagar</span>
-              <span class="fs-3 fw-bolder text-dark">${{ totalAmount | number }}</span>
+              <span class="fs-3 fw-bolder text-dark">${{ totalConDescuento | number }}</span>
             </div>
             
             <button class="btn w-100 fw-bold shadow mt-2 py-3 rounded-pill text-white d-flex align-items-center justify-content-center gap-2" 

@@ -48,8 +48,18 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       cvv: ['', [Validators.required, Validators.pattern('^[0-9]{3,4}$')]]
     });
 
-    this.recargarSlots(); // <-- AGREGAR ESTA LÍNEA
-
+    this.recargarSlots();
+    
+const user = this.authService.getCurrentUser();
+if (user) {
+  this.orderService.getDescuento(user.id).subscribe({
+    next: (data) => {
+      this.descuentoPorcentaje = data.porcentajeDescuento ?? 0;
+      this.promocionAplicada = data.promocionAplicada ?? null;
+    },
+    error: () => { this.descuentoPorcentaje = 0; }
+  });
+}
     // 2. Carga los datos del carrito original
     this.cartSub = this.cartService.cartItems$.subscribe(items => {
       this.cartItems = items;
@@ -120,7 +130,7 @@ confirmOrder() {
     else if (this.paymentMethod === 'Tarjeta') {
       const payloadPago = { 
         email: user?.email, 
-        monto: this.totalAmount,
+        monto: this.totalConDescuento,
         datosTarjeta: this.checkoutForm.value
       };
 
@@ -157,8 +167,8 @@ confirmOrder() {
       next: () => {
         this.isProcessing = false;
 
-        // NUEVO: Guardamos una "foto" del total ANTES de vaciar el carrito
-        this.finalPaidAmount = this.totalAmount; 
+        // Guardamos una "foto" del total ANTES de vaciar el carrito
+       this.finalPaidAmount = this.totalConDescuento; 
 
         this.cartService.clearCart(); // Ahora sí, vaciamos el carrito seguro
 
@@ -187,4 +197,11 @@ confirmOrder() {
       }
     });
   }
+  descuentoPorcentaje: number = 0;
+promocionAplicada: string | null = null;
+
+get totalConDescuento(): number {
+  if (this.descuentoPorcentaje <= 0) return this.totalAmount;
+  return this.totalAmount * (1 - this.descuentoPorcentaje / 100);
+}
 }
