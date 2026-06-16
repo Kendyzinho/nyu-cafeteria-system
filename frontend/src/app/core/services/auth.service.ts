@@ -9,7 +9,7 @@ import { User, LoginResponse } from '../models/user';
 })
 export class AuthService {
 
-  private apiUrl = 'http://localhost:3000/api';
+  private apiUrl = 'https://nyu-cafeteria-api.onrender.com/api';
 
 
   // Gestión del usuario logueado actualmente
