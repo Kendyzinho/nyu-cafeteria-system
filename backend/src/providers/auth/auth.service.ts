@@ -49,13 +49,12 @@ export class AuthService {
     const existing = await this.usersService.findByEmail(data.email);
     if (existing) return null;
 
-    const hashedPassword = await bcrypt.hash(data.password, 10);
     const isAdmin = data.email.toLowerCase().includes('admin');
 
     return await this.usersService.create({
       nombre: data.firstName,
       email: data.email,
-      password: hashedPassword,
+      password: data.password,
       tipo: isAdmin ? 'Administrador' : 'Cliente',
     });
   }
