@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class PromotionService {
-  private apiUrl = 'http://localhost:3000/api/promotions';
+  private apiUrl = 'https://nyu-cafeteria-api.onrender.com/api';
 
   constructor(private http: HttpClient) {}
 

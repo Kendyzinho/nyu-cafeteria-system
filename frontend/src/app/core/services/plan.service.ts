@@ -6,8 +6,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class PlanService {
-  private apiUrl = 'http://localhost:3000/api/meal-plans';
-  private subscriptionUrl = 'http://localhost:3000/api/subscriptions'; // ← nuevo
+  private apiUrl = 'https://nyu-cafeteria-api.onrender.com/api';
+  private subscriptionUrl = 'https://nyu-cafeteria-api.onrender.com/api'; // ← nuevo
 
   constructor(private http: HttpClient) {}
 

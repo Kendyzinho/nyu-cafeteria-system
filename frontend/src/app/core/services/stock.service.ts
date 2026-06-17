@@ -22,7 +22,7 @@ export interface ActualizarStockPayload {
 })
 export class StockService {
 
-  private apiUrl = 'http://localhost:3000/api';
+  private apiUrl = 'https://nyu-cafeteria-api.onrender.com/api/stock';
 
   constructor(private http: HttpClient) {}
 
