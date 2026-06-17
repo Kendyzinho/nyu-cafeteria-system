@@ -7,6 +7,8 @@ import { DetallePedidoEntity } from 'src/database/entities/detalle-pedido.entity
 import type { IPostPedidoRequest } from 'src/controllers/pedidos/dto/IPostPedidoRequest';
 import type { IPutPedidoRequest } from 'src/controllers/pedidos/dto/IPutPedidoRequest';
 import { validarHorarioRetiro } from 'src/common/constants/cafeteria-horario';
+import { MockUsuarioEntity } from 'src/database/entities/mock-usuario.entity';
+import { PromocionEntity } from 'src/database/entities/promocion.entity';
 
 @Injectable()
 export class PedidosService {
@@ -15,7 +17,35 @@ export class PedidosService {
     private readonly pedidoRepository: Repository<PedidoEntity>,
     @InjectRepository(ComidaEntity)
     private readonly comidaRepository: Repository<ComidaEntity>,
+    @InjectRepository(MockUsuarioEntity)
+    private readonly usuarioRepository: Repository<MockUsuarioEntity>,
+    @InjectRepository(PromocionEntity)
+    private readonly promocionRepository: Repository<PromocionEntity>,
   ) {}
+
+  private async calcularDescuento(usuarioId: number, itemIds: number[]): Promise<number> {
+  const usuario = await this.usuarioRepository.findOne({ where: { id: usuarioId } });
+
+  // Solo estudiantes activos califican para descuentos
+  if (!usuario || !usuario.activo) return 0;
+
+  const ahora = new Date();
+  const horaActual = ahora.toTimeString().slice(0, 8); // "HH:MM:SS"
+
+  const promociones = await this.promocionRepository.find({ where: { activa: true } });
+
+  const aplicables = promociones.filter(p => {
+    // Verifica horario activo
+    if (horaActual < p.horaInicio || horaActual > p.horaFin) return false;
+    // Si la promo aplica a comidas específicas, verificar que haya al menos una
+    if (p.comidasIds && p.comidasIds.length > 0) {
+      return itemIds.some(id => p.comidasIds!.includes(id));
+    }
+    return true;
+  });
+  if (aplicables.length === 0) return 0;
+  const total = aplicables.reduce((sum, p) => sum + Number(p.descuento), 0);
+  return Math.min(total, 100);}
 
   private mapPedido(pedido: PedidoEntity) {
     const items = (pedido.detalles || []).map(d => ({
@@ -80,11 +110,18 @@ export class PedidosService {
         }
       }
     }
+        
+    const itemIds = data.items.map(i => i.id || i.productId).filter(Boolean) as number[];
+    const porcentajeDescuento = await this.calcularDescuento(data.usuarioId, itemIds);
+    if (porcentajeDescuento > 0) {
+      calculatedTotal = calculatedTotal * (1 - porcentajeDescuento / 100);
+    }
 
     const nuevoPedido = this.pedidoRepository.create({
       usuarioId: data.usuarioId,
       total: calculatedTotal,
-      estado: 'pendiente',
+      estado: data.ordenPagoId ? 'pagado' : 'pendiente',
+      ordenPagoId: data.ordenPagoId ?? null,
       fechaCreacion: new Date(),
       horarioRetiro,
     });
@@ -114,4 +151,39 @@ export class PedidosService {
     if (result.affected === 0) return undefined;
     return result;
   }
+public async getDescuentoPerfil(usuarioId: number): Promise<{
+  usuarioActivo: boolean;
+  porcentajeDescuento: number;
+  promocionAplicada: string | null;
+}> {
+  const usuario = await this.usuarioRepository.findOne({ where: { id: usuarioId } });
+
+if (!usuario || !usuario.activo) {
+  return { usuarioActivo: false, porcentajeDescuento: 0, promocionAplicada: null };
+}
+  const ahora = new Date();
+  const horaActual = ahora.toTimeString().slice(0, 8);
+  const promociones = await this.promocionRepository.find({ where: { activa: true } });
+
+ const aplicables = promociones.filter(p => {
+  if (horaActual < p.horaInicio || horaActual > p.horaFin) return false;
+  return true;
+});
+
+  if (aplicables.length === 0) {
+    return { usuarioActivo: true, porcentajeDescuento: 0, promocionAplicada: null };
+  }
+
+  const totalDescuento = Math.min(
+  aplicables.reduce((sum, p) => sum + Number(p.descuento), 0),
+  100
+);
+const nombresAplicados = aplicables.map(p => p.nombre).join(' + ');
+return {
+  usuarioActivo: true,
+  porcentajeDescuento: totalDescuento,
+  promocionAplicada: nombresAplicados || null,
+};
+
+}
 }

@@ -7,6 +7,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { IntegrationService } from '../../../core/services/integration.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { formatearSlot, getSlotsDisponiblesHoy } from '../../../core/constants/cafeteria-horario';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-checkout',
@@ -14,16 +15,22 @@ import { formatearSlot, getSlotsDisponiblesHoy } from '../../../core/constants/c
   styleUrls: ['./checkout.component.css']
 })
 export class CheckoutComponent implements OnInit, OnDestroy {
+  checkoutForm!: FormGroup;
   cartItems: CartItem[] = [];
   totalAmount: number = 0;
   private cartSub!: Subscription;
 
   slotsDisponibles: Date[] = [];
   horarioSeleccionadoIso: string | null = null;
-  paymentMethod: string = 'Tarjeta';
+  paymentMethod: string = '';
   isProcessing: boolean = false;
 
+  orderSuccess: boolean = false;
+  orderNumber: number = 0;
+  finalPaidAmount: number = 0;
+
   constructor(
+    private fb: FormBuilder,
     private cartService: CartService,
     private orderService: OrderService,
     private authService: AuthService,
@@ -31,15 +38,34 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     private toastService: ToastService,
     private router: Router
   ) {}
-
+  
   ngOnInit(): void {
+    // 1. Construye el formulario con sus reglas
+    this.checkoutForm = this.fb.group({
+      titular: ['', [Validators.required, Validators.minLength(3)]],
+      numeroTarjeta: ['', [Validators.required, Validators.pattern('^[0-9]{16}$')]],
+      fechaVencimiento: ['', [Validators.required, Validators.pattern('^(0[1-9]|1[0-2])/?([0-9]{2})$')]],
+      cvv: ['', [Validators.required, Validators.pattern('^[0-9]{3,4}$')]]
+    });
+
+    this.recargarSlots();
+    
+const user = this.authService.getCurrentUser();
+if (user) {
+  this.orderService.getDescuento(user.id).subscribe({
+    next: (data) => {
+      this.descuentoPorcentaje = data.porcentajeDescuento ?? 0;
+      this.promocionAplicada = data.promocionAplicada ?? null;
+    },
+    error: () => { this.descuentoPorcentaje = 0; }
+  });
+}
+    // 2. Carga los datos del carrito original
     this.cartSub = this.cartService.cartItems$.subscribe(items => {
       this.cartItems = items;
       this.totalAmount = this.cartService.getTotalAmount();
     });
-    this.recargarSlots();
   }
-
   ngOnDestroy(): void {
     if (this.cartSub) this.cartSub.unsubscribe();
   }
@@ -66,7 +92,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     this.cartService.removeItem(item.product.id);
   }
 
-  confirmOrder() {
+confirmOrder() {
+    // 1. Validaciones REALES activadas
     if (!this.horarioSeleccionadoIso) {
       this.toastService.show('Por favor selecciona una hora de retiro.', 'warning');
       return;
@@ -77,30 +104,44 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (!this.paymentMethod) {
+      this.toastService.show('Por favor selecciona un método de pago.', 'warning');
+      return;
+    }
+
+    if (this.paymentMethod === 'Tarjeta' && this.checkoutForm.invalid) {
+      this.toastService.show('Por favor, ingresa los datos válidos de la tarjeta.', 'warning');
+      this.checkoutForm.markAllAsTouched();
+      return;
+    }
+
     this.isProcessing = true;
     const user = this.authService.getCurrentUser();
 
-    // Regla de Negocio: Validar Plan Residente
-    // Bypass temporal de validación de Residencia
-    if (false && this.paymentMethod === 'Plan Residente') {
+    // 2. Conexión REAL activada
+    if (this.paymentMethod === 'Plan Residente') {
       if (!user?.isResident) {
-        this.toastService.show('No eres un Residente activo. No puedes usar este método de pago.', 'danger');
+        this.toastService.show('No eres un Residente activo. No puedes usar este método.', 'danger');
         this.isProcessing = false;
         return;
       }
       this.executeOrderCreation(user);
     } 
-    // Regla de Negocio: Validar Tarjeta (Pasarela Equipo 5)
-    else {
-      const payloadPago = { email: user?.email, monto: this.totalAmount };
+    else if (this.paymentMethod === 'Tarjeta') {
+      const payloadPago = { 
+        email: user?.email, 
+        monto: this.totalConDescuento,
+        datosTarjeta: this.checkoutForm.value
+      };
+
       this.integrationService.validarPagoAprobado(payloadPago).subscribe({
-        next: (pagoAprobado) => {
-          if (!pagoAprobado) {
+        next: ({ aprobado, transactionId }) => {
+          if (!aprobado) {
             this.toastService.show('El pago fue rechazado por la pasarela.', 'danger');
             this.isProcessing = false;
             return;
           }
-          this.executeOrderCreation(user);
+          this.executeOrderCreation(user, transactionId?.toString() ?? null);
         },
         error: () => {
           this.toastService.show('Error conectando a la pasarela de pagos.', 'danger');
@@ -110,24 +151,39 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     }
   }
 
-  private executeOrderCreation(user: any) {
+  private executeOrderCreation(user: any, ordenPagoId: string | null = null) {
     const payload = {
-      usuarioId: user ? user.id : 1, 
+      usuarioId: user ? user.id : 1,
       items: this.cartItems.map(i => ({
-        comidaId: i.product.id,
+        id: i.product.id,
         cantidad: i.quantity,
-        precioUnitario: i.product.precio || 0
+        precio: i.product.precio || 0
       })),
-      horarioRetiro: this.horarioSeleccionadoIso
+      horarioRetiro: this.horarioSeleccionadoIso,
+      ordenPagoId
     };
 
     this.orderService.createOrder(payload).subscribe({
       next: () => {
         this.isProcessing = false;
-        this.cartService.clearCart();
+
+        // Guardamos una "foto" del total ANTES de vaciar el carrito
+       this.finalPaidAmount = this.totalConDescuento; 
+
+        this.cartService.clearCart(); // Ahora sí, vaciamos el carrito seguro
+
+        // 1. Generamos el número de orden para la boleta
+        this.orderNumber = Math.floor(Math.random() * 10000) + 1000; 
+
+        // 2. Activamos el switch para mostrar la pantalla de éxito en el HTML
+        this.orderSuccess = true; 
+
+        // 3. Mantenemos tu mensaje verde pequeño (toast) porque es un buen detalle
         const hr = new Date(this.horarioSeleccionadoIso!);
         this.toastService.show(`¡Pedido confirmado! Retira a las ${formatearSlot(hr)}`, 'success');
-        this.router.navigate(['/history']);
+
+        // 4. Mantenemos la redirección comentada para que el usuario pueda leer su boleta
+        // this.router.navigate(['/history']);
       },
       error: (err: any) => {
         console.error('Error al procesar orden', err);
@@ -141,4 +197,11 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       }
     });
   }
+  descuentoPorcentaje: number = 0;
+promocionAplicada: string | null = null;
+
+get totalConDescuento(): number {
+  if (this.descuentoPorcentaje <= 0) return this.totalAmount;
+  return this.totalAmount * (1 - this.descuentoPorcentaje / 100);
+}
 }

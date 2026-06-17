@@ -2,18 +2,85 @@
   <div class="row align-items-center mb-4 g-4">
     <div class="col-md-8">
       <h2 class="fw-bolder mb-1" style="color: var(--nyu-dark);">Gestión de Promociones</h2>
-      <p class="text-muted mb-0">Activación de beneficios basada en validación del Sistema de Matrícula y Pagos (Eq. 1 y 5).</p>
+      <p class="text-muted mb-0">Crea y activa descuentos para estudiantes activos.</p>
+    </div>
+    <div class="col-md-4 text-md-end">
+      <button class="btn text-white fw-bold rounded-3" style="background-color: var(--nyu-dark);" (click)="toggleForm()">
+        {{ showForm ? 'Cancelar' : '+ Nueva Promoción' }}
+      </button>
     </div>
   </div>
 
+  <!-- Formulario de creación -->
+  <div *ngIf="showForm" class="card border-0 shadow-sm rounded-4 mb-4 p-4">
+    <h5 class="fw-bold mb-4" style="color: var(--nyu-dark);">Nueva Promoción</h5>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label fw-bold small text-muted">Nombre *</label>
+        <input type="text" class="form-control" [(ngModel)]="nuevaPromo.nombre" placeholder="Ej: Descuento Almuerzo">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-bold small text-muted">Descuento (%) *</label>
+        <input type="number" class="form-control" [(ngModel)]="nuevaPromo.descuento" min="1" max="100">
+      </div>
+      <div class="col-md-12">
+        <label class="form-label fw-bold small text-muted">Descripción</label>
+        <input type="text" class="form-control" [(ngModel)]="nuevaPromo.descripcion" placeholder="Descripción breve">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-bold small text-muted">Hora inicio</label>
+        <input type="time" class="form-control" [(ngModel)]="nuevaPromo.horaInicio">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-bold small text-muted">Hora fin</label>
+        <input type="time" class="form-control" [(ngModel)]="nuevaPromo.horaFin">
+      </div>
+
+      <!-- Selección de alimentos -->
+      <div class="col-12">
+        <label class="form-label fw-bold small text-muted">
+          Alimentos asociados
+          <span class="text-muted fw-normal">(si no seleccionas ninguno, aplica a todo el pedido)</span>
+        </label>
+        <div class="border rounded-3 p-3 bg-light" style="max-height: 200px; overflow-y: auto;">
+          <div *ngFor="let alimento of alimentos" class="form-check mb-1">
+            <input class="form-check-input" type="checkbox"
+                   [id]="'alimento-' + alimento.id"
+                   [checked]="isComidaSeleccionada(alimento.id)"
+                   (change)="toggleComida(alimento.id)">
+            <label class="form-check-label" [for]="'alimento-' + alimento.id">
+              {{ alimento.nombre }}
+              <span class="text-muted small"> — ${{ alimento.precio | number }}</span>
+            </label>
+          </div>
+          <p *ngIf="alimentos.length === 0" class="text-muted small mb-0">Cargando alimentos...</p>
+        </div>
+        <small *ngIf="comidasSeleccionadas.length > 0" class="text-success fw-bold">
+          {{ comidasSeleccionadas.length }} alimento(s) seleccionado(s)
+        </small>
+        <small *ngIf="comidasSeleccionadas.length === 0" class="text-muted">
+          Ninguno seleccionado → aplica a todo el pedido
+        </small>
+      </div>
+
+      <div class="col-12 text-end">
+        <button class="btn text-white fw-bold rounded-3 px-4" style="background-color: var(--nyu-dark);" (click)="crearPromocion()">
+          Guardar Promoción
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla de promociones -->
   <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
     <div class="table-responsive">
       <table class="table table-hover mb-0 align-middle">
         <thead style="background-color: #f8f9fa;">
           <tr>
             <th class="py-4 px-4 fw-bold text-uppercase text-muted" style="font-size: 0.85rem;">Campaña / Descuento</th>
-            <th class="py-4 px-4 fw-bold text-uppercase text-muted text-center" style="font-size: 0.85rem;">Horario Habilitado</th>
-            <th class="py-4 px-4 fw-bold text-uppercase text-muted text-center" style="font-size: 0.85rem;">Estado de Campaña</th>
+            <th class="py-4 px-4 fw-bold text-uppercase text-muted text-center" style="font-size: 0.85rem;">Horario</th>
+            <th class="py-4 px-4 fw-bold text-uppercase text-muted text-center" style="font-size: 0.85rem;">Alimentos</th>
+            <th class="py-4 px-4 fw-bold text-uppercase text-muted text-center" style="font-size: 0.85rem;">Estado</th>
             <th class="py-4 px-4 fw-bold text-uppercase text-muted text-end" style="font-size: 0.85rem;">Acción</th>
           </tr>
         </thead>
@@ -25,34 +92,38 @@
                 {{ promo.descuento }}% OFF
               </span>
             </td>
-
-            <td class="py-3 px-4 text-center">
-              <div class="d-flex flex-column align-items-center gap-1" style="font-size: 0.8rem;">
-                <span class="text-dark fw-bold">
-                  <i class="bi bi-clock"></i> {{ promo.horaInicio }} - {{ promo.horaFin }}
-                </span>
-              </div>
+            <td class="py-3 px-4 text-center" style="font-size: 0.8rem;">
+              <span class="text-dark fw-bold">{{ promo.horaInicio }} - {{ promo.horaFin }}</span>
             </td>
-
             <td class="py-3 px-4 text-center">
-              <span class="badge rounded-pill px-3 py-2 fw-bold" 
-                    [ngClass]="promo.activa ? 'bg-success-subtle text-success' : 'bg-secondary bg-opacity-10 text-secondary'">
-                <span class="d-inline-block rounded-circle me-1" style="width: 6px; height: 6px;" [ngClass]="promo.activa ? 'bg-success' : 'bg-secondary'"></span>
-                {{ promo.activa ? 'Campaña Activa' : 'Pausada' }}
+              <span *ngIf="!promo.comidasIds || promo.comidasIds.length === 0" class="text-muted small">Todo el pedido</span>
+              <span *ngIf="promo.comidasIds && promo.comidasIds.length > 0" class="badge bg-info-subtle text-info rounded-pill">
+                {{ promo.comidasIds.length }} alimento(s)
               </span>
             </td>
-
-            <td class="py-3 px-4 text-end">
-              <button class="btn btn-sm shadow-sm fw-bold rounded-3" 
+            <td class="py-3 px-4 text-center">
+              <span class="badge rounded-pill px-3 py-2 fw-bold"
+                    [ngClass]="promo.activa ? 'bg-success-subtle text-success' : 'bg-secondary bg-opacity-10 text-secondary'">
+                <span class="d-inline-block rounded-circle me-1" style="width:6px;height:6px;"
+                      [ngClass]="promo.activa ? 'bg-success' : 'bg-secondary'"></span>
+                {{ promo.activa ? 'Activa' : 'Pausada' }}
+              </span>
+            </td>
+            <td class="py-3 px-4 text-end d-flex gap-2 justify-content-end">
+              <button class="btn btn-sm shadow-sm fw-bold rounded-3"
                       [ngClass]="promo.activa ? 'btn-outline-secondary' : 'btn-dark'"
                       (click)="aplicarPromocion(promo)">
-                {{ promo.activa ? 'Desactivar' : 'Aplicar Promoción' }}
+                {{ promo.activa ? 'Desactivar' : 'Activar' }}
+              </button>
+              <button class="btn btn-sm btn-outline-danger fw-bold rounded-3"
+                      (click)="eliminarPromocion(promo)">
+                Eliminar
               </button>
             </td>
           </tr>
           <tr *ngIf="promociones.length === 0">
             <td colspan="5" class="text-center py-5 text-muted">
-              No hay promociones registradas en el sistema.
+              No hay promociones registradas. Crea una con el botón de arriba.
             </td>
           </tr>
         </tbody>

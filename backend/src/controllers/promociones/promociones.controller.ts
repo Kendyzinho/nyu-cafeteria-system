@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, Res } from '@nestjs/common';
 import type { Response } from 'express';
-import type { IPostPromocionRequest } from './dto/IPostPromocionRequest';
+import { IPostPromocionRequest } from './dto/IPostPromocionRequest';
 import type { IPostPromocionResponse } from './dto/IPostPromocionResponse';
-import type { IPutPromocionRequest } from './dto/IPutPromocionRequest';
+import { IPutPromocionRequest } from './dto/IPutPromocionRequest';
 import { PromocionesService } from 'src/providers/promociones/promociones.service';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 

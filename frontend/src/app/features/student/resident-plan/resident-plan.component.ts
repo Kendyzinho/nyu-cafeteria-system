@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { PlanService } from '../../../core/services/plan.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Plan } from '../../../core/models/plan';
@@ -10,15 +11,14 @@ import { Plan } from '../../../core/models/plan';
 })
 export class ResidentPlanComponent implements OnInit {
 
-  // ── Estado del plan activo (viene de HU18) ──
-  currentPlan: any = null;       // objeto con { plan, estado, mesVigencia, ... }
+  // ── Estado del plan activo 
+  currentPlan: any = null;       
   currentPlanId: number | null = null;
   currentUser: any = null;
 
-  // ── Lista de planes disponibles (viene de GET /meal-plans) ──
+  // ── Lista de planes disponibles 
   availablePlans: any[] = [];
 
-  // ── UI ──
   loading = false;
   selectedTime: string = '';
   preferences = {
@@ -28,21 +28,30 @@ export class ResidentPlanComponent implements OnInit {
     halal: false
   };
 
-  
+  // Variables para el pago del plan
+  showPaymentModal: boolean = false;
+  selectedPlanToBuy: any = null;
+  isProcessingPayment: boolean = false;
+
+  ticketGenerated: boolean = false;
+  ticketHora: string = '';
+
 
   constructor(
     private planService: PlanService,
-    private authService: AuthService
+    private authService: AuthService,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
     this.cargarPlanesDisponibles();  // siempre carga el catálogo
-    this.cargarEstadoPlanActivo();   // HU18: carga el plan activo del usuario
+    this.cargarEstadoPlanActivo();   // carga el plan activo del usuario
   }
 
   // ── Carga el catálogo de planes desde GET /meal-plans ──
   private cargarPlanesDisponibles(): void {
+    
     this.planService.getPlanes().subscribe({
       next: (data: Plan[]) => {
         this.availablePlans = data.map(plan => ({
@@ -54,8 +63,9 @@ export class ResidentPlanComponent implements OnInit {
     });
   }
 
-  // ── HU18: Carga el plan activo del usuario logueado ──
+  //  Carga el plan activo del usuario logueado ──
   private cargarEstadoPlanActivo(): void {
+    
     const user = this.authService.getCurrentUser();
     if (!user) return;
 
@@ -72,6 +82,7 @@ export class ResidentPlanComponent implements OnInit {
       }
     });
   }
+
 
   isResidentPlan(plan: any): boolean {
     return plan.nombre?.toLowerCase().includes('residente');
@@ -119,32 +130,89 @@ export class ResidentPlanComponent implements OnInit {
   }
 
 generateTicket(): void {
-  if (!this.selectedTime) {
-    alert('Selecciona un horario primero.');
-    return;
+    if (!this.selectedTime) {
+      alert('Selecciona un horario primero.');
+      return;
+    }
+
+    const user = this.authService.getCurrentUser();
+    if (!user) return;
+
+    // CÓDIGO REAL ACTIVADO
+    this.planService.redimirComida(user.id).subscribe({
+      next: (res) => {
+        if (this.currentPlan) {
+          this.currentPlan.comidasUsadas = res.comidasUsadas;
+        }
+        
+        // Encendemos el modal del Ticket al recibir éxito de la Base de Datos
+        this.ticketHora = this.selectedTime;
+        this.ticketGenerated = true; 
+        this.selectedTime = '';
+      },
+      error: (err) => {
+        if (err.status === 400) {
+          alert('Ya usaste todos tus canjes disponibles por hoy.');
+        } else {
+          alert('No tenés usos disponibles en tu plan este mes.');
+        }
+      },
+    });
   }
 
-  const user = this.authService.getCurrentUser();
-  if (!user) return;
+  cerrarTicket(): void {
+    this.ticketGenerated = false; // Apaga el modal HTML
+  }
 
-  this.planService.redimirComida(user.id).subscribe({
-    next: (res) => {
-      if (this.currentPlan) {
-        this.currentPlan.comidasUsadas = res.comidasUsadas;
+  // FUNCIONES DEL MODAL DE PAGO DE PLAN
+  openPaymentModal(plan: any): void {
+    this.selectedPlanToBuy = plan;
+    this.showPaymentModal = true;
+  }
+
+  closePaymentModal(): void {
+    this.showPaymentModal = false;
+    this.selectedPlanToBuy = null;
+    this.isProcessingPayment = false;
+  }
+confirmPlanPayment(): void {
+  const user = this.authService.getCurrentUser();
+  if (!user || !this.selectedPlanToBuy) return;
+
+  this.isProcessingPayment = true;
+
+  // Paso 1: Procesar el pago
+  this.http.post<any>('http://localhost:3000/api/pagos/procesar', {
+    email: user.email,
+    monto: this.selectedPlanToBuy.precio_mensual,
+  }).subscribe({
+    next: (pagoResult : any) => {
+      if (pagoResult.status !== 'APPROVED') {
+        this.isProcessingPayment = false;
+        alert('El pago fue rechazado. Verifica tus datos.');
+        return;
       }
-      alert(`Ticket generado para las ${this.selectedTime}. Presentá tu TUI en la cafetería.`);
-      this.selectedTime = '';
+
+      // Paso 2: Crear la suscripción con el ID del pago
+      this.planService.suscribir(user.id, this.selectedPlanToBuy.id, pagoResult.transactionId).subscribe({
+        next: () => {
+          this.isProcessingPayment = false;
+          this.closePaymentModal();
+          this.cargarEstadoPlanActivo();
+          alert('¡Pago exitoso! Tu plan ha sido activado.');
+        },
+        error: () => {
+          this.isProcessingPayment = false;
+          alert('El pago fue aprobado pero no se pudo activar el plan. Contacta soporte.');
+        }
+      });
     },
-    error: (err) => {
-      if (err.status === 400) {
-        alert('Ya usaste todos tus canjes disponibles por hoy.');
-      } else {
-        alert('No tenés usos disponibles en tu plan este mes.');
-      }
-    },
+    error: () => {
+      this.isProcessingPayment = false;
+      alert('Error al procesar el pago. Intenta de nuevo.');
+    }
   });
 }
-  
 
 get totalMeals(): number {
   return this.currentPlan?.plan?.cantidadComidas ?? 0;

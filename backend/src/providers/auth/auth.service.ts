@@ -14,16 +14,7 @@ export class AuthService {
     const user = await this.usersService.findByEmail(email);
     if (!user) return null;
 
-    let passwordMatch = false;
-    if (user.password === password) {
-      passwordMatch = true;
-    } else {
-      try {
-        passwordMatch = await bcrypt.compare(password, user.password);
-      } catch (e) {
-        passwordMatch = false;
-      }
-    }
+    const passwordMatch = await bcrypt.compare(password, user.password).catch(() => false);
 
     if (!passwordMatch) return null;
 
@@ -58,13 +49,12 @@ export class AuthService {
     const existing = await this.usersService.findByEmail(data.email);
     if (existing) return null;
 
-    const hashedPassword = await bcrypt.hash(data.password, 10);
     const isAdmin = data.email.toLowerCase().includes('admin');
 
     return await this.usersService.create({
       nombre: data.firstName,
       email: data.email,
-      password: hashedPassword,
+      password: data.password,
       tipo: isAdmin ? 'Administrador' : 'Cliente',
     });
   }

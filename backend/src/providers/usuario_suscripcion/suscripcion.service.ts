@@ -8,6 +8,7 @@ import { MockUsuarioEntity } from '../../database/entities/mock-usuario.entity';
 interface IPostSubscriptionRequest {
   userId: number;
   planId: number;
+  ordenPagoId?: number;
 }
 
 @Injectable()
@@ -23,32 +24,32 @@ export class SubscriptionsService {
     private readonly usuarioRepository: Repository<MockUsuarioEntity>,
   ) {}
 
-  // HU17 — Suscribir residente a un plan mensual
+  //  Suscribir residente a un plan mensual
  public async suscribir(data: IPostSubscriptionRequest): Promise<{
   suscripcion: SuscripcionAlumnoEntity;
   plan: PlanesCatalogoEntity;
   precioFinal: number;
 } | null> {
 
-  // 1. Verificar usuario residente activo
-  
+  //  Verificar usuario residente activo
   const usuario = await this.usuarioRepository.findOne({
     where: { id: data.userId },
   });
   if (!usuario || !usuario.activo) return null;
 
-  // 2. Verificar plan activo
+  //  Verificar plan activo
 const plan = await this.planRepository.findOne({
   where: { id: data.planId },
 });
 
 if (!plan || !plan.activo) return null;
-// 2.1 Si el plan es exclusivo para residentes y el usuario no lo es → rechazar
+
 if (plan.reqResidencia && !usuario.es_residente) return null;
-  // 3. Primer día del mes actual
+
+
   const now = new Date();
   const mesVigencia = new Date(now.getFullYear(), now.getMonth(), 1);
-  // 4. UPSERT — actualizar si existe, crear si no existe
+
   const suscripcionExistente = await this.suscripcionRepository.findOne({
     where: { usuarioId: data.userId },
   });
@@ -62,6 +63,7 @@ if (suscripcionExistente) {
   suscripcionExistente.comidasUsadas = 0;
   suscripcionExistente.canjesHoy = 0;
   suscripcionExistente.fechaUltimoCanje = null;
+  suscripcionExistente.ordenPagoId = data.ordenPagoId ?? null;
   saved = await this.suscripcionRepository.save(suscripcionExistente);
 } else {
     const nueva = this.suscripcionRepository.create({
@@ -69,23 +71,22 @@ if (suscripcionExistente) {
       planActivoId: data.planId,
       mesVigencia,
       estado: 'activo',
+      ordenPagoId: data.ordenPagoId ?? null,
     });
     saved = await this.suscripcionRepository.save(nueva);
   }
 
   const precioFinal = Number(plan.precio_mensual);
   return { suscripcion: saved, plan, precioFinal };
-  
 }
 
-  // HU18 — Ver estado del plan activo
+  //  Ver estado del plan activo
   public async getEstadoPlan(userId: number): Promise<{
     suscripcion: SuscripcionAlumnoEntity;
     plan: PlanesCatalogoEntity;
   } | null> {
     const suscripcion = await this.suscripcionRepository.findOne({
       where: { usuarioId: userId, estado: 'activo' },
-      
     });
 
     if (!suscripcion || !suscripcion.planActivoId) return null;
@@ -98,7 +99,8 @@ if (suscripcionExistente) {
 
     return { suscripcion, plan };
   }
-public async redimirComida(userId: number): Promise<{
+
+  public async redimirComida(userId: number): Promise<{
   comidasUsadas: number;
   cantidadComidas: number;
   restantes: number;

@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrderService {
-  private apiUrl = 'http://localhost:3000/api';
+  private apiUrl = environment.apiBackendUrl;
 
   constructor(private http: HttpClient) { }
 
@@ -21,4 +22,7 @@ export class OrderService {
   createOrder(orderData: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/orders`, orderData);
   }
+  getDescuento(userId: number): Observable<any> {
+  return this.http.get<any>(`${this.apiUrl}/orders/discount/${userId}`);
+}
 }
