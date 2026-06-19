@@ -1,27 +1,92 @@
-# Frontend
+# NYU Cafeteria System - Frontend
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.2.11.
+Este es el proyecto frontend para el sistema de gestión de la cafetería de NYU. Desarrollado con **Angular 18**, proporciona una interfaz de usuario moderna, reactiva y fácil de usar, separando las funcionalidades para administradores y estudiantes.
 
-## Development server
+---
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Tecnologías Principales
 
-## Code scaffolding
+- **[Angular](https://angular.dev/) (v18.2.x)**: Framework principal para la construcción de la SPA (Single Page Application).
+- **[TypeScript](https://www.typescriptlang.org/)**: Lenguaje principal de desarrollo, ofreciendo tipado estático y orientación a objetos.
+- **[RxJS](https://rxjs.dev/)**: Utilizado para la programación reactiva y el manejo de flujos de datos asíncronos.
+- **[SweetAlert2](https://sweetalert2.github.io/)**: Para la creación de alertas modales y notificaciones elegantes y personalizadas.
+- **HTML5 & CSS3**: Estructuración y estilización de la interfaz de usuario.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+---
 
-## Build
+## Estructura del Proyecto
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+El proyecto sigue las mejores prácticas de arquitectura de Angular, dividiendo el código en `core`, `features` y `shared`:
 
-## Running unit tests
+```text
+src/
+└── app/
+    ├── core/          # Servicios singleton, guards, interceptors, modelos de datos y constantes globales.
+    ├── features/      # Módulos de características agrupados por dominio de la aplicación:
+    │   ├── admin/     # Gestión de usuarios, inventario y reportes para administradores.
+    │   ├── auth/      # Login, registro y recuperación de contraseña.
+    │   ├── checkout/  # Proceso de compra y carrito.
+    │   ├── layout/    # Estructura principal de la aplicación.
+    │   ├── profile/   # Perfil del usuario y configuración.
+    │   └── student/   # Menú de la cafetería, pedidos y opciones para estudiantes.
+    └── shared/        # Componentes reutilizables, directivas y pipes (ej. navbars, botones).
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+---
 
-## Running end-to-end tests
+## Requisitos Previos
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+Antes de comenzar, asegúrate de tener instalados los siguientes componentes:
 
-## Further help
+- [Node.js](https://nodejs.org/) (Versión 18 LTS o superior)
+- [npm](https://www.npmjs.com/) (Gestor de paquetes, usualmente instalado con Node.js)
+- [Angular CLI](https://angular.io/cli) (Opcional pero recomendado para comandos globales: `npm install -g @angular/cli`)
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+---
+
+## Instalación y Configuración Local
+
+Sigue estos pasos para levantar el entorno de desarrollo local:
+
+1. **Instalar dependencias:**
+
+   Navega a la carpeta del frontend y ejecuta:
+   ```bash
+   npm install
+   ```
+
+2. **Servidor de desarrollo:**
+
+   Para ejecutar la aplicación en entorno de desarrollo local, utiliza:
+   ```bash
+   npm start
+   ```
+   > Alternativamente puedes usar `ng serve`. La aplicación estará disponible en `http://localhost:4200/`. La aplicación se recargará automáticamente si realizas cambios en los archivos fuente.
+
+---
+
+## Scripts Disponibles
+
+En el directorio del proyecto, puedes ejecutar los siguientes comandos predefinidos en `package.json`:
+
+- `npm start`: Inicia el servidor de desarrollo local (`ng serve`).
+- `npm run build`: Construye el proyecto para producción. Los artefactos de compilación se almacenarán en el directorio `dist/`.
+- `npm run watch`: Inicia la compilación en modo observación (watch mode), ideal para desarrollo continuo.
+- `npm test`: Ejecuta las pruebas unitarias vía [Karma](https://karma-runner.github.io).
+
+---
+
+## Creación de Componentes
+
+Para generar nuevos elementos a través de Angular CLI:
+
+```bash
+ng generate component nombre-del-componente
+```
+*También puedes utilizar `ng generate directive|pipe|service|class|guard|interface|enum|module`.*
+
+---
+
+## Contribución
+
+Asegúrate de seguir las convenciones de código y crear ramas (branches) descriptivas para nuevas funcionalidades o correcciones de errores. Ejecuta siempre las pruebas (`npm test`) y verifica que la compilación sea exitosa (`npm run build`) antes de fusionar los cambios.
