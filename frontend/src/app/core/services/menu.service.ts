@@ -16,6 +16,11 @@ export class MenuService {
     return this.http.get<any[]>(`${this.apiUrl}/menu`);
   }
 
+  // Agregado basándonos en tu Swagger para listar categorías disponibles
+  getCategorias(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/categorias`);
+  }
+
   create(product: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/menu`, product);
   }

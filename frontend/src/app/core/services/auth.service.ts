@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { User, LoginResponse } from '../models/user';
 import { environment } from '../../../environments/environment';
@@ -10,8 +10,8 @@ import { environment } from '../../../environments/environment';
 })
 export class AuthService {
 
-  private apiUrl = 'https://nyu-cafeteria-api.onrender.com/api';
-
+  // CAMBIO AQUÍ: Ahora lee dinámicamente la URL de Render desde el environment
+  private apiUrl = environment.apiBackendUrl;
 
   // Gestión del usuario logueado actualmente
   private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -23,8 +23,6 @@ export class AuthService {
       this.currentUserSubject.next(JSON.parse(storedUser));
     }
   }
-
-
 
   /**
    * LOGIN: Valida que exista el correo en la BD Maestra y que LA CONTRASEÑA COINCIDA.
@@ -42,7 +40,6 @@ export class AuthService {
   register(userData: { firstName: string, lastName: string, email: string, password: string }): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/auth/register`, userData);
   }
-
 
   logout(): void {
     localStorage.removeItem('jwt_token');

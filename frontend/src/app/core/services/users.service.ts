@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 export interface UserAdminView {
   id: number;
   email: string;
-  firstName: string;  // mock_usuario.nombre
-  role: string;       // mock_usuario.tipo
+  firstName: string;   // mock_usuario.nombre
+  role: string;        // mock_usuario.tipo
   isActive: boolean;  // mock_usuario.activo
   isResident: boolean; // mock_usuario.es_residente
 }
@@ -16,7 +17,8 @@ export interface UserAdminView {
   providedIn: 'root'
 })
 export class UsersService {
-  private readonly API_URL = 'https://nyu-cafeteria-api.onrender.com/api/users';
+  // CAMBIO: Conectamos con el environment de forma limpia hacia la ruta /users
+  private readonly API_URL = `${environment.apiBackendUrl}/users`;
 
   constructor(private http: HttpClient) { }
 
