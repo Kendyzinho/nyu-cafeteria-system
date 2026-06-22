@@ -10,7 +10,6 @@ import { environment } from '../../../environments/environment';
 })
 export class AuthService {
 
-  // CAMBIO AQUÍ: Ahora lee dinámicamente la URL de Render desde el environment
   private apiUrl = environment.apiBackendUrl;
 
   // Gestión del usuario logueado actualmente

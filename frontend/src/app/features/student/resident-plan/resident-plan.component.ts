@@ -141,7 +141,6 @@ export class ResidentPlanComponent implements OnInit {
     this.isProcessingPayment = true;
 
     // Paso 1: Procesar el pago
-    // ✅ 2. CORREGIDO: Reemplazamos localhost por la variable dinámica
     this.http.post<any>(`${environment.apiPagosUrl}/procesar`, {
       email: user.email,
       monto: this.selectedPlanToBuy.precio_mensual,
