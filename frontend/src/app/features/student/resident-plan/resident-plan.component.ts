@@ -12,12 +12,12 @@ import { environment } from 'src/environments/environment';
 })
 export class ResidentPlanComponent implements OnInit {
 
-  // ── Estado del plan activo 
-  currentPlan: any = null;       
+  // Estado del plan activo
+  currentPlan: any = null;
   currentPlanId: number | null = null;
   currentUser: any = null;
 
-  // ── Lista de planes disponibles 
+  // Lista de planes disponibles
   availablePlans: any[] = [];
 
   loading = false;
@@ -29,7 +29,7 @@ export class ResidentPlanComponent implements OnInit {
     halal: false
   };
 
-  // Variables para el pago del plan
+  // Gestión de pagos
   showPaymentModal: boolean = false;
   selectedPlanToBuy: any = null;
   isProcessingPayment: boolean = false;
@@ -42,15 +42,15 @@ export class ResidentPlanComponent implements OnInit {
     private planService: PlanService,
     private authService: AuthService,
     private http: HttpClient
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
-    this.cargarPlanesDisponibles();  // siempre carga el catálogo
-    this.cargarEstadoPlanActivo();   // carga el plan activo del usuario
+    this.cargarPlanesDisponibles();
+    this.cargarEstadoPlanActivo();
   }
 
-  // ── Carga el catálogo de planes desde GET /meal-plans ──
+  // Carga el catálogo de planes
   private cargarPlanesDisponibles(): void {
     this.planService.getPlanes().subscribe({
       next: (data: Plan[]) => {
@@ -63,7 +63,7 @@ export class ResidentPlanComponent implements OnInit {
     });
   }
 
-  //  Carga el plan activo del usuario logueado ──
+  // Carga el plan activo del usuario logueado
   private cargarEstadoPlanActivo(): void {
     const user = this.authService.getCurrentUser();
     if (!user) return;
@@ -74,7 +74,7 @@ export class ResidentPlanComponent implements OnInit {
         this.currentPlanId = data.plan?.id ?? null; // marca cuál plan está activo en la UI
       },
       error: () => {
-        // 404 = no tiene plan activo todavía, es normal
+        // 404: Sin plan activo
         this.currentPlan = null;
         this.currentPlanId = null;
       }
@@ -100,7 +100,7 @@ export class ResidentPlanComponent implements OnInit {
       next: (response) => {
         this.loading = false;
         this.currentPlanId = plan.id;
-        // Recarga el estado del plan para mostrar datos actualizados (HU18)
+        // Recarga el estado del plan para reflejar la nueva suscripción
         this.cargarEstadoPlanActivo();
         alert('¡Suscripción exitosa! Tu plan ha sido activado.');
       },
@@ -134,16 +134,16 @@ export class ResidentPlanComponent implements OnInit {
     const user = this.authService.getCurrentUser();
     if (!user) return;
 
-    // CÓDIGO REAL ACTIVADO
+    // Redime la comida y actualiza el estado
     this.planService.redimirComida(user.id).subscribe({
       next: (res) => {
         if (this.currentPlan) {
           this.currentPlan.comidasUsadas = res.comidasUsadas;
         }
-        
-        // Encendemos el modal del Ticket al recibir éxito de la Base de Datos
+
+        // Muestra el ticket de confirmación
         this.ticketHora = this.selectedTime;
-        this.ticketGenerated = true; 
+        this.ticketGenerated = true;
         this.selectedTime = '';
       },
       error: (err) => {
@@ -160,7 +160,7 @@ export class ResidentPlanComponent implements OnInit {
     this.ticketGenerated = false; // Apaga el modal HTML
   }
 
-  // FUNCIONES DEL MODAL DE PAGO DE PLAN
+  // Manejo del Modal de Pago
   openPaymentModal(plan: any): void {
     this.selectedPlanToBuy = plan;
     this.showPaymentModal = true;

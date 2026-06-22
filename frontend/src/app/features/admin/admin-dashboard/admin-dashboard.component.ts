@@ -11,7 +11,7 @@ export class AdminDashboardComponent implements OnInit {
   demandLevel: string = 'Alta';
 
   ngOnInit() {
-    // Simulating fetching data from Library API (HU24)
+    // Simulating fetching data from Library API
     setTimeout(() => {
       this.libraryOccupancy = Math.floor(Math.random() * 40) + 60; // 60-100%
       if (this.libraryOccupancy > 80) {

@@ -34,7 +34,7 @@ export class LoginComponent {
         next: (response) => {
           this.isLoading = false;
           
-          // RÚBRICA: Enrutamiento basado en roles
+          // Enrutamiento basado en roles
           if (response.user.role === 'Administrador') {
             this.router.navigate(['/admin/users']); // Manda al staff al panel de control
           } else {

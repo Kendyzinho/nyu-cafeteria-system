@@ -7,10 +7,10 @@ import { Product } from '../../../../core/models/product';
   styleUrls: ['./menu-item.component.css']
 })
 export class MenuItemComponent {
-  // 1. RÚBRICA: @Input() permite recibir un objeto desde el componente Padre
-  @Input() item!: Product; 
-  
-  // 2. RÚBRICA: @Output() permite enviar un evento (como un clic) hacia el Padre
+  // Recibe el producto desde el componente padre
+  @Input() item!: Product;
+
+  // Emite el producto seleccionado al carrito
   @Output() add = new EventEmitter<Product>();
 
   onAddToCart() {

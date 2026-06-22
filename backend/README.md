@@ -1,92 +1,110 @@
-# Sistema de Gestión de Cafetería NYU - API Backend
+# NYU Cafeteria System - Backend
 
-## Descripción General
-Este repositorio contiene la infraestructura backend del Sistema de Gestión de Cafetería de NYU. Está construido como una API RESTful robusta y escalable utilizando el framework NestJS, diseñada para manejar solicitudes de alta concurrencia para la gestión de menús, procesamiento de pedidos y administración de planes alimentarios.
+Este es el proyecto backend para el sistema de gestión de la cafetería de NYU. Desarrollado con **NestJS (v11)**, expone una API RESTful robusta y segura para el manejo de usuarios, menú, inventario, pedidos y pagos.
 
-El sistema se integra con múltiples subsistemas universitarios (Alojamiento, Matrícula y Pasarelas de Pago Externas) para garantizar la consistencia de los datos y el cumplimiento de las reglas de negocio en todo el ecosistema del campus.
+---
 
-## Stack Técnico
-*   **Framework:** NestJS (Node.js)
-*   **Lenguaje:** TypeScript
-*   **Base de Datos:** MySQL 8.0+
-*   **ORM:** TypeORM
-*   **Documentación:** OpenAPI (Swagger)
-*   **Validación:** Class-validator y Class-transformer
-*   **Seguridad:** Autenticación basada en JWT
+## Tecnologías Principales
 
-## Arquitectura del Sistema
-La aplicación sigue una arquitectura modular que promueve la separación de responsabilidades y una alta mantenibilidad:
-*   **Controladores:** Manejan las solicitudes HTTP entrantes y las mapean a los métodos de servicio.
-*   **Proveedores/Servicios:** Contienen la lógica de negocio central y las reglas de integración.
-*   **Entidades:** Definen el esquema de la base de datos y las relaciones mediante decoradores de TypeORM.
-*   **DTOs (Objetos de Transferencia de Datos):** Aplican una validación estricta de las entradas y seguridad de tipos.
+- **[NestJS](https://nestjs.com/) (v11)**: Framework progresivo de Node.js para construir aplicaciones backend eficientes, confiables y escalables.
+- **[TypeScript](https://www.typescriptlang.org/)**: Lenguaje principal de desarrollo.
+- **[TypeORM](https://typeorm.io/)**: ORM utilizado para interactuar con la base de datos relacional.
+- **[MySQL](https://www.mysql.com/)**: Motor de base de datos relacional.
+- **[Passport & JWT](http://www.passportjs.org/)**: Implementados para la autenticación y autorización segura basada en tokens.
+- **[Swagger](https://swagger.io/)**: Para la documentación interactiva de la API y sus endpoints.
 
-## Módulos Principales
-1.  **Módulo de Autenticación:** Gestiona el registro de usuarios, inicio de sesión y manejo seguro de sesiones.
-2.  **Módulo de Planes Alimentarios:** Administra el catálogo de planes disponibles (Estándar, Flex, Residente) y gestiona las asignaciones de estudiantes.
-3.  **Menú y Productos:** Gestiona el inventario de la cafetería, precios y disponibilidad.
-4.  **Control de Stock:** Seguimiento en tiempo real de las cantidades de productos y agotamiento automático.
-5.  **Promociones:** Gestión de campañas dinámicas con validación de requisitos cruzados entre servicios.
-
-## Reglas de Integración (Contexto del Proyecto)
-El backend implementa lógica de negocio específica para el ecosistema universitario:
-*   **Integración con Matrícula (Eq. 3):** Valida el estado activo del estudiante para la elegibilidad de los planes Estándar y Flex.
-*   **Integración con Alojamiento (Eq. 2):** Verifica el estado de residencia para la activación del Plan Residente y el procesamiento de pagos.
-*   **Validación Financiera:** Aplica descuentos específicos y simulaciones de pasarela para transacciones con tarjetas de crédito externas.
-
-## Instalación y Configuración
-
-### Requisitos Previos
-*   Node.js (v18.0 o superior)
-*   Servidor MySQL
-*   npm o yarn
-
-### Configuración
-1.  Navegar al directorio del backend: `cd backend`
-2.  Instalar dependencias:
-    ```bash
-    npm install
-    ```
-3.  Configurar las variables de entorno en el archivo `.env`:
-    ```env
-    DB_HOST=localhost
-    DB_PORT=3306
-    DB_USER=root
-    DB_PASS=tu_password
-    DB_NAME=nyu_cafeteria
-    ```
-
-### Inicialización de la Base de Datos
-El sistema utiliza la sincronización de TypeORM. Asegúrese de que la base de datos especificada en el `.env` exista; las tablas se generarán automáticamente en la primera ejecución.
-
-## Ejecución
-
-### Modo de Desarrollo
-```bash
-npm run start:dev
-```
-
-### Compilación para Producción
-```bash
-npm run build
-npm run start:prod
-```
-
-## Documentación de la API
-Una vez que el servidor esté en funcionamiento, puede acceder a la documentación interactiva (Swagger UI) en:
-*   **URL:** `http://localhost:3000/docs`
-
-Esta interfaz proporciona una visión completa de todos los endpoints disponibles, parámetros requeridos y esquemas de respuesta.
+---
 
 ## Estructura del Proyecto
+
+El código fuente está estructurado de manera modular y escalable, dividiendo responsabilidades claramente:
+
 ```text
 src/
-├── controllers/    # Controladores y DTOs
-├── database/       # Entidades de TypeORM y migraciones
-├── providers/      # Servicios de lógica de negocio
-├── main.ts         # Punto de entrada de la aplicación
-└── app.module.ts   # Configuración del módulo raíz
+├── common/        # Decoradores personalizados, Guards (ej. JWT Auth), y Strategies de Passport.
+├── controllers/   # Controladores que definen las rutas HTTP (endpoints) y manejan las peticiones.
+│   ├── auth/      # Rutas de autenticación (login, registro).
+│   ├── menu/      # Gestión del menú de la cafetería.
+│   ├── pedidos/   # Creación y seguimiento de pedidos.
+│   ├── pagos/     # Procesamiento de pagos.
+│   └── ...        # (usuarios, stock, planes-comida, etc.)
+├── database/      # Configuración de TypeORM y definición de Entidades (Entities).
+└── providers/     # Servicios (Providers) que contienen la lógica de negocio para cada controlador.
 ```
 
 ---
-*Desarrollado para el Proyecto de Modernización de la Cafetería NYU.*
+
+## Requisitos Previos
+
+Asegúrate de contar con lo siguiente en tu entorno local:
+
+- [Node.js](https://nodejs.org/) (Versión 18 o superior)
+- [npm](https://www.npmjs.com/) (Gestor de paquetes)
+- [MySQL](https://www.mysql.com/) (Servidor de base de datos en ejecución)
+- [Nest CLI](https://docs.nestjs.com/cli/overview) (Recomendado: `npm install -g @nestjs/cli`)
+
+---
+
+## Configuración del Entorno
+
+1. Renombra o copia el archivo `.env.example` a `.env` en la raíz del backend (si aplica).
+2. Configura las variables de entorno necesarias, como las credenciales de conexión a la base de datos MySQL y el secreto para JWT.
+
+Ejemplo de variables comunes en el `.env`:
+```env
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=tu_usuario
+DB_PASSWORD=tu_contraseña
+DB_NAME=nyu_cafeteria
+JWT_SECRET=tu_secreto_seguro
+```
+
+---
+
+## Instalación y Configuración Local
+
+Navega al directorio del backend y ejecuta los siguientes comandos:
+
+1. **Instalar dependencias:**
+   ```bash
+   npm install
+   ```
+
+2. **Ejecutar en modo desarrollo:**
+   ```bash
+   npm run start:dev
+   ```
+   > La API estará disponible en `http://localhost:3000` (o el puerto configurado).
+
+---
+
+## Scripts Disponibles
+
+En el directorio del backend, cuentas con los siguientes comandos predefinidos:
+
+- `npm run start`: Inicia la aplicación.
+- `npm run start:dev`: Inicia la aplicación en modo desarrollo con recarga automática.
+- `npm run start:prod`: Ejecuta el código compilado para producción.
+- `npm run build`: Compila el proyecto en el directorio `dist/`.
+- `npm run format`: Formatea el código fuente utilizando Prettier.
+- `npm run lint`: Analiza el código buscando problemas de estilo o errores con ESLint.
+- `npm test`: Ejecuta la suite de pruebas unitarias usando Jest.
+
+---
+
+## Documentación de la API (Swagger)
+
+Una vez que el servidor esté en ejecución, puedes acceder a la interfaz interactiva de Swagger para explorar y probar todos los endpoints disponibles.
+
+Típicamente disponible en:
+```text
+http://localhost:3000/api
+```
+*(Verifica en `src/main.ts` la ruta exacta configurada para la documentación).*
+
+---
+
+## Contribución
+
+Sigue el estándar de arquitectura modular de NestJS. Crea componentes usando la CLI de Nest (`nest g resource nombre-recurso`). Asegúrate de ejecutar el linter y de que las pruebas pasen satisfactoriamente antes de proponer cambios a la rama principal.
