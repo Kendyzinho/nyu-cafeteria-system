@@ -47,4 +47,7 @@ export class IPostPedidoRequest {
   @IsOptional()
   @IsNumber()
   ordenPagoId?: number; 
+  @IsOptional()
+  @IsString()
+  metodoPago?: string;
 }

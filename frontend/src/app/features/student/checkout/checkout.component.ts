@@ -8,7 +8,7 @@ import { IntegrationService } from '../../../core/services/integration.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { formatearSlot, getSlotsDisponiblesHoy } from '../../../core/constants/cafeteria-horario';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
+import { PlanService } from '../../../core/services/plan.service';
 @Component({
   selector: 'app-checkout',
   templateUrl: './checkout.component.html',
@@ -28,7 +28,9 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   orderSuccess: boolean = false;
   orderNumber: number = 0;
   finalPaidAmount: number = 0;
-
+  planEstado: any = null;
+  currentUser: any = null;
+  
   constructor(
     private fb: FormBuilder,
     private cartService: CartService,
@@ -36,6 +38,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private integrationService: IntegrationService,
     private toastService: ToastService,
+    private planService: PlanService,
     private router: Router
   ) {}
   
@@ -49,15 +52,21 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     });
 
     this.recargarSlots();
-    
 const user = this.authService.getCurrentUser();
 if (user) {
+  this.currentUser = user;
+
   this.orderService.getDescuento(user.id).subscribe({
     next: (data) => {
       this.descuentoPorcentaje = data.porcentajeDescuento ?? 0;
       this.promocionAplicada = data.promocionAplicada ?? null;
     },
     error: () => { this.descuentoPorcentaje = 0; }
+  });
+
+  this.planService.getEstadoPlan(user.id).subscribe({
+    next: (data) => { this.planEstado = data; },
+    error: () => { this.planEstado = null; }
   });
 }
     // 2. Carga los datos del carrito original
@@ -119,14 +128,24 @@ confirmOrder() {
     const user = this.authService.getCurrentUser();
 
     // 2. Conexión REAL activada
-    if (this.paymentMethod === 'Plan Residente') {
-      if (!user?.isResident) {
-        this.toastService.show('No eres un Residente activo. No puedes usar este método.', 'danger');
-        this.isProcessing = false;
-        return;
-      }
-      this.executeOrderCreation(user);
-    } 
+  if (this.paymentMethod === 'Plan') {
+  if (!this.planEstado) {
+    this.toastService.show('No tienes un plan activo.', 'danger');
+    this.isProcessing = false;
+    return;
+  }
+  if (!this.tieneUsoDiarioDisponible) {
+    this.toastService.show('Ya usaste tu cupo de hoy. Vuelve mañana.', 'danger');
+    this.isProcessing = false;
+    return;
+  }
+  if (this.usosRestantes <= 0) {
+    this.toastService.show('No tienes usos disponibles en tu plan este mes.', 'danger');
+    this.isProcessing = false;
+    return;
+  }
+  this.executeOrderCreation(user, null, 'Plan');
+}
     else if (this.paymentMethod === 'Tarjeta') {
       const payloadPago = { 
         email: user?.email, 
@@ -141,7 +160,7 @@ confirmOrder() {
             this.isProcessing = false;
             return;
           }
-          this.executeOrderCreation(user, transactionId?.toString() ?? null);
+          this.executeOrderCreation(user, transactionId?.toString() ?? null, 'Tarjeta');
         },
         error: () => {
           this.toastService.show('Error conectando a la pasarela de pagos.', 'danger');
@@ -151,17 +170,18 @@ confirmOrder() {
     }
   }
 
-  private executeOrderCreation(user: any, ordenPagoId: string | null = null) {
-    const payload = {
-      usuarioId: user ? user.id : 1,
-      items: this.cartItems.map(i => ({
-        id: i.product.id,
-        cantidad: i.quantity,
-        precio: i.product.precio || 0
-      })),
-      horarioRetiro: this.horarioSeleccionadoIso,
-      ordenPagoId
-    };
+  private executeOrderCreation(user: any, ordenPagoId: string | null = null, metodoPago: string = '') {
+const payload = {
+  usuarioId: user ? user.id : 1,
+  items: this.cartItems.map(i => ({
+    id: i.product.id,
+    cantidad: i.quantity,
+    precio: i.product.precio || 0
+  })),
+  horarioRetiro: this.horarioSeleccionadoIso,
+  ordenPagoId,
+  metodoPago: metodoPago || undefined
+};
 
     this.orderService.createOrder(payload).subscribe({
       next: () => {
@@ -197,11 +217,30 @@ confirmOrder() {
       }
     });
   }
-  descuentoPorcentaje: number = 0;
+descuentoPorcentaje: number = 0;
 promocionAplicada: string | null = null;
 
 get totalConDescuento(): number {
   if (this.descuentoPorcentaje <= 0) return this.totalAmount;
   return this.totalAmount * (1 - this.descuentoPorcentaje / 100);
+  
+}
+get usosRestantes(): number {
+  if (!this.planEstado) return 0;
+  return (this.planEstado.plan?.cantidadComidas ?? 0) - (this.planEstado.comidasUsadas ?? 0);
+}
+
+get tieneUsoDiarioDisponible(): boolean {
+  if (!this.planEstado) return false;
+  const fechaUltimoCanje = this.planEstado.fechaUltimoCanje;
+  if (!fechaUltimoCanje) return true;
+  const hoy = new Date().toISOString().split('T')[0];
+  const ultimoCanje = new Date(fechaUltimoCanje).toISOString().split('T')[0];
+  if (ultimoCanje !== hoy) return true;
+  return (this.planEstado.canjesHoy ?? 0) < (this.planEstado.plan?.limiteDiario ?? 1);
+}
+
+get tieneUsosDisponibles(): boolean {
+  return this.usosRestantes > 0 && this.tieneUsoDiarioDisponible;
 }
 }

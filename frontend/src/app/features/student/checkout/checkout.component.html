@@ -126,9 +126,17 @@
               </div>
               
               <label class="border rounded-3 p-3 d-flex align-items-center gap-3 transition-all"
-                     [ngClass]="paymentMethod === 'Plan Residente' ? 'border-primary bg-primary bg-opacity-10 shadow-sm' : 'border-light-subtle bg-white'"
-                     style="cursor: pointer;">
-                <input type="radio" name="paymentMethod" value="Plan Residente" [(ngModel)]="paymentMethod" class="form-check-input mt-0" style="transform: scale(1.2);">
+                     [ngClass]="{
+                       'border-primary bg-primary bg-opacity-10 shadow-sm': paymentMethod === 'Plan',
+                       'border-light-subtle bg-white': paymentMethod !== 'Plan',                      
+                       'opacity-50': !planEstado || !tieneUsosDisponibles
+                     }"
+                     [style.cursor]="(!planEstado || !tieneUsosDisponibles) ? 'not-allowed' : 'pointer'">
+                <input type="radio" name="paymentMethod" value="Plan"
+                       [(ngModel)]="paymentMethod"
+                       class="form-check-input mt-0"
+                       style="transform: scale(1.2);"
+                       [disabled]="!planEstado || !tieneUsosDisponibles">
                 <div class="d-flex flex-column">
                   <span class="fw-bold text-dark d-flex align-items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-house-door text-warning" viewBox="0 0 16 16">
@@ -136,7 +144,18 @@
                     </svg>
                     Usar Plan Residente
                   </span>
-                  <small class="text-muted" style="font-size: 0.75rem;">Consume raciones de tu plan</small>
+                  <small *ngIf="planEstado && tieneUsosDisponibles" class="text-success fw-bold" style="font-size: 0.75rem;">
+                    {{ usosRestantes }} usos restantes este mes
+                  </small>
+                  <small *ngIf="planEstado && usosRestantes > 0 && !tieneUsoDiarioDisponible" class="text-danger fw-bold" style="font-size: 0.75rem;">
+                    Límite diario alcanzado — vuelve mañana
+                  </small>
+                  <small *ngIf="planEstado && usosRestantes <= 0" class="text-danger fw-bold" style="font-size: 0.75rem;">
+                    Sin usos disponibles este mes
+                  </small>
+                  <small *ngIf="!planEstado" class="text-muted" style="font-size: 0.75rem;">
+                    No tienes un plan activo
+                  </small>
                 </div>
               </label>
 

@@ -23,17 +23,13 @@ export class NavbarComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Nos suscribimos al usuario actual para que el Navbar reaccione dinámicamente
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
       if (user) {
-        // mock_usuario solo tiene 'nombre' (sin apellido), usamos las dos primeras letras
         const parts = user.firstName.trim().split(' ');
-        if (parts.length >= 2) {
-          this.initials = `${parts[0].charAt(0)}${parts[1].charAt(0)}`.toUpperCase();
-        } else {
-          this.initials = user.firstName.substring(0, 2).toUpperCase();
-        }
+        this.initials = parts.length >= 2
+          ? `${parts[0].charAt(0)}${parts[1].charAt(0)}`.toUpperCase()
+          : user.firstName.substring(0, 2).toUpperCase();
       } else {
         this.initials = '';
       }

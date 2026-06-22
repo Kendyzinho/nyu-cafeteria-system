@@ -153,14 +153,19 @@ return response.status(201).json({
       estado: suscripcion.estado,
       mesVigencia: new Date(suscripcion.mesVigencia).toISOString().split('T')[0],
       comidasUsadas: suscripcion.comidasUsadas,
+      canjesHoy: suscripcion.canjesHoy ?? 0,
+      fechaUltimoCanje: suscripcion.fechaUltimoCanje
+      ? new Date(suscripcion.fechaUltimoCanje).toISOString().split('T')[0]
+      : null,
       plan: {
         id: plan.id,
         nombre: plan.nombre,
         descripcion: plan.descripcion,
         precioMensual: Number(plan.precio_mensual),
-         cantidadComidas: plan.cantidadComidas,
-      },
-    };
+        cantidadComidas: plan.cantidadComidas,
+        limiteDiario: plan.limiteDiario ?? 1,
+  },
+};
 
     return response.status(200).json(body);
   }

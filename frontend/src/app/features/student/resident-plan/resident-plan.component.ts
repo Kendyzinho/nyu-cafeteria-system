@@ -21,7 +21,6 @@ export class ResidentPlanComponent implements OnInit {
   availablePlans: any[] = [];
 
   loading = false;
-  selectedTime: string = '';
   preferences = {
     vegano: false,
     vegetariano: false,
@@ -34,8 +33,6 @@ export class ResidentPlanComponent implements OnInit {
   selectedPlanToBuy: any = null;
   isProcessingPayment: boolean = false;
 
-  ticketGenerated: boolean = false;
-  ticketHora: string = '';
 
 
   constructor(
@@ -123,41 +120,6 @@ export class ResidentPlanComponent implements OnInit {
 
   cancelPlan(): void {
     alert('Funcionalidad de cancelación próximamente.');
-  }
-
-  generateTicket(): void {
-    if (!this.selectedTime) {
-      alert('Selecciona un horario primero.');
-      return;
-    }
-
-    const user = this.authService.getCurrentUser();
-    if (!user) return;
-
-    // Redime la comida y actualiza el estado
-    this.planService.redimirComida(user.id).subscribe({
-      next: (res) => {
-        if (this.currentPlan) {
-          this.currentPlan.comidasUsadas = res.comidasUsadas;
-        }
-
-        // Muestra el ticket de confirmación
-        this.ticketHora = this.selectedTime;
-        this.ticketGenerated = true;
-        this.selectedTime = '';
-      },
-      error: (err) => {
-        if (err.status === 400) {
-          alert('Ya usaste todos tus canjes disponibles por hoy.');
-        } else {
-          alert('No tenés usos disponibles en tu plan este mes.');
-        }
-      },
-    });
-  }
-
-  cerrarTicket(): void {
-    this.ticketGenerated = false; // Apaga el modal HTML
   }
 
   // Manejo del Modal de Pago
