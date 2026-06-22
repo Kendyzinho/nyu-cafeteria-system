@@ -92,7 +92,7 @@ if (suscripcionExistente) {
     if (!suscripcion || !suscripcion.planActivoId) return null;
 
     const plan = await this.planRepository.findOne({
-      where: { id: suscripcion.planActivoId },
+      where: { id: suscripcion.planActivoId, activo: true },
     });
 
     if (!plan) return null;
@@ -114,9 +114,8 @@ if (suscripcionExistente) {
   if (!suscripcion || !suscripcion.planActivoId) return null;
 
   const plan = await this.planRepository.findOne({
-    where: { id: suscripcion.planActivoId },
+    where: { id: suscripcion.planActivoId, activo: true },
   });
-
   if (!plan) return null;
 
   // Validar que quedan usos mensuales

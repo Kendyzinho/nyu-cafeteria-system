@@ -17,9 +17,6 @@
         </div>
 
         <div class="card-body text-center py-4">
-          <h5 class="fw-bold mb-3" style="color: var(--nyu-dark);">
-            Comidas restantes este mes: {{ totalMeals - mealsConsumed }}/{{ totalMeals }}
-          </h5>
           <p class="mb-0 fw-bold text-muted">
             {{ getCurrentPlanName() }} <br>
             <span *ngIf="preferences.vegano">(Vegano Preference)</span>
@@ -104,74 +101,6 @@
           </button>
         </div>
       </div>
-
-      <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white pt-4 pb-2 text-center">
-          <h5 class="fw-bold" style="color: var(--nyu-dark);">
-            Generar Ticket de Canje Hoy
-          </h5>
-          <hr style="border-top: 2px solid var(--nyu-dark); opacity: 1; margin-bottom: 0;">
-        </div>
-
-        <div class="card-body p-4 text-center">
-          <select class="form-select shadow-sm mb-4" [(ngModel)]="selectedTime">
-            <option value="" disabled>Seleccionar Horario de Canje</option>
-            <option value="12:00 - 12:30">12:00 - 12:30 (hoy)</option>
-            <option value="13:00 - 13:30">13:00 - 13:30 (hoy)</option>
-            <option value="14:00 - 14:30">14:00 - 14:30 (hoy)</option>
-          </select>
-
-          <button class="btn text-white w-100 fw-bold" style="background-color: var(--nyu-dark);" (click)="generateTicket()">
-            Canjear Comida del Plan (1 Uso)
-          </button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
-<div *ngIf="ticketGenerated" class="modal-backdrop fade show" style="background-color: rgba(0,0,0,0.6);"></div>
-
-<div *ngIf="ticketGenerated" class="modal fade show d-block" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 rounded-4 overflow-hidden shadow-lg">
-      
-      <div class="modal-header text-white text-center border-0" style="background-color: var(--nyu-dark);">
-        <h5 class="modal-title fw-bold w-100">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-ticket-perforated mb-1 me-2" viewBox="0 0 16 16">
-            <path d="M4 4.85v.9h1v-.9zm7 0v.9h1v-.9zm-7 1.8v.9h1v-.9zm7 0v.9h1v-.9zm-7 1.8v.9h1v-.9zm7 0v.9h1v-.9zm-7 1.8v.9h1v-.9zm7 0v.9h1v-.9z"/>
-            <path d="M1.5 3A1.5 1.5 0 0 0 0 4.5V6a.5.5 0 0 0 .5.5 1.5 1.5 0 1 1 0 3 .5.5 0 0 0-.5.5v1.5A1.5 1.5 0 0 0 1.5 13h13a1.5 1.5 0 0 0 1.5-1.5V10a.5.5 0 0 0-.5-.5 1.5 1.5 0 0 1 0-3A.5.5 0 0 0 16 6V4.5A1.5 1.5 0 0 0 14.5 3zM1 4.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v1.05a2.5 2.5 0 0 0 0 4.9v1.05a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-1.05a2.5 2.5 0 0 0 0-4.9z"/>
-          </svg>
-          Ticket de Canje
-        </h5>
-      </div>
-
-      <div class="modal-body text-center p-5">
-        <h4 class="fw-bold mb-1" style="color: var(--nyu-dark);">{{ currentUser?.name || 'Nelson' }}</h4>
-        <p class="text-muted mb-4 fw-bold">{{ getCurrentPlanName() }}</p>
-
-        <div class="p-3 border border-secondary-subtle rounded-3 bg-light mb-4 shadow-sm">
-          <h6 class="text-muted text-uppercase small fw-bold mb-2">Horario de Retiro</h6>
-          <h2 class="fw-bolder text-success mb-0">{{ ticketHora }}</h2>
-        </div>
-
-        <div class="mb-2">
-          <svg xmlns="http://www.w3.org/2000/svg" width="220" height="60" fill="currentColor" class="bi bi-upc text-dark" viewBox="0 0 16 16">
-            <path d="M3 4.5a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0zm2 0a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0zm2 0a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0zm2 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0z"/>
-          </svg>
-          <p class="small text-muted mt-2 mb-0 fw-bold">Muestra este código al personal de cocina</p>
-        </div>
-      </div>
-
-      <div class="modal-footer justify-content-center bg-light border-top p-3">
-        <button type="button" class="btn fw-bold px-5 rounded-pill text-white" style="background-color: var(--nyu-dark);" (click)="cerrarTicket()">
-          Entendido
-        </button>
-      </div>
-
-    </div>
-  </div>
-</div>
 
 <!-- Fondo oscuro -->
 <div *ngIf="showPaymentModal" class="modal-backdrop fade show" style="background-color: rgba(0,0,0,0.6);"></div>

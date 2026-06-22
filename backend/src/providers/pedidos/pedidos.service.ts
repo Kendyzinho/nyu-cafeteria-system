@@ -9,6 +9,7 @@ import type { IPutPedidoRequest } from 'src/controllers/pedidos/dto/IPutPedidoRe
 import { validarHorarioRetiro } from 'src/common/constants/cafeteria-horario';
 import { MockUsuarioEntity } from 'src/database/entities/mock-usuario.entity';
 import { PromocionEntity } from 'src/database/entities/promocion.entity';
+import { SubscriptionsService } from 'src/providers/usuario_suscripcion/suscripcion.service';
 
 @Injectable()
 export class PedidosService {
@@ -21,6 +22,7 @@ export class PedidosService {
     private readonly usuarioRepository: Repository<MockUsuarioEntity>,
     @InjectRepository(PromocionEntity)
     private readonly promocionRepository: Repository<PromocionEntity>,
+    private readonly subscriptionsService: SubscriptionsService,
   ) {}
 
   private async calcularDescuento(usuarioId: number, itemIds: number[]): Promise<number> {
@@ -86,6 +88,13 @@ export class PedidosService {
     const validacion = validarHorarioRetiro(horarioRetiro);
     if (!validacion.ok) {
       throw new BadRequestException(validacion.motivo);
+    }
+
+    if (data.metodoPago === 'Plan') {
+      const resultado = await this.subscriptionsService.redimirComida(data.usuarioId);
+      if (!resultado) {
+        throw new BadRequestException('No tienes usos disponibles en tu plan (límite mensual o diario alcanzado).');
+      }
     }
 
     let calculatedTotal = 0;
