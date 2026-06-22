@@ -3,8 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { PlanService } from '../../../core/services/plan.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Plan } from '../../../core/models/plan';
-// ✅ 1. IMPORTANTE: Agregamos la importación del environment
-import { environment } from '../../../environments/environment';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-resident-plan',
