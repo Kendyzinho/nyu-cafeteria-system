@@ -100,7 +100,7 @@ if (suscripcionExistente) {
     return { suscripcion, plan };
   }
 
-  public async redimirComida(userId: number): Promise<{
+  public async redimirComida(userId: number, cantidad: number = 1): Promise<{
   comidasUsadas: number;
   cantidadComidas: number;
   restantes: number;
@@ -119,25 +119,27 @@ if (suscripcionExistente) {
   if (!plan) return null;
 
   // Validar que quedan usos mensuales
-  if (suscripcion.comidasUsadas >= plan.cantidadComidas) return null;
+  if (suscripcion.comidasUsadas + cantidad > plan.cantidadComidas) return null;
 
-  // Verificar límite diario
-  const hoy = new Date().toISOString().split('T')[0]; // "2026-05-28"
-  const ultimoCanje = suscripcion.fechaUltimoCanje
-    ? new Date(suscripcion.fechaUltimoCanje).toISOString().split('T')[0]
-    : null;
-
-  if (ultimoCanje === hoy) {
-    // Ya canjeó hoy — verificar si llegó al límite
-    if (suscripcion.canjesHoy >= plan.limiteDiario) return null;
-    suscripcion.canjesHoy += 1;
-  } else {
-    // Nuevo día — resetear el contador diario
-    suscripcion.canjesHoy = 1;
+   // Verificar límite diario
+  const hoy = new Date().toLocaleDateString('en-CA');
+  let ultimoCanje: string | null = null;
+  if (suscripcion.fechaUltimoCanje) {
+    const d = new Date(suscripcion.fechaUltimoCanje);
+    d.setUTCHours(12); // DATE de MySQL llega como medianoche UTC; +12h evita el desfase horario
+    ultimoCanje = d.toLocaleDateString('en-CA');
   }
 
-  suscripcion.fechaUltimoCanje = new Date();
-  suscripcion.comidasUsadas += 1;
+  if (ultimoCanje === hoy) {
+    if (suscripcion.canjesHoy + cantidad > plan.limiteDiario) return null;
+    suscripcion.canjesHoy += cantidad;   // ← esta línea también faltaba
+  } else {
+    suscripcion.canjesHoy = cantidad;
+  }
+
+  const todayLocal = new Date().toLocaleDateString('en-CA');
+  suscripcion.fechaUltimoCanje = new Date(todayLocal + 'T12:00:00Z'); // Guardar como mediodía UTC
+  suscripcion.comidasUsadas += cantidad;
   await this.suscripcionRepository.save(suscripcion);
 
   return {

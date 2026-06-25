@@ -167,21 +167,26 @@
           <div class="card-body p-4">
             <h5 class="fw-bolder mb-3" style="color: #4E342E;">Resumen del Pedido</h5>
 
-            <div class="d-flex justify-content-between mb-2 pb-2 border-bottom border-secondary-subtle">
+            <div *ngIf="paymentMethod !== 'Plan'" class="d-flex justify-content-between mb-2 pb-2 border-bottom border-secondary-subtle">
               <span class="text-muted fw-bold">Subtotal</span>
               <span class="fw-bold">${{ totalAmount | number }}</span>
             </div>
 
-            <div *ngIf="descuentoPorcentaje > 0" class="d-flex justify-content-between mb-2 pb-2 border-bottom border-secondary-subtle">
+            <div *ngIf="paymentMethod !== 'Plan' && descuentoPorcentaje > 0" class="d-flex justify-content-between mb-2 pb-2 border-bottom border-secondary-subtle">
               <span class="fw-bold text-success">
                 Descuento {{ promocionAplicada ? '(' + promocionAplicada + ')' : '' }} — {{ descuentoPorcentaje }}% OFF
               </span>
               <span class="fw-bold text-success">-${{ (totalAmount - totalConDescuento) | number }}</span>
             </div>
 
-            <div class="d-flex justify-content-between align-items-center my-3">
+            <div *ngIf="paymentMethod !== 'Plan'" class="d-flex justify-content-between align-items-center my-3">
               <span class="fs-5 fw-bolder" style="color: #4E342E;">Total a Pagar</span>
               <span class="fs-3 fw-bolder text-dark">${{ totalConDescuento | number }}</span>
+            </div>
+
+            <div *ngIf="paymentMethod === 'Plan'" class="d-flex justify-content-between align-items-center my-3">
+              <span class="fs-5 fw-bolder" style="color: #4E342E;">Usos restantes</span>
+              <span class="fs-5 fw-bolder text-success">{{ usosRestantes }} uso(s)</span>
             </div>
             
             <button class="btn w-100 fw-bold shadow mt-2 py-3 rounded-pill text-white d-flex align-items-center justify-content-center gap-2" 
@@ -204,27 +209,50 @@
 </div>
 
 <div *ngIf="orderSuccess" class="container py-5 d-flex justify-content-center align-items-center" style="min-height: 60vh;">
-  <div class="card border-0 shadow-lg text-center p-5" style="max-width: 500px; border-radius: 20px;">
-    
+  <div class="card border-0 shadow-lg text-center p-5" style="max-width: 520px; border-radius: 20px;" id="ticket-imprimible">
+
     <i class="bi bi-check-circle-fill text-success mb-3" style="font-size: 6rem;"></i>
-    
-    <h2 class="fw-bold mb-3" style="color: #4E342E;">¡Pago Exitoso!</h2>
-    <p class="text-muted mb-4 fs-5">Tu pedido ha sido procesado correctamente y la cocina ya fue notificada.</p>
-    
-    <div class="bg-light rounded-3 p-4 mb-4 text-start shadow-sm">
-      <div class="d-flex justify-content-between border-bottom pb-3 mb-3">
-        <span class="text-muted fw-bold">Número de Orden:</span>
-        <span class="fw-bold text-dark fs-5">#NYU-{{ orderNumber }}</span>
+     <h2 class="fw-bold mb-1" style="color: #4E342E;">
+      {{ ticketMetodoPago === 'Plan' ? '¡Pedido Confirmado!' : '¡Pago Exitoso!' }}
+    </h2>
+    <p class="text-muted mb-4">Tu pedido fue procesado y la cocina fue notificada.</p>
+
+    <div class="bg-light rounded-3 p-4 mb-3 text-start shadow-sm">
+
+      <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+        <span class="text-muted fw-bold small">Número de Orden</span>
+        <span class="fw-bold text-dark">#NYU-{{ orderNumber }}</span>
       </div>
-      <div class="d-flex justify-content-between align-items-center">
-        <span class="text-muted fw-bold">Total Pagado:</span>
-        <span class="fw-bold text-success fs-4">${{ finalPaidAmount | number }}</span>      
+
+      <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+        <span class="text-muted fw-bold small">Método de Pago</span>
+        <span class="fw-bold text-dark">{{ ticketMetodoPago }}</span>
       </div>
+
+      <div class="d-flex justify-content-between border-bottom pb-2 mb-3">
+        <span class="text-muted fw-bold small">Hora de Retiro</span>
+        <span class="fw-bold text-dark">{{ ticketHorario | date:'HH:mm' }}hs</span>
+      </div>
+
+      <p class="text-muted fw-bold small mb-2">Detalle del pedido:</p>
+      <div *ngFor="let item of ticketItems" class="d-flex justify-content-between small mb-1">
+        <span class="text-dark">{{ item.product.nombre }} <span class="text-muted">x{{ item.quantity }}</span></span>
+        <span *ngIf="ticketMetodoPago !== 'Plan'" class="fw-bold">${{ (item.product.precio * item.quantity) | number }}</span>
+      </div>
+
+      <div *ngIf="ticketMetodoPago !== 'Plan'" class="d-flex justify-content-between align-items-center border-top mt-3 pt-3">
+        <span class="fw-bolder" style="color: #4E342E;">Total Pagado</span>
+        <span class="fw-bolder text-success fs-5">${{ finalPaidAmount | number }}</span>
+      </div>
+
     </div>
 
+    <button class="btn btn-outline-secondary w-100 fw-bold mb-2" onclick="window.print()">
+      Imprimir Ticket
+    </button>
     <button class="btn btn-lg w-100 fw-bold text-white" style="background-color: #4E342E;" routerLink="/menu">
       Volver al Menú Principal
     </button>
-    
+
   </div>
 </div>

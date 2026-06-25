@@ -89,11 +89,12 @@ export class PedidosService {
     if (!validacion.ok) {
       throw new BadRequestException(validacion.motivo);
     }
-
+      console.log('metodoPago recibido:', data.metodoPago);   // ← temporal para debug
     if (data.metodoPago === 'Plan') {
-      const resultado = await this.subscriptionsService.redimirComida(data.usuarioId);
+      const totalItems = data.items.reduce((sum, i) => sum + (Number(i.cantidad || i.quantity) || 1), 0);
+      const resultado = await this.subscriptionsService.redimirComida(data.usuarioId, totalItems);
       if (!resultado) {
-        throw new BadRequestException('No tienes usos disponibles en tu plan (límite mensual o diario alcanzado).');
+        throw new BadRequestException(`No tienes suficientes usos en tu plan para este pedido (necesitas ${totalItems}).`);
       }
     }
 
@@ -129,8 +130,7 @@ export class PedidosService {
     const nuevoPedido = this.pedidoRepository.create({
       usuarioId: data.usuarioId,
       total: calculatedTotal,
-      estado: data.ordenPagoId ? 'pagado' : 'pendiente',
-      ordenPagoId: data.ordenPagoId ?? null,
+     estado: (data.ordenPagoId || data.metodoPago === 'Plan') ? 'pagado' : 'pendiente',
       fechaCreacion: new Date(),
       horarioRetiro,
     });

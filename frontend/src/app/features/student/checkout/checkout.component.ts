@@ -28,6 +28,9 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   orderSuccess: boolean = false;
   orderNumber: number = 0;
   finalPaidAmount: number = 0;
+  ticketItems: CartItem[] = [];
+  ticketHorario: string | null = null;
+  ticketMetodoPago: string = '';
   planEstado: any = null;
   currentUser: any = null;
   
@@ -184,26 +187,31 @@ const payload = {
 };
 
     this.orderService.createOrder(payload).subscribe({
-      next: () => {
+      next: (pedido) => {
         this.isProcessing = false;
 
-        // Guardamos una "foto" del total ANTES de vaciar el carrito
-       this.finalPaidAmount = this.totalConDescuento; 
+        this.finalPaidAmount = this.totalConDescuento;
+        this.ticketItems = [...this.cartItems];
+        this.ticketHorario = this.horarioSeleccionadoIso;
+        this.ticketMetodoPago = metodoPago;
 
-        this.cartService.clearCart(); // Ahora sí, vaciamos el carrito seguro
+        this.cartService.clearCart();
 
-        // 1. Generamos el número de orden para la boleta
-        this.orderNumber = Math.floor(Math.random() * 10000) + 1000; 
+        this.orderNumber = pedido?.id ?? Math.floor(Math.random() * 10000) + 1000;
+        this.orderSuccess = true;
 
-        // 2. Activamos el switch para mostrar la pantalla de éxito en el HTML
-        this.orderSuccess = true; 
+        if (metodoPago === 'Plan') {
+          const u = this.authService.getCurrentUser();
+          if (u) {
+            this.planService.getEstadoPlan(u.id).subscribe({
+              next: (data) => { this.planEstado = data; },
+              error: () => { this.planEstado = null; }
+            });
+          }
+        }
 
-        // 3. Mantenemos tu mensaje verde pequeño (toast) porque es un buen detalle
         const hr = new Date(this.horarioSeleccionadoIso!);
         this.toastService.show(`¡Pedido confirmado! Retira a las ${formatearSlot(hr)}`, 'success');
-
-        // 4. Mantenemos la redirección comentada para que el usuario pueda leer su boleta
-        // this.router.navigate(['/history']);
       },
       error: (err: any) => {
         console.error('Error al procesar orden', err);
@@ -230,17 +238,22 @@ get usosRestantes(): number {
   return (this.planEstado.plan?.cantidadComidas ?? 0) - (this.planEstado.comidasUsadas ?? 0);
 }
 
+get totalCartQuantity(): number {
+  return this.cartItems.reduce((sum, item) => sum + item.quantity, 0);
+}
+
 get tieneUsoDiarioDisponible(): boolean {
   if (!this.planEstado) return false;
+  const canjesHoy = this.planEstado.canjesHoy ?? 0;
+  const limiteDiario = this.planEstado.plan?.limiteDiario ?? 1;
   const fechaUltimoCanje = this.planEstado.fechaUltimoCanje;
-  if (!fechaUltimoCanje) return true;
-  const hoy = new Date().toISOString().split('T')[0];
-  const ultimoCanje = new Date(fechaUltimoCanje).toISOString().split('T')[0];
-  if (ultimoCanje !== hoy) return true;
-  return (this.planEstado.canjesHoy ?? 0) < (this.planEstado.plan?.limiteDiario ?? 1);
+  if (!fechaUltimoCanje) return this.totalCartQuantity <= limiteDiario;
+  const hoy = new Date().toLocaleDateString('en-CA');
+  if (fechaUltimoCanje !== hoy) return this.totalCartQuantity <= limiteDiario;
+  return canjesHoy + this.totalCartQuantity <= limiteDiario;
 }
 
 get tieneUsosDisponibles(): boolean {
-  return this.usosRestantes > 0 && this.tieneUsoDiarioDisponible;
+  return this.usosRestantes >= this.totalCartQuantity && this.tieneUsoDiarioDisponible;
 }
 }
